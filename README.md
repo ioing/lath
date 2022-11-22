@@ -1,6 +1,7 @@
 # Introduce
 
-Lath is a framework for seamlessly connecting pages.
+A pure front-end container
+Bring interactive experiences comparable to Native Apps.
 
 https://lath.dev
 

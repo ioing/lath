@@ -53,7 +53,7 @@ createApplication({
       ...
     } // normal module config
   }
-}).then(( { application } ) => {
+}).then(( application ) => {
   console.log(application)
 })
 ```

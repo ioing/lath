@@ -43,7 +43,6 @@ class ModalityView extends ModalityEventTarget {
     this.modalityOverlay = modalityOverlay
   }
   public slide(degree: number, maxDegree: number, prevViewport: HTMLElement) {
-    if (!this.activity) return
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
@@ -181,7 +180,6 @@ class ModalityView extends ModalityEventTarget {
       modalityHandle.style.display = 'none'
     }
     const scrollHandle = (): void => {
-      if (!this.activity) return
       this.slide(this.degree, this.maxDegree, this.prevViewport)
     }
 

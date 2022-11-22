@@ -1,0 +1,63 @@
+{
+  "name": "lath",
+  "version": "0.10.2",
+  "description": "Seamless connection of pages.",
+  "keywords": [
+    "lath",
+    "portal",
+    "web-portal",
+    "pages-link",
+    "linkup",
+    "seamless",
+    "pushWindow",
+    "slide page",
+    "page animate",
+    "iframe",
+    "SPA",
+    "PWA",
+    "Application",
+    "webapp",
+    "Web Application",
+    "Web Components",
+    "Single Page Web Application",
+    "The Progressive JavaScript Framework"
+  ],
+  "main": "app/launcher.js",
+  "module": "app/launcher.js",
+  "jsnext:main": "app/launcher.js",
+  "types": "app/typings/launcher.d.ts",
+  "files": [
+    "app/"
+  ],
+  "scripts": {
+    "clean": "rimraf ./app",
+    "lint": "eslint --cache --ext .ts ./src",
+    "build": "node scripts/build.js",
+    "debug": "node --inspect-brk app/index.js"
+  },
+  "engines": {
+    "install-node": ">=14.18.3",
+    "npm": ">=7.0.0"
+  },
+  "dependencies": {
+    "@webcomponents/custom-elements": "^1.5.0",
+    "@webcomponents/webcomponentsjs": "^2.6.0",
+    "html2canvas": "^1.4.1",
+    "scroll-polyfill": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.12",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
+    "eslint": "^8.11.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.57.0",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "text-loader": "0.0.1",
+    "ts-loader": "^9.2.6",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.2"
+  },
+  "author": "lien",
+  "license": "MIT"
+}

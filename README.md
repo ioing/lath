@@ -8,6 +8,9 @@ Lath is a framework for seamlessly connecting pages.
 $ npm i lath --save
 ```
 
+# Example
+https://github.com/ioing/lath-vue-example
+
 # Use
 
 ```html

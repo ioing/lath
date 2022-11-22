@@ -1,12 +1,19 @@
 # Introduce
 
-Lath is a framework for seamlessly connecting pages.
+A pure front-end container
+
+Bring interactive experiences comparable to Native Apps.
+
+https://lath.dev
 
 # Install：
 
 ```bash
 $ npm i lath --save
 ```
+
+# Example
+https://github.com/ioing/lath-vue-example
 
 # Use
 
@@ -53,7 +60,7 @@ createApplication({
       ...
     } // normal module config
   }
-}).then(( { application } ) => {
+}).then(( application ) => {
   console.log(application)
 })
 ```

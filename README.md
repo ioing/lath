@@ -2,6 +2,8 @@
 
 Lath is a framework for seamlessly connecting pages.
 
+https://lath.dev
+
 # Install：
 
 ```bash

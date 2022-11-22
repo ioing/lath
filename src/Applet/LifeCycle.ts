@@ -12,18 +12,16 @@ class AppletLifeCycle extends AppletState {
   }
 
   public removeContainer() {
-    if (!this.isPresetAppletsView) {
-      this.contentView?.parentElement?.removeChild(this.contentView)
-      this.viewport?.parentNode?.removeChild(this.viewport as HTMLElement)
-    }
+    if (this.isPresetAppletsView) return
+    this.contentView?.parentElement?.removeChild(this.contentView)
+    this.viewport?.parentNode?.removeChild(this.viewport as HTMLElement)
     this.viewport = undefined
     this.delPresetView()
   }
 
   public clearContainer() {
-    if (!this.isPresetAppletsView) {
-      this.contentView?.parentElement?.removeChild(this.contentView)
-    }
+    if (this.isPresetAppletsView) return
+    this.contentView?.parentElement?.removeChild(this.contentView)
     if (this.viewport) {
       this.viewport.innerHTML = ''
     }

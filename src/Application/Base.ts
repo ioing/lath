@@ -63,8 +63,8 @@ class ApplicationBase extends EventProvider {
     const preset = this.presetAppletsView[id]
     if (preset && preset.parentElement) {
       preset.parentElement.removeChild(preset)
-      delete this.presetAppletsView[id]
     }
+    delete this.presetAppletsView[id]
   }
   public setPrestAppletsView(presetApplets: PresetApplets) {
     this.residentApplets = Object.keys(presetApplets)

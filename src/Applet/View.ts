@@ -95,9 +95,8 @@ class AppletView extends AppletEventTarget {
     return contentView
   }
   private buildContentStructure(): void {
-    if (!this.contentView) {
-      this.contentView = this.getContentView()
-    }
+    if (this.contentView) return
+    this.contentView = this.getContentView()
     this.contentSlot = this.contentView.getViewSlot() as HTMLSlotElement
     const contentContainer = this.getContentContainer()
     if (this.config.defaultSlideViewApplets) {

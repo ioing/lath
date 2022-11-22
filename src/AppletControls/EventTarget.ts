@@ -70,7 +70,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
     const swipeTransitionType = this.application.config.swipeTransitionType
     const prevViewport = viewports[1]
     // Block impressions triggered by sliding card subviews, etc
-    if (viewports[0] !== this.applet.viewport) return
+    // if (viewports[0] !== this.applet.viewport) return
     if (prevViewport) {
       if (swipeTransitionType === 'slide') {
         prevViewport.style.transform = 'translate3d(30%, 0, 0)'

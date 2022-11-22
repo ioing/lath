@@ -34,7 +34,7 @@ class ModalityView extends ModalityEventTarget {
     `
     modalityOverlay.addEventListener('touchstart', (event) => {
       // Prevent interruptions due to Alert, etc., from not closing the applet properly.
-      if (this.degree <= this.advanceDegree) {
+      if (this.degree <= this.advanceDegree && this.activity) {
         this.hide()
       }
       event.stopPropagation()

@@ -41,6 +41,13 @@ export const injectDocument = (appletWindow: Window, applet: Applet): void => {
         break
     }
   }
+  if (typeof config.injectToDocument === 'function') {
+    try {
+      config.injectToDocument(appletWindow, applet)
+    } catch (error) {
+      console.error('config > inject:', error)
+    }
+  }
   if (applet.components) {
     for (const mountComponent of applet.components) {
       appletWindow.customElements.define('code-highlight', mountComponent(appletWindow))

@@ -230,6 +230,7 @@ declare interface AppletBaseConfig {
   applyOptions?: AppletApplyOptionsParam
   unApply?: AppletApplyOptions
   inject?: (w: Window, m: Applet) => void
+  injectToDocument?: (w: Window, m: Applet) => void
   useMirroring?: boolean
   pullToRefresh?: boolean
   forcedToRefresh?: boolean

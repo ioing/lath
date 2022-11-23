@@ -64,8 +64,8 @@ export const getHolderStyle = (darkTheme: boolean) => {
     transform: translate3d(0, -100%, 0);
     transition-property: transform;
     border-radius: 0 0 50% 50%;
-    backdrop-filter: blur(20px); 
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   `
 }
 export const holdLayerStyle = `

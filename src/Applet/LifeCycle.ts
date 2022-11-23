@@ -30,7 +30,7 @@ class AppletLifeCycle extends AppletState {
 
   public delPresetView() {
     this.contentView = undefined
-    this.application.delPresetAppletsView(this.id)
+    this.application.delPresetAppletsView(this.id, true)
   }
 
   public setParam(param: string): Promise<boolean> {

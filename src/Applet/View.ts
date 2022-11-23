@@ -261,14 +261,14 @@ class AppletView extends AppletEventTarget {
   public async refresh(): Promise<void> {
     if (this.status.refreshing || !this.view) return Promise.reject()
     this.status.refreshing = true
-    if (this.config.refresh instanceof Promise) {
+    if (typeof this.config.refresh === 'function') {
       await this.config.refresh()
       this.status.refreshing = false
       this.trigger('refreshing')
       return
     }
-    if (this.rel !== 'applet' && this.noSource) {
-      this.status.refreshing = true
+    if (this.isPresetAppletsView || (this.rel !== 'applet' && this.noSource)) {
+      this.status.refreshing = false
       return
     }
     const contentView = this.contentView as DefineApplet

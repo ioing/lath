@@ -3,9 +3,9 @@ import { setTimeout } from '../lib/util'
 
 class ModalityEventTarget extends ModalityState {
   private processPromise!: Promise<void>
-  public async switchSheet(): Promise<void> {
+  public async switchSheet(hideThresholdScale = 1.5): Promise<void> {
     if (!this.activity) return Promise.resolve()
-    if (this.degree <= this.maxDegree / 2) {
+    if (this.degree <= this.maxDegree / hideThresholdScale) {
       return this.hide()
     } else {
       return this.rise()
@@ -88,28 +88,13 @@ class ModalityEventTarget extends ModalityState {
     dragContent.addEventListener('touchend', async () => {
       if (!startPoint.swipe) return
       startPoint.swipe = false
-      const scrollStop = await new Promise((resolve) => {
-        const waitScrollEnd = (callback: () => void) => {
-          setTimeout(() => {
-            if (this.scrolling) {
-              waitScrollEnd(callback)
-            } else {
-              callback()
-            }
-          }, 100)
-        }
-        waitScrollEnd(() => {
-          resolve(true)
-        })
-      })
-      if (!scrollStop) return
+      if (!await this.checkScrollStop()) return
       this.switchSmooth(true)
-      this.switchSheet().then(() => {
+      this.switchSheet(this.miniCard ? 2 : 1.25).then(() => {
         this.switchOverlay(false)
         this.switchSnap(true)
         this.switching = false
       })
-
     }, true)
     dragContent.addEventListener('touchmove', (event: Event) => {
       const { changedTouches } = event as TouchEvent
@@ -118,7 +103,7 @@ class ModalityEventTarget extends ModalityState {
       const deltaY = touch.pageY - startPoint.y
       if (this.switching) return
       if (startPoint.swipe === false) return
-      if (Math.abs(deltaX) - Math.abs(deltaY) > 10 && Math.abs(deltaY) <= 5) {
+      if (Math.abs(deltaX) - Math.abs(deltaY) > 20 && Math.abs(deltaY) <= 10) {
         startPoint.swipe = true
         this.switchOverlay(true)
         this.switchSmooth(false)

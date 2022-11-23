@@ -38,6 +38,14 @@ class ModalityState extends ModalityBase {
   get activity(): boolean {
     return this.application.activityApplet === this.applet
   }
+  public checkScrollStop(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const waitScrollEnd = (callback: () => void) => {
+        setTimeout(() => this.scrolling ? waitScrollEnd(callback) : callback(), 100)
+      }
+      waitScrollEnd(() => resolve(true))
+    })
+  }
   public setBackdropViewport(viewport: HTMLElement): void {
     if (!this.fromViewports) {
       this.fromViewports = this.viewports

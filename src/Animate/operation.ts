@@ -86,8 +86,8 @@ class AnimateOperation extends EventProvider {
     element.style.setProperty(property, value)
   }
 
-  public style(property: string, val?: string): this {
-    if (property.indexOf('transition') === -1 && property.indexOf('animation') === -1) this.setTransitionProps(property)
+  public style(property: string, val?: string, setTransition = false): this {
+    if (setTransition && property.indexOf('transition') === -1 && property.indexOf('animation') === -1) this.setTransitionProps(property)
     this.properties[property] = val === undefined ? '' : val
     return this
   }

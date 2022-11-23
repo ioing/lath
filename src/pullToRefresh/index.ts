@@ -44,7 +44,7 @@ export const registerPullDownEvent = (applet: Applet, scroller: HTMLElement, hol
     hasTouchStart: false,
     triggered: false
   }
-  scroller.addEventListener('touchstart', (e) => {
+  const touchStartHandle = (e: TouchEvent) => {
     if (active.triggered) return
     const isBody = scroller.tagName === 'BODY'
     const scrollTop = scroller?.scrollTop
@@ -54,8 +54,8 @@ export const registerPullDownEvent = (applet: Applet, scroller: HTMLElement, hol
     active.scrollStartY = scrollStartY
     active.startY = getTouchPos(e)[1]
     active.hasTouchStart = true
-  })
-  scroller.addEventListener('touchend', () => {
+  }
+  const touchEndHandle = () => {
     active.hasTouchStart = false
     spinner.style.filter = 'blur(0px)'
     holder.style.transitionDuration = '.4s'
@@ -82,8 +82,8 @@ export const registerPullDownEvent = (applet: Applet, scroller: HTMLElement, hol
       }, 400)
     }, 800)
     applet.trigger('pullToRefreshRelease')
-  })
-  scroller.addEventListener('touchmove', (e) => {
+  }
+  const touchMoveHandle = (e: TouchEvent) => {
     if (active.hasTouchStart === false || active.scrollStartY > 100) return
     const pos = getTouchPos(e)
     const [x, y] = pos
@@ -95,24 +95,22 @@ export const registerPullDownEvent = (applet: Applet, scroller: HTMLElement, hol
     const retardMovePercentX = 50 - (50 - movePercentX) / 3
     const movePercentY = Math.max(Math.min((active.y - 50) / 300 * 100, 100), 0)
     const retardMovePercentY = movePercentY * .6
-    requestAnimationFrame(() => {
-      holder.style.borderBottomLeftRadius = retardMovePercentX + '%'
-      holder.style.borderBottomRightRadius = (100 - retardMovePercentX) + '%'
-      holder.style.transform = `translate3d(0, -${100 - retardMovePercentY}%, 0)`
-      spinner.style.transform = `translate3d(0, 0, 0) rotate(${active.y * 1.2 % 360}deg)`
-    })
+    holder.style.borderBottomLeftRadius = retardMovePercentX + '%'
+    holder.style.borderBottomRightRadius = (100 - retardMovePercentX) + '%'
+    holder.style.transform = `translate3d(0, -${100 - retardMovePercentY}%, 0)`
+    spinner.style.transform = `translate3d(0, 0, 0) rotate(${active.y * 1.2 % 360}deg)`
     if (movePercentY === 100) {
       active.triggered = true
-      requestAnimationFrame(() => {
-        spinner.style.filter = 'blur(2px)'
-      })
+      spinner.style.filter = 'blur(2px)'
       applet.trigger('pullToRefreshReady')
     } else {
       active.triggered = false
-      requestAnimationFrame(() => {
-        spinner.style.filter = 'blur(0px)'
-      })
+      spinner.style.filter = 'blur(0px)'
       applet.trigger('pullToRefreshRequest')
     }
-  })
+  }
+  scroller.addEventListener('touchstart', touchStartHandle)
+  scroller.addEventListener('touchend', touchEndHandle)
+  scroller.addEventListener('touchcancel', touchEndHandle)
+  scroller.addEventListener('touchmove', touchMoveHandle)
 }

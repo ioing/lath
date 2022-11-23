@@ -65,17 +65,15 @@ export class AppletControlsEventTarget extends AppletControlsState {
       }
     })
   }
-  public prepare() {
+  public prepare(reset = false) {
     const viewports = this.viewports
     const swipeTransitionType = this.application.config.swipeTransitionType
     const prevViewport = viewports[1]
-    // Block impressions triggered by sliding card subviews, etc
-    // if (viewports[0] !== this.applet.viewport) return
     if (prevViewport) {
       if (swipeTransitionType === 'slide') {
-        prevViewport.style.transform = 'translate3d(30%, 0, 0)'
+        prevViewport.style.transform = reset ? 'translate3d(0, 0, 0)' : 'translate3d(30%, 0, 0)'
       } else {
-        prevViewport.style.transform = `scale(${1 - this.backdropReducedScale})`
+        prevViewport.style.transform = reset ? 'scale(1)' : `scale(${1 - this.backdropReducedScale})`
       }
     }
   }

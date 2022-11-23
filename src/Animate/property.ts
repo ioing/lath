@@ -125,10 +125,10 @@ class AnimateProperty extends AnimateOperation {
   }
   public opacity(o: number): this {
     this.setTransitionProps('opacity')
-    return this.style('opacity', o + '')
+    return this.style('opacity', o + '', true)
   }
   public filter(val: string): this {
-    this.style('filter', val)
+    this.style('filter', val, true)
     this.setTransitionProps('filter')
     return this
   }
@@ -137,21 +137,21 @@ class AnimateProperty extends AnimateOperation {
       n :
       n + 'px'
     this.setTransitionProps('width')
-    return this.style('width', n)
+    return this.style('width', n, true)
   }
   public height(n: string | number): this {
     n = 'string' === typeof n ?
       n :
       n + 'px'
     this.setTransitionProps('height')
-    return this.style('height', n)
+    return this.style('height', n, true)
   }
   public borderRadius(n: string | number): this {
     n = 'string' === typeof n ?
       n :
       n + 'px'
     this.setTransitionProps('border-radius')
-    return this.style('border-radius', n)
+    return this.style('border-radius', n, true)
   }
 }
 

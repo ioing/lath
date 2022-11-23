@@ -71,7 +71,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
     const prevViewport = viewports[1]
     if (prevViewport) {
       if (swipeTransitionType === 'slide') {
-        prevViewport.style.transform = reset ? 'translate3d(0, 0, 0)' : 'translate3d(30%, 0, 0)'
+        prevViewport.style.transform = reset ? 'translate3d(0, 0, 0)' : 'translate3d(-30%, 0, 0)'
       } else {
         prevViewport.style.transform = reset ? 'scale(1)' : `scale(${1 - this.backdropReducedScale})`
       }

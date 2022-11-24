@@ -4,6 +4,7 @@ interface TouchActive {
   element: null | HTMLElement
   oldFilterStyle: string
   oldTransitionStyle: string
+  waitingToAddTimeId: number
 }
 
 interface ObsoleteTouchEvent extends TouchEvent {
@@ -14,7 +15,8 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
   const touchActive: TouchActive = {
     element: null,
     oldFilterStyle: '',
-    oldTransitionStyle: ''
+    oldTransitionStyle: '',
+    waitingToAddTimeId: -1
   }
   const addHighlight = (event: TouchEvent): void => {
     const captureList = capture ? typeof capture === 'string' ? capture.split(' ') : capture : null
@@ -53,7 +55,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
     // @ts-ignore
     anchor.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
     anchor.style.transition = touchActive.oldTransitionStyle ? touchActive.oldTransitionStyle + ', ' : '' + 'all .2s ease'
-    setTimeout(() => {
+    touchActive.waitingToAddTimeId = setTimeout(() => {
       if (touchActive.element === anchor) {
         const elWidth = anchor.offsetWidth
         const elHeight = anchor.offsetHeight
@@ -65,6 +67,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
   }
   const cancelHighlight = (): void => {
     if (!touchActive.element) return
+    clearTimeout(touchActive.waitingToAddTimeId)
     if (touchActive.element?.style.filter) {
       touchActive.element.style.filter = touchActive.oldFilterStyle
     }
@@ -81,6 +84,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
   const delayCancelHighlight = (): void => {
     // Make entry control（appletWindow.setTimeout）
     appletWindow.setTimeout(() => {
+      console.log(touchActive)
       cancelHighlight()
     }, 300)
   }

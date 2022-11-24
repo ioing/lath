@@ -84,7 +84,6 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
   const delayCancelHighlight = (): void => {
     // Make entry control（appletWindow.setTimeout）
     appletWindow.setTimeout(() => {
-      console.log(touchActive)
       cancelHighlight()
     }, 300)
   }

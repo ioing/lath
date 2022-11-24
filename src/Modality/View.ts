@@ -194,7 +194,9 @@ class ModalityView extends ModalityEventTarget {
     modalityContainer.addEventListener('scroll', scrollHandle, false)
 
     this.applet.on('willShow', () => {
-      this.fromViewports = undefined
+      if (this.application.segue.stackUp) {
+        this.fromViewports = undefined
+      }
       if (options?.alwaysPopUp !== false) {
         if (this.applet.transforming) return
         this.rise()

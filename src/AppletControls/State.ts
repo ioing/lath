@@ -6,16 +6,19 @@ export class AppletControlsState extends AppletControlsBase {
   get visibility(): boolean {
     return Math.round(this.controlsView.scrollLeft / this.appletViewport.offsetWidth) === 0 ? false : true
   }
-  get viewports() {
+  get viewports(): HTMLElement[] {
     if (this.fromViewports) {
       return this.fromViewports
     }
     return this.fromViewports = this.application.segue.viewports
   }
-  get degree() {
+  get degree(): number {
     return this.controlsView.scrollLeft / this.appletViewport.offsetWidth
   }
-  public clearFromViewports() {
+  get activity(): boolean {
+    return this.application.activityApplet === this.applet
+  }
+  public clearFromViewports(): void {
     this.fromViewports = undefined
   }
 }

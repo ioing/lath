@@ -11,6 +11,7 @@ class ModalityState extends ModalityBase {
    * If the previous view was a modal box, you need to replace it with the previous non-modal box view.
    */
   get viewports() {
+    console.log(this.fromViewports)
     if (this.fromViewports && this.activity) {
       return this.fromViewports
     }

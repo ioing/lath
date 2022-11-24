@@ -7,7 +7,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
     const applet = this.applet
     if (applet.transforming) return
     if (this.toggleLock === false && degree <= this.advanceDegree) {
-      if (this.application.activityApplet === applet) {
+      if (this.activity) {
         this.toggleLock = true
         setTimeout(() => {
           this.toggleLock = false

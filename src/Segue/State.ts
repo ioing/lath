@@ -23,7 +23,11 @@ class SegueState extends SegueHistory {
     } else if (this.applet.config.free && !this.prevApplet?.config.free) {
       return 0
     }
-    return this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0) ? 0 : 1
+    return this.stackUp ? 0 : 1
+  }
+
+  get stackUp(): boolean {
+    return this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0)
   }
 
   get countercurrent(): boolean {

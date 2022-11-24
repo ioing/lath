@@ -12,10 +12,10 @@ export class AppletControlsState extends AppletControlsBase {
     }
     return this.fromViewports = this.application.segue.viewports
   }
-  get historyBack() {
-    return this.application.segue.prevHistoryStep === -1
-  }
   get degree() {
     return this.controlsView.scrollLeft / this.appletViewport.offsetWidth
+  }
+  public clearFromViewports() {
+    this.fromViewports = undefined
   }
 }

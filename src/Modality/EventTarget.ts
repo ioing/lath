@@ -58,9 +58,8 @@ class ModalityEventTarget extends ModalityState {
   public async hide(): Promise<void> {
     return this.fall().then(async () => {
       if (this.activity) {
-        await this.application.segue.back()
         this.switchBackdropColor(false)
-        this.fromViewports = undefined
+        await this.application.segue.back()
       }
     })
   }

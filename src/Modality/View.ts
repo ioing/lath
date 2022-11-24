@@ -57,7 +57,8 @@ class ModalityView extends ModalityEventTarget {
     // stillBackdrop
     const stillBackdrop = this.options?.stillBackdrop || (this.miniCard && degree <= 1)
     requestAnimationFrame(() => {
-      if (prevViewport && !stillBackdrop) {
+      // this.activity: Prevents asynchronous operations from resetting closed views
+      if (this.activity && prevViewport && !stillBackdrop) {
         prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
         prevViewport.style.transform = `
         translate3d(0, ${relativeDegree * 10}px, -100px) 
@@ -180,6 +181,8 @@ class ModalityView extends ModalityEventTarget {
       modalityHandle.style.display = 'none'
     }
     const scrollHandle = (): void => {
+      // this.activity: Prevents asynchronous operations from resetting closed views
+      if (!this.activity) return
       this.slide(this.degree, this.maxDegree, this.prevViewport)
     }
 
@@ -190,16 +193,19 @@ class ModalityView extends ModalityEventTarget {
     }
     modalityContainer.addEventListener('scroll', scrollHandle, false)
 
-    if (options?.alwaysPopUp !== false) {
-      this.applet.on('willShow', () => {
+    this.applet.on('willShow', () => {
+      this.fromViewports = undefined
+      if (options?.alwaysPopUp !== false) {
         if (this.applet.transforming) return
         this.rise()
-      })
-      this.applet.on('willHide', () => {
+      }
+    })
+    this.applet.on('willHide', () => {
+      if (options?.alwaysPopUp !== false) {
         if (this.applet.transforming) return
         this.fall()
-      })
-    }
+      }
+    })
 
     modalityContainer.appendChild(contentContainer)
     this.modalityPlaceholder = modalityPlaceholder

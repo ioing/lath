@@ -11,7 +11,7 @@ class ModalityState extends ModalityBase {
    * If the previous view was a modal box, you need to replace it with the previous non-modal box view.
    */
   get viewports() {
-    if (this.fromViewports) {
+    if (this.fromViewports && this.activity) {
       return this.fromViewports
     }
     this.fromViewports = this.application.segue.viewports
@@ -36,7 +36,7 @@ class ModalityState extends ModalityBase {
     return this.viewports[1]
   }
   get activity(): boolean {
-    return this.application.activityApplet === this.applet
+    return this.applet.transforming || this.application.activityApplet === this.applet
   }
   public checkScrollStop(): Promise<boolean> {
     return new Promise((resolve) => {

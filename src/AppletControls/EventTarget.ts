@@ -51,19 +51,25 @@ export class AppletControlsEventTarget extends AppletControlsState {
       event.stopPropagation()
       event.preventDefault()
     }, false)
+    // update viewports
+    this.applet.on('willShow', () => {
+      this.clearFromViewports()
+    })
     // when history back
     this.applet.on('show', () => {
       if (!this.visibility) {
         this.appearImmediately()
       }
-      this.prepare()
-    })
-    // isOverscrollHistoryNavigation
-    this.applet.on('hide', () => {
-      if (this.visibility && this.historyBack) {
-        this.disappearImmediately()
+      if (this.application.segue.stackUp) {
+        this.prepare()
       }
     })
+    // isOverscrollHistoryNavigation
+    // this.applet.on('hide', () => {
+    //   if (this.visibility && this.application.segue.fromHistoryBack) {
+    //     this.disappearImmediately()
+    //   }
+    // })
   }
   public prepare(reset = false) {
     const viewports = this.viewports

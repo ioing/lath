@@ -68,15 +68,6 @@ class SegueSwitch extends SegueAnimation {
     `
   }
 
-  private getSuperViewport(applet: Applet = this.applet): HTMLElement | ShadowRoot {
-    return applet.rel === 'system' ? this.fixedViewport : !applet.config.free ? (this.relativeViewport.shadowRoot || this.relativeViewport) : (this.absoluteViewport.shadowRoot || this.absoluteViewport)
-  }
-
-  private checkSwitchViewport(prevApplet: Applet | undefined = this.prevApplet, applet: Applet = this.applet): boolean {
-    prevApplet = prevApplet || applet
-    return !!applet.config.free !== !!prevApplet.config.free ? true : false
-  }
-
   // Gets the previous queue task
   private prev(): Promise<void> | undefined {
     return this.promiseQueue[0]

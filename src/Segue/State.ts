@@ -1,4 +1,5 @@
 import { SegueHistory } from './History'
+import { Applet } from '../types'
 
 class SegueState extends SegueHistory {
   public hasAnimation = false
@@ -27,7 +28,7 @@ class SegueState extends SegueHistory {
   }
 
   get stackUp(): boolean {
-    return this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0)
+    return !(!this.applet.config.free && this.hasSuperSwitched) && this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0)
   }
 
   get countercurrent(): boolean {
@@ -46,6 +47,15 @@ class SegueState extends SegueHistory {
 
   get isInseparableLayer() {
     return !this.prevApplet || (this.prevApplet.rel === 'frameworks' && !this.prevApplet.slide)
+  }
+
+  public checkSwitchViewport(prevApplet: Applet | undefined = this.prevApplet, applet: Applet = this.applet): boolean {
+    prevApplet = prevApplet || applet
+    return !!applet.config.free !== !!prevApplet.config.free
+  }
+
+  public getSuperViewport(applet: Applet = this.applet): HTMLElement | ShadowRoot {
+    return applet.rel === 'system' ? this.fixedViewport : !applet.config.free ? (this.relativeViewport.shadowRoot || this.relativeViewport) : (this.absoluteViewport.shadowRoot || this.absoluteViewport)
   }
 }
 

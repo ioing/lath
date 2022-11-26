@@ -53,7 +53,9 @@ export class AppletControlsEventTarget extends AppletControlsState {
     }, false)
     // update viewports
     this.applet.on('willShow', () => {
-      this.clearFromViewports()
+      if (!this.application.segue.fromHistoryBack) {
+        this.clearFromViewports()
+      }
     })
     // when history back
     this.applet.on('show', () => {

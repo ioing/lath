@@ -187,7 +187,7 @@ class AppSwitcher {
       this.snapWrapper.style.overflowY = 'scroll'
       this.snapWrapper.style.scrollSnapType = 'y mandatory'
       if (this.snapWrapper.offsetHeight <= offsetTop) {
-        requestAnimationFrame(() => {
+        requestIdleCallback(() => {
           this.scroll.snapTo(0, offsetTop)
         })
       }

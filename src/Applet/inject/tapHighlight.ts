@@ -54,7 +54,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     anchor.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
-    anchor.style.transition = touchActive.oldTransitionStyle ? touchActive.oldTransitionStyle + ', ' : '' + 'all .2s ease'
+    anchor.style.transition = touchActive.oldTransitionStyle ? touchActive.oldTransitionStyle + ', ' : '' + 'all .1s ease'
     touchActive.waitingToAddTimeId = setTimeout(() => {
       if (touchActive.element === anchor) {
         const elWidth = anchor.offsetWidth
@@ -63,7 +63,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
         anchor.style.filter = touchActive.oldFilterStyle + ' brightness(.8)'
         anchor.setAttribute('tap-highlight', 'true')
       }
-    }, 60)
+    }, 30)
   }
   const cancelHighlight = (): void => {
     if (!touchActive.element) return
@@ -79,7 +79,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
       touchActive.element = null
       touchActive.oldFilterStyle = ''
       touchActive.oldTransitionStyle = ''
-    }, 200)
+    }, 100)
   }
   const delayCancelHighlight = (): void => {
     // Make entry control（appletWindow.setTimeout）

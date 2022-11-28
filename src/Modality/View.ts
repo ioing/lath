@@ -42,7 +42,7 @@ class ModalityView extends ModalityEventTarget {
     }, true)
     this.modalityOverlay = modalityOverlay
   }
-  public slide(degree: number, maxDegree: number, prevViewport: HTMLElement) {
+  public sliding(degree: number, maxDegree: number, prevViewport: HTMLElement) {
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
@@ -182,18 +182,17 @@ class ModalityView extends ModalityEventTarget {
     if (noHandlebar) {
       modalityHandle.style.display = 'none'
     }
-    const scrollHandle = (): void => {
-      // this.activity: Prevents asynchronous operations from resetting closed views
-      if (!this.activity) return
-      this.slide(this.degree, this.maxDegree, this.prevViewport)
-    }
 
     if (this.options?.swipeClosable !== false) {
       setTimeout(() => {
         this.bindDragContentEvent()
       }, 10)
     }
-    modalityContainer.addEventListener('scroll', scrollHandle, false)
+    modalityContainer.addEventListener('scroll', (): void => {
+      // this.activity: Prevents asynchronous operations from resetting closed views
+      if (!this.activity) return
+      this.sliding(this.degree, this.maxDegree, this.prevViewport)
+    }, false)
 
     this.applet.on('willShow', () => {
       if (this.application.segue.stackUp) {

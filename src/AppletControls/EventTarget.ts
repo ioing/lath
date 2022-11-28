@@ -27,20 +27,20 @@ export class AppletControlsEventTarget extends AppletControlsState {
       const degree = this.degree
       this.requestGoBack(degree)
       this.backdropView.style.opacity = `${degree}`
-      requestAnimationFrame(() => {
-        if (degree > 1) {
-          this.controlsView.style.backgroundColor = `rgba(0, 0, 0, ${0.5 + 3 * (degree - 1)})`
+      if (degree > 1) {
+        this.controlsView.style.backgroundColor = `rgba(0, 0, 0, ${0.5 + 3 * (degree - 1)})`
+      } else {
+        this.controlsView.style.backgroundColor = 'transparent'
+      }
+      if (prevViewport && applet.visibility && !applet.transforming && !this.toggleLock) {
+        if (swipeTransitionType === 'slide') {
+          prevViewport.style.transform = `translate3d(${-degree * 30}%, 0, 0)`
         } else {
-          this.controlsView.style.backgroundColor = 'transparent'
+          prevViewport.style.transform = `scale(${1 - degree * 0.03})`
         }
-        if (prevViewport && applet.visibility && !applet.transforming && !this.toggleLock) {
-          if (swipeTransitionType === 'slide') {
-            prevViewport.style.transform = `translate3d(${-degree * 30}%, 0, 0)`
-          } else {
-            prevViewport.style.transform = `scale(${1 - degree * 0.03})`
-          }
-        }
-      })
+      }
+      // update degreeCache
+      this.updateDegreeCache()
       this.application.trigger('transition', degree, this.application.segue.appletGroup)
     })
     this.backdropView.addEventListener('touchstart', async () => {

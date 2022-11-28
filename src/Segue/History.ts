@@ -158,8 +158,6 @@ class SegueHistory extends SegueBase {
   }
   public requestRegisterHistory(id = '', title = '', search = ''): void {
     if (this.applet.viewType === 'portal') return
-    // No state changes are made to those returned from history
-    if (this.fromHistoryBack || this.fromHistoryForward) return
     if (this.options.oneHistory) {
       if (this.prevHistoryStep === -1) {
         return this.replaceState(id, title, search)
@@ -167,6 +165,8 @@ class SegueHistory extends SegueBase {
     } else if (this.prevHistoryStep === -1) {
       return this.replaceState(id, title, search)
     }
+    // No state changes are made to those returned from history
+    if (this.fromHistoryBack || this.fromHistoryForward) return
     this.pushState(id, title, search)
   }
   public async toHistory(state?: PopState): Promise<void> {

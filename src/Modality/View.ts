@@ -47,36 +47,38 @@ class ModalityView extends ModalityEventTarget {
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
     if (degree > maxDegree) {
-      requestAnimationFrame(() => {
-        this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
-      })
+      this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
+      // update degreeCache
+      this.updateDegreeCache()
       return
     }
     // if miniCard.
     const relativeDegree = this.miniCard ? (degree - 1) / (maxDegree - 1) : degree
     // stillBackdrop
     const stillBackdrop = this.options?.stillBackdrop || (this.miniCard && degree <= 1)
-    requestAnimationFrame(() => {
-      // this.activity: Prevents asynchronous operations from resetting closed views
-      if (this.activity && prevViewport && !stillBackdrop) {
-        prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
-        prevViewport.style.transform = `
+    // this.activity: Prevents asynchronous operations from resetting closed views
+    if (this.activity && prevViewport && !stillBackdrop) {
+      prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
+      prevViewport.style.transform = `
         translate3d(0, ${relativeDegree * 10}px, -100px) 
         perspective(${this.backdropPerspective}px) 
         rotateX(${relativeDegree * this.backdropRotateX}deg) 
         scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
       `
-      }
-      this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
-      if (useFade) {
-        this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
-      }
-    })
+    }
+    this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
+    if (useFade) {
+      this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
+    }
+    // update degreeCache
+    this.updateDegreeCache()
 
     this.scrolling = true
     clearTimeout(this.scrollingTimeoutId)
     this.scrollingTimeoutId = setTimeout(() => {
       this.scrolling = false
+      // clear degreeCache
+      this.clearDegreeCache()
       /**
        * Obsolete
        * ------------- start -------------

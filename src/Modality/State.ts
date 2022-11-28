@@ -5,6 +5,7 @@ import { ModalityBase } from './Base'
  * ------------- end -------------
  */
 class ModalityState extends ModalityBase {
+  public degreeCache?: number
   /**
    * Gets the view of the two switched windows during a transition.
    * The value should be cached because it needs to be returned from the state.
@@ -24,6 +25,7 @@ class ModalityState extends ModalityBase {
     return this.maxDegreeCache = 1 + miniCardHeight / this.contentContainer.offsetHeight
   }
   get degree() {
+    if (this.degreeCache) return this.degreeCache
     return this.modalityContainer.scrollTop / Math.min(this.contentContainer.offsetHeight + (this.miniCard?.offsetHeight ?? 0), this.modalityContainer.offsetHeight)
   }
   get visibility(): boolean {
@@ -37,6 +39,13 @@ class ModalityState extends ModalityBase {
   }
   get activity(): boolean {
     return this.applet.transforming || this.application.activityApplet === this.applet
+  }
+  public clearDegreeCache() {
+    this.degreeCache = undefined
+  }
+  public updateDegreeCache() {
+    this.clearDegreeCache()
+    this.degreeCache = this.degree
   }
   public checkScrollStop(): Promise<boolean> {
     return new Promise((resolve) => {

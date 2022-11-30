@@ -6,6 +6,7 @@ class SegueState extends SegueHistory {
   public hasSuperSwitched = false
   public viewportLevelLength = 2
   public historyIndexOfStartOverlaying: number | undefined = undefined
+  public fromOverscrollHistoryNavigation = false
 
   get isEntryApplet() {
     return !this.prevApplet || this.prevApplet.rel !== 'applet'

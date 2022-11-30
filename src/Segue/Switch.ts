@@ -163,6 +163,7 @@ class SegueSwitch extends SegueAnimation {
     this.appletGroup = appletGroup
     this.prevHistoryStep = pushState
     this.touches = touches
+    this.fromOverscrollHistoryNavigation = this.isOverscrollHistoryNavigation
 
     this.setStepState()
     this.attachAppletViewport(applet)
@@ -256,14 +257,14 @@ class SegueSwitch extends SegueAnimation {
           this.prevApplet?.willSegueHide()
           this.applet.willSegueShow()
           // Rendering and animation execution are isolated, otherwise native scroll animations will be affected
-          requestAnimationFrame(() => {
+          setTimeout(() => {
             const promiseAnimation = animation(options)
             if (promiseAnimation instanceof Promise) {
               promiseAnimation.then(resolve)
             }
             // Insurance mechanism
             setTimeout(() => resolve(false), 2500)
-          })
+          }, 0)
         }).catch(() => {
           resolve(false)
         })

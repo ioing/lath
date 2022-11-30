@@ -1,4 +1,5 @@
 import { AppletControlsState } from './State'
+import { sleep } from '../lib/util'
 
 export class AppletControlsEventTarget extends AppletControlsState {
   private available = true
@@ -66,7 +67,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
     })
     // isOverscrollHistoryNavigation
     this.applet.on('hide', () => {
-      if (this.visibility && this.application.segue.isOverscrollHistoryNavigation) {
+      if (this.visibility && this.application.segue.fromOverscrollHistoryNavigation) {
         this.disappearImmediately()
       }
     })
@@ -86,7 +87,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
   public async switch(show: boolean): Promise<void> {
     this.controlsOverlay.style.display = 'block'
     if (show) {
-      this.disappearImmediately()
+      await this.disappearImmediately()
     }
     this.toggleLock = true
     return this.scroll.snapTo(show ? this.appletViewport.offsetWidth : 0, 0).then(() => {
@@ -94,13 +95,15 @@ export class AppletControlsEventTarget extends AppletControlsState {
       this.controlsOverlay.style.display = 'none'
     })
   }
-  public disappearImmediately() {
+  public async disappearImmediately() {
     this.controlsView.style.scrollBehavior = 'auto'
     this.controlsView.scrollLeft = 0
+    await sleep(30)
   }
-  public appearImmediately() {
+  public async appearImmediately() {
     this.controlsView.style.scrollBehavior = 'auto'
     this.controlsView.scrollLeft = this.appletViewport.offsetWidth
+    await sleep(30)
   }
   public show(): Promise<void> {
     return this.switch(true)

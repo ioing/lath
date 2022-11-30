@@ -18,7 +18,7 @@ class SegueAnimation extends SegueState {
 
   public getAnimationNames(): AnimationPrestType | boolean | undefined | AnimationConfig {
     if (this.options.index && this.applet.isFullscreen && this.isEntryApplet) return false
-    if (this.isOverscrollHistoryNavigation || this.backFromType === 'controls') return false
+    if (this.fromOverscrollHistoryNavigation || this.backFromType === 'controls') return false
     const usePrevAppletAnimation = this.countercurrent
     const animationNames = this[usePrevAppletAnimation ? 'prevApplet' : 'applet']?.config.animation ?? 'slide'
     if (animationNames === true || animationNames === 'inherit') {

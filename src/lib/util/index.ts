@@ -7,6 +7,7 @@ import testHasSmoothScrolling from "./testHasSmoothScrolling"
 import testHasScrolling from './testHasScrolling'
 import testHasSlotBug from './testHasSlotBug'
 import getCSSUnits from './getCSSUnits'
+import sleep from './sleep'
 
 export {
   setTimeout,
@@ -17,5 +18,6 @@ export {
   testHasSmoothScrolling,
   testHasScrolling,
   testHasSlotBug,
-  getCSSUnits
+  getCSSUnits,
+  sleep
 }

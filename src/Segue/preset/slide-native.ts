@@ -8,7 +8,7 @@ export default async (state: SegueAnimateState) => {
   if (!state.reverse) {
     await state.in.duration(0).to(0, 0, 0).end()
     if (swipeTransitionType === 'slide') {
-      state.out.duration(600).to('-30%', 0, 0).end()
+      state.out.duration(600).delay(30).to('-30%', 0, 0).end()
     } else {
       state.out.duration(400).to(0, 0, 0).scale(1 - controls.backdropReducedScale).end()
     }

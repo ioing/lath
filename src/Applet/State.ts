@@ -14,19 +14,6 @@ class AppletState extends AppletBase {
     requestRefresh: false,
     presetElements: false
   }
-  public resume() {
-    this.status = {
-      preload: false,
-      prefetch: false,
-      prerender: false,
-      refreshing: false,
-      requestRefresh: false,
-      presetElements: false
-    }
-    this.darkTask = []
-    this.view = null
-    this.img = null
-  }
   get swipeModel(): boolean {
     return this.application.config.swipeModel ?? "ontouchend" in document ? true : false
   }
@@ -160,6 +147,19 @@ class AppletState extends AppletBase {
       return this.application.applets[this.slide.activeId]
     }
     return
+  }
+  protected resume() {
+    this.status = {
+      preload: false,
+      prefetch: false,
+      prerender: false,
+      refreshing: false,
+      requestRefresh: false,
+      presetElements: false
+    }
+    this.darkTask = []
+    this.view = null
+    this.img = null
   }
   public saveMirroring(): Promise<boolean> {
     if (!this.config.useMirroring || !this.sameOrigin) {

@@ -37,17 +37,16 @@ class SegueBase {
       width: 100%;
       height: 0;
       max-height: 0;
-      overflow: visible;
-      contain: strict;
       z-index: 3;
       overflow: hidden;
+      contain: layout size;
     `
     this.applicationViewport.style.cssText = `
       position: fixed;
       ${fullscreenBaseCSSText}
       overflow: hidden;
-      contain: strict;
       z-index: ${this.zIndex};
+      contain: layout size;
     `
     this.applicationViewport.appendChild(this.relativeViewport)
     this.applicationViewport.appendChild(this.absoluteViewport)
@@ -60,7 +59,7 @@ class SegueBase {
       position: fixed;
       ${fullscreenBaseCSSText}
       overflow: hidden;
-      contain: strict;
+      contain: layout size;
     `
     this.relativeViewport.style.cssText = `
       ${baseStyle}

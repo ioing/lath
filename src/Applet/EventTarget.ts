@@ -8,8 +8,7 @@ class AppletEventTarget extends AppletPrefetch {
     this.registerTapStatusBarToScrollToTop()
     this.registerPullToRefresh()
   }
-
-  public scrollToTop(): void {
+  private scrollToTop(): void {
     const scroller = this.getMainScroller()
     if (!scroller) return
     import('../Scroll').then(({ SmoothScroller }) => {

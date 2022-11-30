@@ -26,6 +26,7 @@ export const capture = async (applet: Applet) => {
     application.appletsSpace.setAttribute(ignoreAttrName, 'true')
     shotWrapper = document.createElement('div')
     shotWrapper.style.opacity = '0'
+    shotWrapper.style.contain = 'strict'
     shotWrapper.appendChild(cloneAppletView)
     document.body.appendChild(shotWrapper)
   }

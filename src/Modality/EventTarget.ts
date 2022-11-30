@@ -3,7 +3,7 @@ import { setTimeout } from '../lib/util'
 
 class ModalityEventTarget extends ModalityState {
   private processPromise!: Promise<void>
-  public async switchSheet(hideThresholdScale = 1.5): Promise<void> {
+  private async switchSheet(hideThresholdScale = 1.5): Promise<void> {
     if (!this.activity) return Promise.resolve()
     if (this.degree <= this.maxDegree / hideThresholdScale) {
       return this.hide()
@@ -11,16 +11,16 @@ class ModalityEventTarget extends ModalityState {
       return this.rise()
     }
   }
-  public switchOverlay(open = false): void {
+  private switchOverlay(open = false): void {
     this.modalityOverlay.style.display = open ? 'block' : 'none'
   }
-  public switchSmooth(open = true): void {
+  private switchSmooth(open = true): void {
     this.modalityContainer.style.scrollBehavior = open ? 'smooth' : 'auto'
   }
-  public switchSnap(open = true): void {
+  private switchSnap(open = true): void {
     this.modalityContainer.style.scrollSnapType = open ? 'y mandatory' : 'none'
   }
-  public switchBackdropColor(open = true): void {
+  private switchBackdropColor(open = true): void {
     this.application.segue.applicationViewport.style.backgroundColor = open ? this.options?.backdropColor ?? '#000' : ''
   }
   public freezeSnap() {
@@ -63,7 +63,7 @@ class ModalityEventTarget extends ModalityState {
       }
     })
   }
-  public bindDragContentEvent(): void {
+  protected bindDragContentEvent(): void {
     const dragContent = this.applet.contentDocument
     if (!dragContent) return
     const startPoint: {

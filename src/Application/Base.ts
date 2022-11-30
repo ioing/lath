@@ -14,7 +14,7 @@ class ApplicationBase extends EventProvider {
   public readonly historyNodeLocation: number = history.length
   public routerRegExp = /([^#/]+)(.+)?/
   public options!: ApplicationOptions
-  public resolveURL(url: string): URL {
+  protected resolveURL(url: string): URL {
     const link = new URL(
       url,
       window.location.toString()
@@ -25,7 +25,7 @@ class ApplicationBase extends EventProvider {
     }
     return linkObject
   }
-  public verifyAppletSrcLegitimacy(url: string): boolean {
+  protected verifyAppletSrcLegitimacy(url: string): boolean {
     const capture = this.config.capture
     if (capture) return this.captureAppletSrc(url, capture)
     const allowHosts = this.config.allowHosts || []
@@ -43,7 +43,7 @@ class ApplicationBase extends EventProvider {
     }
     return false
   }
-  public captureAppletSrc(url: string, capture = this.config.capture): boolean {
+  protected captureAppletSrc(url: string, capture = this.config.capture): boolean {
     const resolve = this.resolveURL(url)
     const path = resolve.origin + resolve.pathname
     if (typeof capture === 'string') {
@@ -53,7 +53,7 @@ class ApplicationBase extends EventProvider {
     }
     return false
   }
-  public promiseApplet(promise: () => Promise<AppletManifest>): Promise<AppletManifest> {
+  protected promiseApplet(promise: () => Promise<AppletManifest>): Promise<AppletManifest> {
     return Promise.resolve(promise())
   }
   public checkIsPresetAppletsView(id: string) {

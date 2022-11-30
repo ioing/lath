@@ -3,16 +3,16 @@ import { Applet, Application, SheetOptions, SmoothScroller } from '../types'
 class ModalityBase {
   public applet: Applet
   public application: Application
-  public scroller!: SmoothScroller
-  public switching = false
-  public scrolling = false
+  protected scroller!: SmoothScroller
+  protected switching = false
+  protected scrolling = false
+  protected maxDegreeCache?: number
   public backdropReducedScale = 0.1
   public backdropRotateX = -10
   public backdropPerspective = 3000
   public backdropBorderRadius = 20
   public advanceDegree = 0.03
   public options?: SheetOptions
-  public maxDegreeCache?: number
   public modalityContainer: HTMLElement
   public contentContainer!: HTMLElement
   public miniCard?: HTMLElement

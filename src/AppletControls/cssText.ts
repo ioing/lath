@@ -1,6 +1,7 @@
 import { coveredCSSText } from '../lib/cssText/coveredCSSText'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 
+// important: relative
 export const snapItemCSSText = `
   position: relative;
   display: flex;
@@ -23,7 +24,7 @@ export const backdropViewCSSText = `
   background: rgba(0, 0, 0, .3);
   opacity: 0;
 `
-
+// important: relative
 export const controlsViewCSSText = `
   position: relative;
   display: flex;

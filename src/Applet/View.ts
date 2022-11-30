@@ -37,7 +37,7 @@ class AppletView extends AppletEventTarget {
     if (this.useControls) return this.createControlsView()
     return this.viewport as HTMLElement
   }
-  public buildSlideView(target: HTMLElement): Promise<void> {
+  private buildSlideView(target: HTMLElement): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.slide) return resolve()
       if (!this.config.defaultSlideViewApplets) return reject()
@@ -65,6 +65,7 @@ class AppletView extends AppletEventTarget {
       background: ${this.color};
       opacity: 1;
       transition: opacity .3s;
+      contain: strict;
     `
     this.img = img
   }
@@ -89,7 +90,8 @@ class AppletView extends AppletEventTarget {
         max-width: 100%;
         max-height: 100%;
         overflow: auto;
-        background: ${this.color}
+        background: ${this.color};
+        contain: strict;
       `
     }
     return contentView
@@ -213,6 +215,7 @@ class AppletView extends AppletEventTarget {
       ${coveredCSSText}
       border: 0;
       outline: 0;
+      contain: strict;
     `
   }
   private waitingForResponse(): Promise<void> {

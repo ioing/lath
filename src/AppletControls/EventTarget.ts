@@ -39,8 +39,6 @@ export class AppletControlsEventTarget extends AppletControlsState {
           prevViewport.style.transform = `scale(${1 - degree * 0.03})`
         }
       }
-      // update degreeCache
-      this.updateDegreeCache()
       this.application.trigger('transition', degree, this.application.segue.appletGroup)
     })
     this.backdropView.addEventListener('touchstart', async () => {
@@ -53,7 +51,7 @@ export class AppletControlsEventTarget extends AppletControlsState {
     }, false)
     // update viewports
     this.applet.on('willShow', () => {
-      if (!this.application.segue.fromHistoryBack) {
+      if (this.application.segue.stackUp) {
         this.clearFromViewports()
       }
     })

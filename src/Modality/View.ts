@@ -24,7 +24,7 @@ class ModalityView extends ModalityEventTarget {
     this.buildModalityOverlay()
     applet.viewport?.appendChild(this.modalityContainer)
   }
-  public buildModalityOverlay() {
+  private buildModalityOverlay() {
     const modalityOverlay = document.createElement('modality-overlay')
     modalityOverlay.style.cssText = `
       position: fixed;
@@ -42,14 +42,12 @@ class ModalityView extends ModalityEventTarget {
     }, true)
     this.modalityOverlay = modalityOverlay
   }
-  public sliding(degree: number, maxDegree: number, prevViewport: HTMLElement) {
+  private sliding(degree: number, maxDegree: number, prevViewport: HTMLElement) {
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
     if (degree > maxDegree) {
       this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
-      // update degreeCache
-      this.updateDegreeCache()
       return
     }
     // if miniCard.
@@ -70,15 +68,11 @@ class ModalityView extends ModalityEventTarget {
     if (useFade) {
       this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
     }
-    // update degreeCache
-    this.updateDegreeCache()
 
     this.scrolling = true
     clearTimeout(this.scrollingTimeoutId)
     this.scrollingTimeoutId = setTimeout(() => {
       this.scrolling = false
-      // clear degreeCache
-      this.clearDegreeCache()
       /**
        * Obsolete
        * ------------- start -------------

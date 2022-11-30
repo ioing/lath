@@ -20,7 +20,9 @@ export default (type: number) => {
           state.out.transformOrigin(state.attach).ease('ease-out-expo').filter('brightness(1)').duration(0).to(0, 0, 0).scale(1).end(() => {
             state.in.duration(767).to(0, 0, 0).scale(1).end()
             state.out.duration(767).scale(2.5).filter('brightness(0.5)').end(() => {
-              state.callback(false)
+              state.out.duration(0).filter('brightness(1)').end(() => {
+                state.callback(false)
+              })
             })
           })
         })

@@ -11,6 +11,7 @@ export const baseCSSText = `
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
     flex-direction: column;
+    contain: layout size;
   }
   modality-container::-webkit-scrollbar {
     display: none;

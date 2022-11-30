@@ -12,13 +12,10 @@ export class AppletControlsView extends AppletControlsEventTarget {
     this.scroll = new SmoothScroller(this.controlsView)
   }
   public buildControlsView(): void {
-    // important: relative
-    const snapItemStyle = snapItemCSSText
     const sheetViewStyle = document.createElement('style')
     sheetViewStyle.innerHTML = sheetViewCSSText
-    this.contentContainer.style.cssText = snapItemStyle
+    this.contentContainer.style.cssText = snapItemCSSText
     this.backdropView.style.cssText = backdropViewCSSText
-    // important: relative
     this.controlsView.style.cssText = controlsViewCSSText
     /**
      * Obsolete

@@ -31,7 +31,7 @@ class Application extends ApplicationState {
     provider(this)
     this.setBaseStyle()
   }
-  public setBaseStyle() {
+  private setBaseStyle() {
     const style = document.createElement('style')
     style.innerHTML = globalCSSText
     document.head.appendChild(style)
@@ -288,7 +288,7 @@ class Application extends ApplicationState {
     if (oneHistory) {
       this.segue.pushState(index || 'frameworks')
       if (id) {
-        return this.segue.to(id, undefined, 1)
+        return this.segue.to(id, location.search, 1)
       }
       return Promise.resolve()
     }
@@ -296,12 +296,12 @@ class Application extends ApplicationState {
       if (!index && !preIndex) this.segue.pushState('frameworks')
       if (preIndex) this.segue.pushState(preIndex)
       if (id) {
-        return this.segue.to(id, undefined, this.exists ? -1 : 1)
+        return this.segue.to(id, location.search, this.exists ? -1 : 1)
       }
       return Promise.resolve()
     }
     if (id) {
-      return this.segue.to(id, undefined, -1)
+      return this.segue.to(id, location.search, -1)
     }
     return Promise.resolve()
   }

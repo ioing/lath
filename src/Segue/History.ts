@@ -45,24 +45,22 @@ class SegueHistory extends SegueBase {
       this.observeSilent()
     }, false)
   }
-  public observeSilent(times = 1000): void {
+  public observeSilent(times = 10): void {
     if (this.options.oneHistory) return
-    if (document.readyState === 'loading') times = 30000
-    clearInterval(this.silentObserver)
-    let cycle = 0
-    this.silentObserver = setInterval(async () => {
-      cycle++
-      if (cycle >= times) {
-        clearInterval(this.silentObserver)
-      }
+    if (document.readyState === 'loading') times = 30
+    clearTimeout(this.silentObserver)
+    if (!times) return
+    this.silentObserver = setTimeout(async () => {
       const route = this.historyState || history.state || this.application.route
       const id = decodeURIComponent(route.id)
       if (id && decodeURIComponent(id) !== this.id) {
         await this.popstate(this.historyState).catch(() => {
-          clearInterval(this.silentObserver)
+          clearTimeout(this.silentObserver)
         })
       }
-    }, 500) as unknown as number
+      console.log('eeeee')
+      this.observeSilent(times--)
+    }, 2000) as unknown as number
   }
   public async popstate(state: PopState): Promise<void> {
     const { historyIndex = this.historyShadowLength } = state ?? {}

@@ -106,7 +106,7 @@ class AppletBase extends EventProvider {
       if (config.animation) {
         typeError(1105, 'warn')
       }
-      const { maskOpacity, swipeClosable } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: true }
+      const { maskOpacity, swipeClosable } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
       config.animation = 'stretch'
       config.sheetOptions = {
         stillBackdrop: true,

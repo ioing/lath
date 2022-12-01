@@ -65,7 +65,7 @@ class AppletView extends AppletEventTarget {
       background: ${this.color};
       opacity: 1;
       transition: opacity .3s;
-      contain: strict;
+      contain: layout size;
     `
     this.img = img
   }
@@ -91,7 +91,6 @@ class AppletView extends AppletEventTarget {
         max-height: 100%;
         overflow: auto;
         background: ${this.color};
-        contain: strict;
       `
     }
     return contentView
@@ -215,7 +214,6 @@ class AppletView extends AppletEventTarget {
       ${coveredCSSText}
       border: 0;
       outline: 0;
-      contain: strict;
     `
   }
   private waitingForResponse(): Promise<void> {

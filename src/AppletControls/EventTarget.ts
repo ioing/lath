@@ -1,6 +1,4 @@
 import { AppletControlsState } from './State'
-import { sleep } from '../lib/util'
-
 export class AppletControlsEventTarget extends AppletControlsState {
   private available = true
   private toggleLock = false
@@ -95,9 +93,6 @@ export class AppletControlsEventTarget extends AppletControlsState {
   }
   public async switch(show: boolean): Promise<void> {
     this.controlsOverlay.style.display = 'block'
-    if (show) {
-      await this.disappearImmediately()
-    }
     this.toggleLock = true
     return this.scroll.snapTo(show ? this.appletViewport.offsetWidth : 0, 0).then(() => {
       this.toggleLock = false
@@ -107,12 +102,10 @@ export class AppletControlsEventTarget extends AppletControlsState {
   public async disappearImmediately() {
     this.controlsView.style.scrollBehavior = 'auto'
     this.controlsView.scrollLeft = 0
-    await sleep(30)
   }
   public async appearImmediately() {
     this.controlsView.style.scrollBehavior = 'auto'
     this.controlsView.scrollLeft = this.appletViewport.offsetWidth
-    await sleep(30)
   }
   public show(): Promise<void> {
     return this.switch(true)

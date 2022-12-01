@@ -226,6 +226,7 @@ declare interface AppletBaseConfig {
     searchParams: URLSearchParams
   }, url: string) => boolean | string)
   mediaGuard?: boolean
+  observerGuard?: boolean
   apply?: AppletApplyOptions
   applyOptions?: AppletApplyOptionsParam
   unApply?: AppletApplyOptions

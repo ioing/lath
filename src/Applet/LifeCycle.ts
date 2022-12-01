@@ -184,31 +184,32 @@ class AppletLifeCycle extends AppletState {
   public guarding(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       if (this.rel !== 'applet') return resolve(true)
+      if (this.sandbox === undefined) return resolve(true)
       if (this.config.background === true) return resolve(true)
       if (this.config.background === false) return resolve(false)
-      if (this.viewType !== 'iframe') return resolve(true)
-      if (this.sandbox === undefined) return resolve(true)
       if (this.sameOrigin === false) return resolve(false)
       const view = this.view as HTMLIFrameElement
       try {
         const contentDocumentElement = view.contentDocument?.documentElement
         if (!contentDocumentElement) return resolve(true)
         const allElements = this.collectAllElements(contentDocumentElement)
-        if (this.config.mediaGuard !== false) this.autoMediaController(allElements).catch(resolve)
+        if (this.config.mediaGuard) this.autoMediaController(allElements).catch(resolve)
         if (this.destructiveTags(allElements)) return resolve(false)
-        const counter = { times: 0 }
-        const observer = this.observer(() => {
-          counter.times++
-          if (counter.times > 1000) {
-            resolve(false)
-            this.mutationObserver.disconnect()
-          }
-        })
-        if (!observer) return
-        this.mutationObserver = observer
-        setTimeout(() => {
-          if (counter.times > 10) resolve(false)
-        }, 3000)
+        if (this.config.observerGuard) {
+          const counter = { times: 0 }
+          const observer = this.observer(() => {
+            counter.times++
+            if (counter.times > 1000) {
+              resolve(false)
+              this.mutationObserver.disconnect()
+            }
+          })
+          if (!observer) return
+          this.mutationObserver = observer
+          setTimeout(() => {
+            if (counter.times > 10) resolve(false)
+          }, 3000)
+        }
       } catch (error) {
         resolve(true)
       }

@@ -68,7 +68,7 @@ class SegueSwitch extends SegueAnimation {
       transform: ${visibility ? 'translate(0, 0)' : 'translate(0, 200%)'};
       backface-visibility: hidden;
       overflow: hidden;
-      contain: strict;
+      contain: layout size;
     `
   }
 
@@ -286,6 +286,7 @@ class SegueSwitch extends SegueAnimation {
         if (transformStart(this.applet) === 'break') return reject()
       }
       if (this.applet.controls) {
+        this.applet.controls.disappearImmediately()
         if (this.isInseparableLayer) {
           this.applet.controls.disable()
           this.applet.controls.freeze()

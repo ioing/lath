@@ -1,6 +1,6 @@
 import { Application } from '../Application'
 import { SegueAnimation } from './Animation'
-import { requestIdleCallback, requestAnimationFrame, setTimeout } from '../lib/util'
+import { requestIdleCallback, setTimeout } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { SegueAnimateState, SegueActionOrigin, Applet, PresetConfig } from '../types'
 
@@ -8,7 +8,8 @@ type SegueToOptions = [
   id: string,
   param?: string,
   history?: -1 | 0 | 1,
-  touches?: SegueActionOrigin
+  touches?: SegueActionOrigin,
+  disableAnimation?: boolean
 ]
 
 class SegueSwitch extends SegueAnimation {
@@ -43,13 +44,13 @@ class SegueSwitch extends SegueAnimation {
     })
   }
 
-  private setStepState() {
+  private setStepState(disableAnimation?: boolean) {
     this.target = this.getSuperViewport()
-    this.hasSuperSwitched = this.checkSwitchViewport()
+    this.superSwitch = this.checkSwitchViewport()
     // step 1
     if (!this.fromHistoryBack) this.applet.setLevel(this.viewportLevelLength++ + 1)
     // step 2
-    this.hasAnimation = this.checkAnimationNamed()
+    this.hasAnimation = disableAnimation ? false : this.checkAnimationNamed()
   }
 
   private resetAppletViewport(applet: Applet, visibility = this.immovable): void {
@@ -60,11 +61,14 @@ class SegueSwitch extends SegueAnimation {
     viewport.style.cssText = `
       position: absolute;
       ${fullscreenBaseCSSText}
-      z-index: ${this.applet.viewLevel};
+      z-index: ${applet.viewLevel};
+      transition-duration: 0ms;
+      transition-delay: 0ms;
+      transition-property: all;
       transform: ${visibility ? 'translate(0, 0)' : 'translate(0, 200%)'};
       backface-visibility: hidden;
-      contain: strict;
       overflow: hidden;
+      contain: strict;
     `
   }
 
@@ -135,7 +139,7 @@ class SegueSwitch extends SegueAnimation {
   }
 
   private async promise(...args: SegueToOptions): Promise<void> {
-    const [id, param = '', pushState = 1, touches] = args
+    const [id, param = '', pushState = 1, touches, disableAnimation] = args
     // next is undefined
     if (!id) return Promise.resolve()
     const prevId = this.id
@@ -159,13 +163,14 @@ class SegueSwitch extends SegueAnimation {
     this.id = id
     this.param = this.getSearch(param)
     this.applet = applet
+    this.prevPrevApplet = this.prevApplet
     this.prevApplet = prevApplet
     this.appletGroup = appletGroup
     this.prevHistoryStep = pushState
     this.touches = touches
     this.fromOverscrollHistoryNavigation = this.isOverscrollHistoryNavigation
 
-    this.setStepState()
+    this.setStepState(disableAnimation)
     this.attachAppletViewport(applet)
     this.resetAppletViewport(applet)
     this.requestRegisterHistory(id, applet.config.title, param as string)
@@ -288,7 +293,7 @@ class SegueSwitch extends SegueAnimation {
           this.applet.controls.freeze()
         }
       }
-      if (!this.hasAnimation || this.hasSuperSwitched) {
+      if (!this.hasAnimation || this.superSwitch) {
         /**
          * important!, Frame-type applets do not set styles.
          * When returning from history, an abnormal container height will appear.
@@ -308,7 +313,7 @@ class SegueSwitch extends SegueAnimation {
   private end(stillness = false): void {
     // Return from upstream or into non-Modality
     if (this.applet.isFullscreen || this.countercurrent) {
-      if (this.hasSuperSwitched) {
+      if (this.superSwitch) {
         this.switchViewport()
       }
       this.switchApplet(stillness)
@@ -356,6 +361,10 @@ class SegueSwitch extends SegueAnimation {
       this.prevApplet.hide()
     } else {
       this.destroy(this.prevApplet)
+    }
+    // Clear the pre-status of the backdrop Applet.
+    if (this.superSwitch && this.prevPrevApplet) {
+      this.resetAppletViewport(this.prevPrevApplet, true)
     }
   }
 }

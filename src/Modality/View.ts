@@ -46,8 +46,11 @@ class ModalityView extends ModalityEventTarget {
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
+    this.modalityContainer.style.transitionDuration = '0ms'
+    this.modalityContainer.style.transitionDelay = '0ms'
+    this.modalityContainer.style.transitionProperty = 'transform, background-color'
     if (degree > maxDegree) {
-      this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
+      this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
       return
     }
     // if miniCard.
@@ -56,6 +59,9 @@ class ModalityView extends ModalityEventTarget {
     const stillBackdrop = this.options?.stillBackdrop || (this.miniCard && degree <= 1)
     // this.activity: Prevents asynchronous operations from resetting closed views
     if (this.activity && prevViewport && !stillBackdrop) {
+      prevViewport.style.transitionDuration = '0ms'
+      prevViewport.style.transitionDelay = '0ms'
+      prevViewport.style.transitionProperty = 'transform, border-radius'
       prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
       prevViewport.style.transform = `
         translate3d(0, ${relativeDegree * 10}px, -100px) 
@@ -64,8 +70,11 @@ class ModalityView extends ModalityEventTarget {
         scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
       `
     }
-    this.modalityContainer.style.background = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
+    this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
     if (useFade) {
+      this.contentContainer.style.transitionDuration = '0ms'
+      this.contentContainer.style.transitionDelay = '0ms'
+      this.contentContainer.style.transitionProperty = 'opacity'
       this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
     }
 

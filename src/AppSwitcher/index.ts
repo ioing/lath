@@ -220,7 +220,7 @@ class AppSwitcher {
       itemImgAnimate.to(0, 0, 0).scale(1).height(this.switcher.offsetHeight).borderRadius('0px').end()
     ])
     const startTime = Date.now()
-    this.application.to(applet.id, applet.param).then(() => {
+    this.application.to(applet.id, applet.param, undefined, undefined, true).then(() => {
       const processTime = Date.now() - startTime
       setTimeout(() => {
         this.progressName = ''

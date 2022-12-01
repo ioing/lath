@@ -12,6 +12,7 @@ class SegueBase {
   public zIndex: number
   public applet!: Applet
   public prevApplet?: Applet
+  public prevPrevApplet?: Applet
   public appletGroup!: Array<Applet>
   public options!: SegueOptions
   public touches?: SegueActionOrigin

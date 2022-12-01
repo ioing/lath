@@ -3,7 +3,7 @@ import { Applet } from '../types'
 
 class SegueState extends SegueHistory {
   public hasAnimation = false
-  public hasSuperSwitched = false
+  public superSwitch = false
   public viewportLevelLength = 2
   public historyIndexOfStartOverlaying: number | undefined = undefined
   public fromOverscrollHistoryNavigation = false
@@ -13,7 +13,7 @@ class SegueState extends SegueHistory {
   }
 
   get immovable() {
-    return this.hasSuperSwitched || !this.hasAnimation || this.countercurrent
+    return this.superSwitch || !this.hasAnimation || this.countercurrent
   }
 
   get fallbackState(): 1 | -1 | 0 {
@@ -29,7 +29,7 @@ class SegueState extends SegueHistory {
   }
 
   get stackUp(): boolean {
-    return !(!this.applet.config.free && this.hasSuperSwitched) && this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0)
+    return !(!this.applet.config.free && this.superSwitch) && this.applet.viewLevel >= (this.prevApplet?.viewLevel ?? 0)
   }
 
   get countercurrent(): boolean {
@@ -37,7 +37,7 @@ class SegueState extends SegueHistory {
   }
 
   get viewports(): [HTMLElement, HTMLElement] {
-    return this.hasSuperSwitched ? [
+    return this.superSwitch ? [
       !this.applet.config.free ? this.relativeViewport : this.absoluteViewport,
       !this.prevApplet?.config.free ? this.relativeViewport : this.absoluteViewport
     ] : [

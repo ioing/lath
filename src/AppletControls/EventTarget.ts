@@ -27,13 +27,22 @@ export class AppletControlsEventTarget extends AppletControlsState {
     this.controlsView.addEventListener('scroll', () => {
       const degree = this.degree
       this.requestGoBack(degree)
+      this.backdropView.style.transitionDuration = '0ms'
+      this.backdropView.style.transitionDelay = '0ms'
+      this.backdropView.style.transitionProperty = 'opacity'
       this.backdropView.style.opacity = `${degree}`
+      this.controlsView.style.transitionDuration = '0ms'
+      this.controlsView.style.transitionDelay = '0ms'
+      this.controlsView.style.transitionProperty = 'background-color'
       if (degree > 1) {
         this.controlsView.style.backgroundColor = `rgba(0, 0, 0, ${0.5 + 3 * (degree - 1)})`
       } else {
         this.controlsView.style.backgroundColor = 'transparent'
       }
       if (prevViewport && applet.visibility && !applet.transforming && !this.toggleLock) {
+        prevViewport.style.transitionDuration = '0ms'
+        prevViewport.style.transitionDelay = '0ms'
+        prevViewport.style.transitionProperty = 'transform'
         if (swipeTransitionType === 'slide') {
           prevViewport.style.transform = `translate3d(${-degree * 30}%, 0, 0)`
         } else {

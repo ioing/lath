@@ -5,18 +5,18 @@ export default (type: number) => {
     let origin = 'center'
     let minScale = 0.3
     let rotate = 150
-    let duration = 1300
+    let duration = 1200
     let inDelay = duration / 8
     let rx = 0
     let ry = 1
     const direction = state.direction * (state.reverse ? -1 : 1)
-    const prevApplet = state.applets[state.historyDirection === -1 ? 0 : 1]
+    const prevApplet = state.applets[state.historyDirection === 1 ? 1 : 0]
     switch (type) {
       case 0:
         origin = 'top'
         rx = 1
         ry = 0
-        duration = 1600
+        duration = 1400
         inDelay = duration / 8
         break
       case 1:
@@ -26,7 +26,7 @@ export default (type: number) => {
         origin = 'bottom'
         rx = 1
         ry = 0
-        duration = 1600
+        duration = 1400
         inDelay = duration / 8
         break
       case 3:

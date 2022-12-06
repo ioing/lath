@@ -39,7 +39,7 @@ export class AppletControlsView extends AppletControlsEventTarget {
   public create(): HTMLElement {
     this.attach()
     this.buildControlsView()
-    this.bindCoreEvent()
+    this.bindBaseEvent()
     const applet = this.applet
     if (applet.rel !== 'applet' || applet.swipeModel === false || applet.mountBehavior?.noSwipeModel) {
       this.freeze()

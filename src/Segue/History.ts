@@ -1,6 +1,5 @@
 import { Application } from '../Application'
 import { SegueBase } from './Base'
-import { setInterval } from '../lib/util'
 import { PopState, PresetConfig, SegueBackType } from '../types'
 
 class SegueHistory extends SegueBase {
@@ -58,7 +57,6 @@ class SegueHistory extends SegueBase {
           clearTimeout(this.silentObserver)
         })
       }
-      console.log('eeeee')
       this.observeSilent(times--)
     }, 2000) as unknown as number
   }

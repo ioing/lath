@@ -6,7 +6,7 @@ export default (type: number) => {
     let outX = 0
     let inY = 0
     let outY = 0
-    const duration = 767
+    const duration = 600
 
     switch (type) {
       case 0:

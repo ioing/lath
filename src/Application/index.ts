@@ -272,8 +272,8 @@ class Application extends ApplicationState {
   }
   private async createCloneApplet(id: string): Promise<void> {
     const idSplit = id.split('^')
-    if (idSplit.length === 1) return
-    this.get(idSplit[1]).then((applet) => {
+    if (idSplit.length === 1) return Promise.resolve()
+    await this.get(idSplit[1]).then((applet) => {
       const appletManifest = applet.model
       Object.assign(appletManifest.config, {
         level: this.activityLevel

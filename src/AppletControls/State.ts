@@ -3,6 +3,7 @@ import { AppletControlsBase } from './Base'
 export class AppletControlsState extends AppletControlsBase {
   public fromViewports?: Array<HTMLElement>
   public advanceDegree = 0
+  public swipeTransitionType = this.application.config.swipeTransitionType
   get visibility(): boolean {
     return Math.round(this.controlsView.scrollLeft / this.appletViewport.offsetWidth) === 0 ? false : true
   }

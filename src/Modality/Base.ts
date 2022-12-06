@@ -7,7 +7,7 @@ class ModalityBase {
   protected switching = false
   protected scrolling = false
   protected maxDegreeCache?: number
-  public backdropReducedScale = 0.1
+  public backdropReducedScale = 0.12
   public backdropRotateX = -10
   public backdropPerspective = 3000
   public backdropBorderRadius = 20

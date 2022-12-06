@@ -42,7 +42,12 @@ class ModalityView extends ModalityEventTarget {
     }, true)
     this.modalityOverlay = modalityOverlay
   }
-  private sliding(degree: number, maxDegree: number, prevViewport: HTMLElement) {
+  private sliding() {
+    // this.activity: Prevents asynchronous operations from resetting closed views
+    if (!this.activity) return
+    const degree = this.degree
+    const maxDegree = this.maxDegree
+    const prevViewport = this.prevViewport
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
@@ -64,7 +69,7 @@ class ModalityView extends ModalityEventTarget {
       prevViewport.style.transitionProperty = 'transform, border-radius'
       prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
       prevViewport.style.transform = `
-        translate3d(0, ${relativeDegree * 10}px, -100px) 
+        translate3d(0px, 0px, -100px) 
         perspective(${this.backdropPerspective}px) 
         rotateX(${relativeDegree * this.backdropRotateX}deg) 
         scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
@@ -106,6 +111,13 @@ class ModalityView extends ModalityEventTarget {
     if (degree <= this.advanceDegree) {
       this.hide()
     }
+  }
+  private slidingListener = this.sliding.bind(this)
+  private bindSlidingEvent(): void {
+    this.modalityContainer.addEventListener('scroll', this.slidingListener)
+  }
+  private removeSlidingEvent(): void {
+    this.modalityContainer.removeEventListener('scroll', this.slidingListener)
   }
   public create(): HTMLElement {
     const viewport = this.appletViewport
@@ -191,13 +203,8 @@ class ModalityView extends ModalityEventTarget {
         this.bindDragContentEvent()
       }, 10)
     }
-    modalityContainer.addEventListener('scroll', (): void => {
-      // this.activity: Prevents asynchronous operations from resetting closed views
-      if (!this.activity) return
-      this.sliding(this.degree, this.maxDegree, this.prevViewport)
-    }, false)
-
     this.applet.on('willShow', () => {
+      this.bindSlidingEvent()
       if (this.application.segue.stackUp) {
         this.fromViewports = undefined
       }
@@ -212,7 +219,9 @@ class ModalityView extends ModalityEventTarget {
         this.fall()
       }
     })
-
+    this.applet.on('hide', () => {
+      this.removeSlidingEvent()
+    })
     modalityContainer.appendChild(contentContainer)
     this.modalityPlaceholder = modalityPlaceholder
     return this.contentContainer = contentContainer

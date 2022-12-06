@@ -285,6 +285,13 @@ class SegueSwitch extends SegueAnimation {
       if (typeof transformStart === 'function') {
         if (transformStart(this.applet) === 'break') return reject()
       }
+      // 0.willShow Event
+      // "willShow" runs before "controls.disappearImmediately"
+      this.applet.willShow()
+      if (this.prevApplet) {
+        this.prevApplet.willHide()
+      }
+      // 1.controls
       if (this.applet.controls) {
         this.applet.controls.disappearImmediately()
         if (this.isInseparableLayer) {
@@ -302,10 +309,6 @@ class SegueSwitch extends SegueAnimation {
         if (this.applet.viewport && this.applet.rel === 'applet') {
           this.applet.viewport.style.transform = 'translate(0, 0)'
         }
-      }
-      this.applet.willShow()
-      if (this.prevApplet) {
-        this.prevApplet.willHide()
       }
       resolve()
     })
@@ -364,8 +367,8 @@ class SegueSwitch extends SegueAnimation {
       this.destroy(this.prevApplet)
     }
     // Clear the pre-status of the backdrop Applet.
-    if (this.superSwitch && this.prevPrevApplet) {
-      this.resetAppletViewport(this.prevPrevApplet, true)
+    if (this.superSwitch && this.prevPrevApplet && this.prevPrevApplet !== this.applet) {
+      this.resetAppletViewport(this.prevPrevApplet, false)
     }
   }
 }

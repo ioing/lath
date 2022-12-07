@@ -67,6 +67,8 @@ class ModalityEventTarget extends ModalityState {
     })
   }
   public async hide(): Promise<void> {
+    this.removeSlidingEvent()
+    this.segueTransition(false)
     return this.fall().then(async () => {
       if (this.activity) {
         await this.application.segue.back()

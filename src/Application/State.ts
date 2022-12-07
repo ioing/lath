@@ -40,6 +40,9 @@ class ApplicationState extends ApplicationBase {
   get activityLevel() {
     return (this.activityApplet?.level ?? 0) + 1
   }
+  get isFullscreen(): boolean {
+    return document.body.offsetHeight === screen.height
+  }
   public overscrollHistoryNavigation = {
     moment: 0,
     type: ''

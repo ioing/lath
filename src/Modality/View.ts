@@ -1,6 +1,6 @@
 import { ModalityEventTarget } from './EventTarget'
 import { SmoothScroller } from "../Scroll"
-import { setTimeout, testHasSmoothSnapScrolling, testHasScrolling, getCSSUnits } from '../lib/util'
+import { setTimeout, testHasScrolling, getCSSUnits } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { baseCSSText } from './cssText'
 import { Applet } from '../types'
@@ -10,14 +10,12 @@ import { Applet } from '../types'
  * ------------- start -------------
  */
 // old; ios < 9
-const NoSmoothSnapScrolling = testHasSmoothSnapScrolling() === false
 const NoScrolling = testHasScrolling() === false
 /**
  * Obsolete
  * ------------- end -------------
  */
 class ModalityView extends ModalityEventTarget {
-  private scrollingTimeoutId = -1
   constructor(applet: Applet) {
     super(applet)
     this.scroller = new SmoothScroller(this.modalityContainer as HTMLElement)
@@ -42,83 +40,7 @@ class ModalityView extends ModalityEventTarget {
     }, true)
     this.modalityOverlay = modalityOverlay
   }
-  private sliding() {
-    // this.activity: Prevents asynchronous operations from resetting closed views
-    if (!this.activity) return
-    const degree = this.degree
-    const maxDegree = this.maxDegree
-    const prevViewport = this.prevViewport
-    const options = this.options
-    const darkness = options?.maskOpacity ?? 0.3
-    const useFade = options?.useFade
-    this.modalityContainer.style.transitionDuration = '0ms'
-    this.modalityContainer.style.transitionDelay = '0ms'
-    this.modalityContainer.style.transitionProperty = 'transform, background-color'
-    if (degree > maxDegree) {
-      this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
-      return
-    }
-    // if miniCard.
-    const relativeDegree = this.miniCard ? (degree - 1) / (maxDegree - 1) : degree
-    // stillBackdrop
-    const stillBackdrop = this.options?.stillBackdrop || (this.miniCard && degree <= 1)
-    // this.activity: Prevents asynchronous operations from resetting closed views
-    if (this.activity && prevViewport && !stillBackdrop) {
-      prevViewport.style.transitionDuration = '0ms'
-      prevViewport.style.transitionDelay = '0ms'
-      prevViewport.style.transitionProperty = 'transform, border-radius'
-      prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
-      prevViewport.style.transform = `
-        translate3d(0px, 0px, -100px) 
-        perspective(${this.backdropPerspective}px) 
-        rotateX(${relativeDegree * this.backdropRotateX}deg) 
-        scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
-      `
-    }
-    this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
-    if (useFade) {
-      this.contentContainer.style.transitionDuration = '0ms'
-      this.contentContainer.style.transitionDelay = '0ms'
-      this.contentContainer.style.transitionProperty = 'opacity'
-      this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
-    }
 
-    this.scrolling = true
-    clearTimeout(this.scrollingTimeoutId)
-    this.scrollingTimeoutId = setTimeout(() => {
-      this.scrolling = false
-      /**
-       * Obsolete
-       * ------------- start -------------
-       */
-      // old; ios < 9
-      if (NoSmoothSnapScrolling) {
-        if (this.degree === degree) {
-          if (degree <= 0.7) {
-            this.hide()
-          } else {
-            this.rise()
-          }
-        }
-      }
-      /**
-       * Obsolete
-       * ------------- end -------------
-       */
-    }, 100)
-    // when triggered by a blocked holder
-    if (this.switching) return
-    if (degree <= this.advanceDegree) {
-      this.hide()
-    }
-  }
-  private slidingListener = this.sliding.bind(this)
-  private bindSlidingEvent(): void {
-    this.modalityContainer.addEventListener('scroll', this.slidingListener)
-  }
-  private removeSlidingEvent(): void {
-    this.modalityContainer.removeEventListener('scroll', this.slidingListener)
-  }
   public create(): HTMLElement {
     const viewport = this.appletViewport
     const modalityContainer = this.modalityContainer
@@ -203,25 +125,7 @@ class ModalityView extends ModalityEventTarget {
         this.bindDragContentEvent()
       }, 10)
     }
-    this.applet.on('willShow', () => {
-      this.bindSlidingEvent()
-      if (this.application.segue.stackUp) {
-        this.fromViewports = undefined
-      }
-      if (options?.alwaysPopUp !== false) {
-        if (this.applet.transforming) return
-        this.rise()
-      }
-    })
-    this.applet.on('willHide', () => {
-      if (options?.alwaysPopUp !== false) {
-        if (this.applet.transforming) return
-        this.fall()
-      }
-    })
-    this.applet.on('hide', () => {
-      this.removeSlidingEvent()
-    })
+    this.bindBaseEvent()
     modalityContainer.appendChild(contentContainer)
     this.modalityPlaceholder = modalityPlaceholder
     return this.contentContainer = contentContainer

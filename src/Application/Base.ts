@@ -12,8 +12,8 @@ class ApplicationBase extends EventProvider {
   public presetAppletsView: PresetApplets = {}
   public config!: FrameworksAppletConfig
   public readonly historyNodeLocation: number = history.length
-  public routerRegExp = /([^#/]+)(.+)?/
-  public options!: ApplicationOptions
+  protected routerRegExp = /([^#/]+)(.+)?/
+  protected options!: ApplicationOptions
   protected resolveURL(url: string): URL {
     const link = new URL(
       url,

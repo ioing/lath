@@ -30,9 +30,9 @@ export const capture = async (applet: Applet) => {
     shotWrapper.appendChild(cloneAppletView)
     document.body.appendChild(shotWrapper)
   }
-
+  const color = /\(/.exec(applet.color) ? (applet.view ? getComputedStyle(applet.view).backgroundColor : 'transparent') : applet.color
   const canvas = await html2canvas(cloneAppletView || appletView, {
-    backgroundColor: applet.color,
+    backgroundColor: color,
     useCORS: true,
     width: viewportWidth,
     height: viewportHeight,

@@ -74,7 +74,7 @@ class AppSwitcher {
     for (const id in applets) {
       const applet = applets[id]
       const color = applet.color
-      if (applet.rel !== 'applet' || applet.isModality) continue
+      if (applet.rel !== 'applet' || applet.isModality || applet.slide) continue
       if (applet.view) {
         const itemView = document.createElement('applet-switcher-item')
         const itemImgWrapper = document.createElement('div')
@@ -122,7 +122,7 @@ class AppSwitcher {
             })
           }
           const intersectionObserver = new IntersectionObserver(function (entries) {
-            if (entries[0].intersectionRatio <= 0) return
+            if (entries[0].intersectionRatio < 0) return
             intersectionObserver.unobserve(itemImgWrapper)
             showNormalItem()
           })
@@ -231,7 +231,7 @@ class AppSwitcher {
   private getActiveApplet() {
     const activityApplet = this.application.activityApplet
     if (activityApplet?.slide) {
-      return this.application.applets[activityApplet.slide.activeId]
+      return activityApplet.subApplet
     }
     return activityApplet
   }

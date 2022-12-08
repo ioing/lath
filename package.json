@@ -1,6 +1,6 @@
 {
   "name": "lath",
-  "version": "0.10.22",
+  "version": "0.10.23",
   "description": "Seamless connection of pages.",
   "keywords": [
     "lath",
@@ -43,7 +43,8 @@
     "@webcomponents/custom-elements": "^1.5.0",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "html2canvas": "^1.4.1",
-    "scroll-polyfill": "^1.0.1"
+    "scroll-polyfill": "^1.0.1",
+    "uglify-js": "^3.17.4"
   },
   "devDependencies": {
     "@types/node": "^10.12.12",

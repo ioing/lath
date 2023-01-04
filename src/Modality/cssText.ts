@@ -49,10 +49,10 @@ export const baseCSSText = `
   }
   blocked-holder {
     position: absolute;
-    top: 0;
+    top: 200px;
     left: 0;
+    bottom: 200px;
     width: 40px;
-    height: 100%;
     z-index: 5;
     overflow-y: hidden;
     overflow-x: scroll;

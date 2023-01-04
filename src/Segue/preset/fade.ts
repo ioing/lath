@@ -16,8 +16,8 @@ export default (type: number) => {
         outO = 1
         inV = outV = state.in
     }
-    await inV.duration(0).ease('ease-out-expo').to(0, 0, 0).opacity(inO).end()
-    await outV.duration(767).opacity(outO).end()
+    await inV.duration(0).to(0, 0, 0).opacity(inO).end()
+    await outV.duration(300).opacity(outO).end()
     return Promise.resolve(false)
   }
 }

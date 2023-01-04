@@ -14,7 +14,7 @@ export default async (state: SegueAnimateState) => {
   const frameWidth = frameRect?.width || '100%'
   const frameHeight = `calc(${frameRect?.height}px + ${paperTop})` || '100%'
   if (!modality) return Promise.resolve(false)
-  if (prevApplet.modality) {
+  if (prevApplet.modality && prevApplet.config?.sheetOptions?.alwaysPopUp !== false) {
     await prevApplet.modality.fall()
   }
   if (!state.reverse) {

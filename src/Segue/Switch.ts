@@ -103,7 +103,10 @@ class SegueSwitch extends SegueAnimation {
   // Execution when the task is complete
   private async bindPromiseDone<P extends Promise<void>>(promise: P): Promise<void> {
     const shift = () => this.shiftPromise()
-    return promise.then(shift).catch(shift)
+    return promise.then(shift).catch(() => {
+      shift()
+      this.to404()
+    })
   }
 
   // Control memory growth
@@ -138,6 +141,11 @@ class SegueSwitch extends SegueAnimation {
     }
   }
 
+  private async to404(): Promise<void> {
+    if (!this.options.notFound) return Promise.resolve()
+    return this.promise(this.options.notFound, this.param + (this.param.indexOf('?') === -1 ? '?' : '&') + '__notFoundId=' + this.id, this.prevHistoryStep)
+  }
+
   private async promise(...args: SegueToOptions): Promise<void> {
     const [id, param = '', pushState = 1, touches, disableAnimation] = args
     // next is undefined
@@ -147,11 +155,7 @@ class SegueSwitch extends SegueAnimation {
     const prevApplet = this.application.applets[prevId]
     const appletGroup = prevApplet ? [applet, prevApplet] : [applet]
     if (!applet) {
-      return this.application.get(id).then(() => this.promise(...args)).catch(() => {
-        if (this.options.notFound) {
-          return this.promise(this.options.notFound, param ? param + '&__notFoundId=' + id : '?__notFoundId=' + id, pushState)
-        }
-      })
+      return this.application.get(id).then(() => this.promise(...args))
     }
     if (id === this.id) {
       return Promise.resolve()

@@ -45,7 +45,7 @@ export class DefineApplet extends HTMLElement {
       // ${id}-obsolete
       if (oldValue && newValue.split('-')[0] !== oldValue.split('-')[0]) {
         typeError(1002)
-        typeError(1003, 'info')
+        typeError(1003, 'warn')
         return
       }
       // some exception callbacks

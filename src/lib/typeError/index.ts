@@ -35,11 +35,11 @@ export default (code: number, type: 'error' | 'info' | 'warn' | 'return' = 'erro
     return message
   }
   if (type === 'error') {
-    console.error('LATH ERROR:', message)
+    console.error('LATH Error:', message)
   } else if (type === 'info') {
-    console.info('LATH INFO:', message)
+    console.info('LATH Info:', message)
   } else if (type === 'warn') {
-    console.warn('LATH WARN:', message)
+    console.warn('LATH Warning:', message)
   }
 
 }

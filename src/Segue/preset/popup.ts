@@ -5,7 +5,7 @@ export default async (state: SegueAnimateState) => {
   const prevApplet = state.applets[state.reverse ? 0 : 1]
   const modality = applet.modality
   if (!modality) return Promise.resolve(false)
-  if (prevApplet.modality) {
+  if (prevApplet.modality && prevApplet.config?.sheetOptions?.alwaysPopUp !== false) {
     await prevApplet.modality.fall()
   }
   if (!state.reverse) {

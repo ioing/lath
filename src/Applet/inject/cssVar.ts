@@ -1,4 +1,5 @@
 
+import { testHasScrolling } from '../../lib/util'
 import { Applet, ApplicationSafeAreaValue, GlobalCSSVariables } from '../../types'
 
 export default (appletWindow: Window, applet: Applet): void => {
@@ -35,6 +36,18 @@ export default (appletWindow: Window, applet: Applet): void => {
   const globalCSSVariablesChange = (data: GlobalCSSVariables): void => {
     setGlobalCSSVariables(data)
   }
+  /**
+     * Obsolete
+     * ------------- start -------------
+     */
+  // ios < 12.55 bug
+  if (testHasScrolling() === false) {
+    docStyle.cssText += 'width: 100vw; height: 100vh; overflow: auto; -webkit-overflow-scrolling: touch;'
+  }
+  /**
+   * Obsolete
+   * ------------- end -------------
+   */
   application.on('safeAreaChange', safeAreaChange, id)
   application.on('globalCSSVariablesChange', globalCSSVariablesChange, id)
 }

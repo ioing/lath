@@ -40,9 +40,19 @@ class Application extends ApplicationState {
     if (this.applets[id]) {
       return this.applets[id]
     }
-    const process = this.config?.appletManifestProcess
-    if (process) {
-      manifest = process(manifest) || manifest
+    if (this.config) {
+      const { appletManifestProcess, untouchableSegueType = 'fade' } = this.config
+      if (appletManifestProcess) {
+        manifest = appletManifestProcess(manifest) || manifest
+      }
+      if (!('ontouchstart' in document.documentElement)) {
+        if (untouchableSegueType && manifest.config.animation) {
+          manifest.config.animation = untouchableSegueType
+        }
+        if (manifest.config.modality) {
+          manifest.config.modality = 'paper'
+        }
+      }
     }
     return this.applets[id] = new Applet(id, manifest, this)
   }
@@ -283,12 +293,25 @@ class Application extends ApplicationState {
       typeError(1008, 'error', id)
     })
   }
+  private async lineUpApplet(id: string, params: string, history: -1 | 0 | 1): Promise<void> {
+    const applet = await this.get(id)
+    const { antecedentApplet } = applet.config
+    if (antecedentApplet) {
+      for (const antecedentId of antecedentApplet) {
+        this.segue.to(antecedentId, params, 1)
+      }
+      this.segue.to(id, params, 1)
+    } else {
+      this.segue.to(id, params, history)
+    }
+    return Promise.resolve()
+  }
   private async mountFirstApplet(id: string, index: string, preIndex?: string, oneHistory?: boolean): Promise<void> {
     await this.createCloneApplet(id)
     if (oneHistory) {
       this.segue.pushState(index || 'frameworks')
       if (id) {
-        return this.segue.to(id, location.search, 1)
+        return this.lineUpApplet(id, location.search, 1)
       }
       return Promise.resolve()
     }
@@ -296,12 +319,12 @@ class Application extends ApplicationState {
       if (!index && !preIndex) this.segue.pushState('frameworks')
       if (preIndex) this.segue.pushState(preIndex)
       if (id) {
-        return this.segue.to(id, location.search, this.exists ? -1 : 1)
+        return this.lineUpApplet(id, location.search, this.exists ? -1 : 1)
       }
       return Promise.resolve()
     }
     if (id) {
-      return this.segue.to(id, location.search, -1)
+      return this.lineUpApplet(id, location.search, -1)
     }
     return Promise.resolve()
   }

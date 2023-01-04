@@ -106,13 +106,14 @@ class AppletBase extends EventProvider {
       if (config.animation) {
         typeError(1105, 'warn')
       }
-      const { maskOpacity, swipeClosable } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
+      const { maskOpacity, swipeClosable, alwaysPopUp } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
       config.animation = 'stretch'
       config.sheetOptions = {
         stillBackdrop: true,
         noHandlebar: true,
         maskOpacity,
         swipeClosable,
+        alwaysPopUp,
         borderRadius: '0px',
         top: '0px'
       }
@@ -123,13 +124,14 @@ class AppletBase extends EventProvider {
       if (!config.color) {
         config.color = 'transparent'
       }
-      const { maskOpacity, swipeClosable } = config.overlayOptions || { maskOpacity: 0.5, swipeClosable: false }
+      const { maskOpacity, swipeClosable, alwaysPopUp } = config.overlayOptions || { maskOpacity: 0.5, swipeClosable: false }
       config.animation = 'popup'
       config.sheetOptions = {
         stillBackdrop: true,
         noHandlebar: true,
         maskOpacity,
         swipeClosable,
+        alwaysPopUp,
         borderRadius: '0px',
         top: '0px',
         useFade: true

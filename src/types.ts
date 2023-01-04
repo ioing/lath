@@ -67,6 +67,7 @@ type PushWindowOptions = [
   cloneAs?: string,
   touches?: SegueActionOrigin
 ]
+type UntouchableSegueType = AnimationPrestType
 type SegueBackType = 'controls' | undefined
 type SlidingState = { readonly x: number, readonly y: number, readonly xIndex: number, readonly yIndex: number }
 type TriggerEventArgsMap = {
@@ -136,10 +137,12 @@ type PaperOptions = {
   clipTop?: string
   maskOpacity?: number
   swipeClosable?: boolean
+  alwaysPopUp?: boolean
 }
 type OverlayOptions = {
   maskOpacity?: number
   swipeClosable?: boolean
+  alwaysPopUp?: boolean
 }
 type AppletAttachBehavior = {
   agentSegue: () => Promise<void>
@@ -205,6 +208,7 @@ declare interface AppletBaseConfig {
   refresh?: () => Promise<void>
   timeout?: number
   prerender?: Array<string>
+  antecedentApplet?: Array<string>
   free?: boolean
   disableSwipeModel?: boolean
   modality?: ModalityType
@@ -230,8 +234,8 @@ declare interface AppletBaseConfig {
   apply?: AppletApplyOptions
   applyOptions?: AppletApplyOptionsParam
   unApply?: AppletApplyOptions
-  inject?: (w: Window, m: Applet) => void
-  injectToDocument?: (w: Window, m: Applet) => void
+  inject?: (appletWindow: Window, applet: Applet) => void
+  injectToDocument?: (appletWindow: Window, applet: Applet) => void
   useMirroring?: boolean
   pullToRefresh?: boolean
   forcedToRefresh?: boolean
@@ -257,6 +261,7 @@ declare interface FrameworksAppletConfig extends AppletConfigWithRender {
   transient?: boolean
   transientTimeout?: number
   disableTransient?: boolean
+  untouchableSegueType?: UntouchableSegueType
   transfer?: (url: string) => string
   holdBack?: (backoutCount: number) => boolean
   globalCSSVariables?: GlobalCSSVariables | (() => GlobalCSSVariables)

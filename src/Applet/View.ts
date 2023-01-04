@@ -90,10 +90,14 @@ class AppletView extends AppletEventTarget {
         max-width: 100%;
         max-height: 100%;
         overflow: auto;
-        background: ${this.color};
+        background: transparent;
       `
     }
     return contentView
+  }
+  private setContentViewColor(): void {
+    if (!this.contentView) return
+    this.contentView.style.background = this.color
   }
   private buildContentStructure(): void {
     if (this.contentView) return
@@ -252,6 +256,7 @@ class AppletView extends AppletEventTarget {
     this.injectIntoContext()
     this.injectIntoContext(2)
     this.view = await this.createView()
+    this.setContentViewColor()
     this.removeMirrorImage()
     return Promise.resolve()
   }

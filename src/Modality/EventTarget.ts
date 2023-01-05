@@ -51,7 +51,7 @@ class ModalityEventTarget extends ModalityState {
     if (this.switching) return this.processPromise
     this.switching = true
     this.switchOverlay(true)
-    const offsetTop = this.modalityContainer.offsetHeight + (this.miniCard ? (this.degree >= 1 + (this.maxDegree - 1) / 2 ? (this.miniCard?.offsetHeight ?? 0) : 0) : 0)
+    const offsetTop = this.modalityContainer.offsetHeight + (this.defaultToLarge ? this.contentContainer.offsetHeight : 0) + (this.miniCard ? (this.degree >= 1 + (this.maxDegree - 1) / 2 ? (this.miniCard?.offsetHeight ?? 0) : 0) : 0)
     return this.processPromise = this.scroller.snapTo(0, offsetTop).then(() => {
       this.switching = false
       this.switchOverlay(false)
@@ -80,9 +80,10 @@ class ModalityEventTarget extends ModalityState {
     const duration = 500
     const delay = 100 // wait switchBackdropColor
     const prevViewport = this.prevViewport
-    const relativeDegree = show ? (this.miniCard ? 0 : 1) : 0
+    const relativeDegree = show ? (this.miniCard && !this.defaultToLarge ? 0 : 1) : 0
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
+    const useFade = options?.useFade
     // stillBackdrop
     const stillBackdrop = this.options?.stillBackdrop
     if (!stillBackdrop) {
@@ -101,6 +102,10 @@ class ModalityEventTarget extends ModalityState {
     this.modalityContainer.style.transitionDelay = delay + 'ms'
     this.modalityContainer.style.transitionProperty = 'transform, background-color'
     this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${show ? darkness : 0})`
+    // reset opacity while "hide"
+    if (useFade && !show) {
+      this.contentContainer.style.opacity = '1'
+    }
   }
   private sliding() {
     // this.activity: Prevents asynchronous operations from resetting closed views

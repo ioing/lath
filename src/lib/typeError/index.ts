@@ -16,7 +16,8 @@ const ErrorCode: ErrorCodeType = {
   1103: 'Applet config: [free & portal] conflict! [free] must be true when [portal] sets true.',
   1104: 'Applet config: [level] needs to be less than 9999!',
   1105: 'Applet config: [modality] applets do not need to configured with [animation].',
-  1106: 'Applet config: Using the "sheet" animation type requires setting the modality to "sheet".'
+  1106: 'Applet config: Using the "sheet" animation type requires setting the modality to "sheet".',
+  1107: 'Applet config: An unknown modality type was used.'
 }
 
 function getMessage(code: number, args: string[]) {

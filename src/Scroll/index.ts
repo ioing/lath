@@ -70,7 +70,7 @@ class SmoothScroller {
     this.defaultScrollBehavior = style.scrollBehavior || 'smooth'
   }
   private isBreak(): boolean {
-    if ('ontouchstart' in document.documentElement) return false
+    if ("ontouchend" in document) return false
     if (this.preStep !== undefined && (this.preStep[0] !== this.element.scrollLeft || this.preStep[1] !== this.element.scrollTop)) {
       this.scrollStop()
       return true

@@ -1,4 +1,5 @@
 import { SegueState } from './State'
+import typeError from '../lib/typeError'
 import { SegueAnimateState, AnimationConfig, AnimationPrestType } from '../types'
 
 type SegueAnimateFn = (e: SegueAnimateState) => undefined | Promise<boolean>
@@ -67,11 +68,11 @@ class SegueAnimation extends SegueState {
             resolve([popup, popup])
           }).catch(reject)
         })
-      case 'stretch':
+      case 'grow':
         return new Promise((resolve, reject) => {
-          import('./preset/stretch').then((applet) => {
-            const stretch = applet.default
-            resolve([stretch, stretch])
+          import('./preset/grow').then((applet) => {
+            const grow = applet.default
+            resolve([grow, grow])
           }).catch(reject)
         })
       case 'flip':
@@ -147,6 +148,10 @@ class SegueAnimation extends SegueState {
       case 'slide':
       case 'slide-left':
       default:
+        if (this.applet.config.modality) {
+          typeError(1007)
+          return
+        }
         return new Promise((resolve, reject) => {
           if (this.options.swipeModel) {
             import('./preset/slide-native').then((applet) => {

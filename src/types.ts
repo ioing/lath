@@ -50,7 +50,7 @@ type SystemAppletSettings = SystemAppletManifest | (() => Promise<SystemAppletMa
 type FrameworksAppletSettings = FrameworksAppletManifest
 type AnimationFunction = (e: SegueAnimateState) => undefined | Promise<boolean>
 type AnimationPrestType = 'inherit'
-  | 'fade' | 'zoom' | 'popup' | 'stretch'
+  | 'fade' | 'zoom' | 'popup' | 'grow'
   | 'flip' | 'flip-left' | 'flip-down' | 'flip-right' | 'flip-up'
   | 'slide' | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
 type SwipeTransitionType = 'zoom' | 'slide'
@@ -67,7 +67,6 @@ type PushWindowOptions = [
   cloneAs?: string,
   touches?: SegueActionOrigin
 ]
-type UntouchableSegueType = AnimationPrestType
 type SegueBackType = 'controls' | undefined
 type SlidingState = { readonly x: number, readonly y: number, readonly xIndex: number, readonly yIndex: number }
 type TriggerEventArgsMap = {
@@ -122,6 +121,7 @@ type ModalityType = 'paper' | 'sheet' | 'overlay'
 type SheetOptions = {
   top?: string,
   miniCardHeight?: number | string
+  defaultCardSize?: 'mini' | 'large'
   maskOpacity?: number
   blockedHolderWidth?: number | string
   alwaysPopUp?: boolean
@@ -212,10 +212,12 @@ declare interface AppletBaseConfig {
   free?: boolean
   disableSwipeModel?: boolean
   modality?: ModalityType
+  modalityUnderUntouchable?: ModalityType
   sheetOptions?: SheetOptions
   paperOptions?: PaperOptions
   overlayOptions?: OverlayOptions
   animation?: AnimationConfig
+  animationUnderUntouchable?: AnimationConfig
   background?: boolean | 'auto'
   color?: string | 'inherit'
   portal?: boolean
@@ -261,7 +263,6 @@ declare interface FrameworksAppletConfig extends AppletConfigWithRender {
   transient?: boolean
   transientTimeout?: number
   disableTransient?: boolean
-  untouchableSegueType?: UntouchableSegueType
   transfer?: (url: string) => string
   holdBack?: (backoutCount: number) => boolean
   globalCSSVariables?: GlobalCSSVariables | (() => GlobalCSSVariables)
@@ -380,6 +381,7 @@ export {
   AppSwitcher,
   AppletControls,
   AppletAttachBehavior,
+  AppletApplyOptions,
   FrameworksAppletConfig,
   FrameworksAppletManifest,
   AppletAllConfig,

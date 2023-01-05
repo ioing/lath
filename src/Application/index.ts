@@ -41,16 +41,18 @@ class Application extends ApplicationState {
       return this.applets[id]
     }
     if (this.config) {
-      const { appletManifestProcess, untouchableSegueType = 'fade' } = this.config
+      const { appletManifestProcess, animationUnderUntouchable = 'fade', modalityUnderUntouchable = 'overlay' } = this.config
+      const animationType = manifest.config.animationUnderUntouchable ?? animationUnderUntouchable
+      const modalityType = manifest.config.modalityUnderUntouchable ?? modalityUnderUntouchable
       if (appletManifestProcess) {
         manifest = appletManifestProcess(manifest) || manifest
       }
-      if (!('ontouchstart' in document.documentElement)) {
-        if (untouchableSegueType && manifest.config.animation) {
-          manifest.config.animation = untouchableSegueType
+      if (!("ontouchend" in document)) {
+        if (animationType) {
+          manifest.config.animation = animationType
         }
         if (manifest.config.modality) {
-          manifest.config.modality = 'paper'
+          manifest.config.modality = modalityType
         }
       }
     }

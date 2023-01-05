@@ -1,8 +1,7 @@
 import { EventProvider } from '../Event'
 import { Sandbox } from '../Sandbox'
-import typeError from '../lib/typeError'
-import getIOSversion from '../lib/util/getIOSVersion'
-import { DefineApplet, Slide, Modality, AppletControls, AppletEvents, AppletAllConfig, AppletResources, AppletManifest, FrameworksAppletConfig, AppletAttachBehavior, Application, Applet } from '../types'
+import manifestProcess from './manifestProcess'
+import { DefineApplet, Slide, Modality, AppletControls, AppletEvents, AppletAllConfig, AppletResources, AppletManifest, AppletAttachBehavior, Application, Applet } from '../types'
 
 class AppletBase extends EventProvider {
   public id: string
@@ -40,7 +39,7 @@ class AppletBase extends EventProvider {
     level: 0,
     source: {},
     prerender: [],
-    apply: ['smart-setTimeout', 'proxy-link', 'tap-highlight'],
+    apply: [],
     background: 'auto',
     free: false
   }
@@ -71,81 +70,7 @@ class AppletBase extends EventProvider {
       this.components = components
     }
   }
-  public setDefaultConfig(manifest: AppletManifest, id: string): AppletManifest {
-    const config = manifest.config
-    if (id === 'frameworks' || id === 'system') {
-      if (config.free) {
-        typeError(1101, 'warn')
-      }
-      if (config.source?.html || config.source?.src) {
-        typeError(1102, 'warn')
-      }
-    }
-    if (config.portal) {
-      if (!config.free) {
-        typeError(1103, 'warn')
-      }
-    }
-    if ((config.level ?? 0) > 10000) {
-      typeError(1104, 'warn')
-    }
-    if (config?.unApply?.length) {
-      const unApply = config.unApply
-      this.config.apply = this.config.apply?.filter((item) => !unApply.includes(item))
-    }
-    if (config.modality?.indexOf('sheet') === 0) {
-      if (config.animation) {
-        typeError(1105, 'warn')
-      }
-      config.animation = 'popup'
-    } else if (config.animation === 'popup') {
-      config.modality = 'sheet'
-      typeError(1106, 'warn')
-    }
-    if (config.modality?.indexOf('paper') === 0) {
-      if (config.animation) {
-        typeError(1105, 'warn')
-      }
-      const { maskOpacity, swipeClosable, alwaysPopUp } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
-      config.animation = 'stretch'
-      config.sheetOptions = {
-        stillBackdrop: true,
-        noHandlebar: true,
-        maskOpacity,
-        swipeClosable,
-        alwaysPopUp,
-        borderRadius: '0px',
-        top: '0px'
-      }
-    } else if (config.modality?.indexOf('overlay') === 0) {
-      if (config.animation) {
-        typeError(1105, 'warn')
-      }
-      if (!config.color) {
-        config.color = 'transparent'
-      }
-      const { maskOpacity, swipeClosable, alwaysPopUp } = config.overlayOptions || { maskOpacity: 0.5, swipeClosable: false }
-      config.animation = 'popup'
-      config.sheetOptions = {
-        stillBackdrop: true,
-        noHandlebar: true,
-        maskOpacity,
-        swipeClosable,
-        alwaysPopUp,
-        borderRadius: '0px',
-        top: '0px',
-        useFade: true
-      }
-    }
-    // In scenes such as Tab, you should also close the left slide to exit when no animation is set, otherwise overlay layers will appear.
-    if (!config.animation) {
-      config.disableSwipeModel = true
-    }
-    if (!(config as FrameworksAppletConfig).swipeTransitionType) {
-      (config as FrameworksAppletConfig).swipeTransitionType = (config as FrameworksAppletConfig).swipeTransitionType ?? (getIOSversion() ? 'slide' : 'zoom')
-    }
-    return manifest
-  }
+  public setDefaultConfig = manifestProcess
 }
 
 export {

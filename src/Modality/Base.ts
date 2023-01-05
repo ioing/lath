@@ -16,6 +16,7 @@ class ModalityBase {
   public modalityContainer: HTMLElement
   public contentContainer!: HTMLElement
   public miniCard?: HTMLElement
+  public defaultToLarge?: boolean
   public appletViewport: HTMLElement
   public fromViewports?: Array<HTMLElement>
   public modalityOverlay!: HTMLElement
@@ -26,6 +27,7 @@ class ModalityBase {
     this.modalityContainer = document.createElement('modality-container')
     this.appletViewport = this.applet.viewport as HTMLElement
     this.options = this.applet.config.sheetOptions
+    this.defaultToLarge = this.options?.defaultCardSize === 'large'
   }
 }
 

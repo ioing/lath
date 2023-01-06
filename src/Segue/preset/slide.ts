@@ -1,12 +1,16 @@
 import { SegueAnimateState } from '../../types'
 
 export default (type: number) => {
-  return (state: SegueAnimateState) => {
+  return async (state: SegueAnimateState) => {
     let inX = 0
     let outX = 0
     let inY = 0
     let outY = 0
     const duration = 600
+    const applet = state.applets[state.reverse ? 1 : 0]
+    const controls = applet.controls
+    const backdropReducedScale = controls?.backdropReducedScale ?? 0.03
+    const swipeTransitionType = state.swipeTransitionType
 
     switch (type) {
       case 0:
@@ -32,20 +36,24 @@ export default (type: number) => {
     }
 
     if (state.reverse) {
-      state.in.duration(0).filter('brightness(0.9)').to(inX * .1, inY * .1, 0).end(() => {
-        state.out.duration(duration).ease('ease-out-expo').to(outX, outY, 0).end()
-        state.in.duration(duration).ease('ease-out-expo').filter('brightness(1)').to(0, 0, 0).end(() => {
-          state.callback(false)
-        })
-      })
+      if (swipeTransitionType === 'slide') {
+        await state.in.duration(0).filter('brightness(0.9)').to(inX * .1, inY * .1, 0).end()
+      } else {
+        await state.in.duration(0).filter('brightness(0.9)').scale(1 - backdropReducedScale).end()
+      }
+      await Promise.all([
+        state.out.duration(duration).ease('ease-out-expo').to(outX, outY, 0).end(),
+        state.in.duration(duration).ease('ease-out-expo').filter('brightness(1)').to(0, 0, 0).scale(1).end()
+      ])
     } else {
-      state.in.duration(0).to(inX, inY, 0).end(() => {
-        state.in.duration(duration).ease('ease-out-expo').to(0, 0, 0).end(() => {
-          state.callback(false)
-        })
-        state.out.duration(duration).ease('ease-out-expo').filter('brightness(0.9)').to(outX * .5, outY * .5, 0).end()
-      })
+      await state.in.duration(0).to(inX, inY, 0).end()
+      await Promise.all([
+        state.in.duration(duration).ease('ease-out-expo').to(0, 0, 100).end(),
+        swipeTransitionType === 'slide'
+          ? state.out.duration(duration).ease('ease-out-expo').filter('brightness(0.9)').to(outX * .3, outY * .3, 0).end()
+          : state.out.duration(duration).ease('ease-out-expo').filter('brightness(0.9)').scale(1 - backdropReducedScale).end()
+      ])
     }
-    return undefined
+    return Promise.resolve(false)
   }
 }

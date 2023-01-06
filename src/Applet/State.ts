@@ -1,4 +1,5 @@
 import { AppletBase } from './Base'
+import getIOSVersion from '../lib/util/getIOSVersion'
 import { Applet, AppletStatus, SegueActionOrigin } from '../types'
 
 class AppletState extends AppletBase {
@@ -15,7 +16,8 @@ class AppletState extends AppletBase {
     presetElements: false
   }
   get swipeModel(): boolean {
-    return this.application.config.swipeModel ?? "ontouchend" in document ? true : false
+    // Use native performance optimizations only for iOS.
+    return this.application.config.swipeModel ?? (("ontouchend" in document) && (getIOSVersion()?.[0] ?? 0) >= 9) ? true : false
   }
   get sameOrigin(): boolean {
     if (!this.uri) {

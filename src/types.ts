@@ -54,7 +54,7 @@ type AnimationPrestType = 'inherit'
   | 'flip' | 'flip-left' | 'flip-down' | 'flip-right' | 'flip-up'
   | 'slide' | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
 type SwipeTransitionType = 'zoom' | 'slide'
-type AnimationConfig = AnimationPrestType | boolean | Array<AnimationPrestType> | [AnimationFunction, AnimationFunction]
+type AnimationConfig = AnimationPrestType | boolean | Array<AnimationPrestType> | AnimationFunction | [AnimationFunction, AnimationFunction]
 type ApplicationSafeAreaValue = string | Array<string>
 type GlobalCSSVariables = { [key: string]: string }
 type SandboxOptions = Array<'allow-same-origin' | 'allow-scripts' | 'allow-forms' | 'allow-modals' | 'allow-orientation-lock' | 'allow-popups'

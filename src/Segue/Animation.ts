@@ -28,16 +28,12 @@ class SegueAnimation extends SegueState {
     return animationNames
   }
 
-  public async getAnimationGroup(): Promise<[SegueAnimateFn, SegueAnimateFn] | undefined> {
-    let animationFunction: [SegueAnimateFn, SegueAnimateFn] | undefined
+  public async getAnimationGroup(): Promise<[SegueAnimateFn, SegueAnimateFn] | SegueAnimateFn | undefined> {
+    let animationFunction: [SegueAnimateFn, SegueAnimateFn] | SegueAnimateFn | undefined
     const animationNames = this.getAnimationNames()
     if (typeof animationNames === 'string') {
       animationFunction = await this.getAnimationByName(animationNames)
-    } else if (typeof (animationNames as [SegueAnimateFn, SegueAnimateFn])?.[0] === 'function') {
-      return animationNames as [SegueAnimateFn, SegueAnimateFn]
-    }
-
-    if (typeof animationFunction?.[0] !== 'function') {
+    } else if (Array.isArray(animationFunction) && typeof (animationNames as [SegueAnimateFn, SegueAnimateFn])[0] !== 'function') {
       return
     }
 
@@ -59,7 +55,7 @@ class SegueAnimation extends SegueState {
     return
   }
 
-  public async getAnimationByName(type: AnimationPrestType): Promise<[SegueAnimateFn, SegueAnimateFn] | undefined> {
+  public async getAnimationByName(type: AnimationPrestType): Promise<[SegueAnimateFn, SegueAnimateFn] | SegueAnimateFn | undefined> {
     switch (type) {
       case 'popup':
         return new Promise((resolve, reject) => {
@@ -72,7 +68,7 @@ class SegueAnimation extends SegueState {
         return new Promise((resolve, reject) => {
           import('./preset/grow').then((applet) => {
             const grow = applet.default
-            resolve([grow, grow])
+            resolve(grow)
           }).catch(reject)
         })
       case 'flip':

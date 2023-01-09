@@ -11,7 +11,7 @@ class ModalityBase {
   public backdropRotateX = -10
   public backdropPerspective = 3000
   public backdropBorderRadius = 20
-  public advanceDegree = 0.03
+  public advanceDegree = 800 / window.innerHeight * 0.03
   public options?: SheetOptions
   public modalityContainer: HTMLElement
   public contentContainer!: HTMLElement

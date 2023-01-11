@@ -22,6 +22,7 @@ export default async (state: SegueAnimateState) => {
     if (iframeView) {
       iframeView.style.willChange = 'min-width, min-height, width, height'
     }
+    modality.freezeSnap()
     await state.in.duration(0).to(frameX, frameY, 500)
       .transformOrigin('center')
       .width(frameWidth).height(frameHeight)
@@ -32,7 +33,6 @@ export default async (state: SegueAnimateState) => {
       .borderRadius('16px')
       .opacity(0)
       .end()
-    modality.freezeSnap()
     await state.in.duration(100).ease('ease-out-expo').to(frameX, frameY, 500).opacity(1).end()
     await state.in.duration(600).ease('ease-out-expo').to(0, 0, 500).width('100%').height('100%').borderRadius('0px').end()
     await modality.rise()

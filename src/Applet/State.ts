@@ -12,8 +12,7 @@ class AppletState extends AppletBase {
     prefetch: false,
     prerender: false,
     refreshing: false,
-    requestRefresh: false,
-    presetElements: false
+    requestRefresh: false
   }
   get swipeModel(): boolean {
     // Use native performance optimizations only for iOS.
@@ -156,8 +155,7 @@ class AppletState extends AppletBase {
       prefetch: false,
       prerender: false,
       refreshing: false,
-      requestRefresh: false,
-      presetElements: false
+      requestRefresh: false
     }
     this.darkTask = []
     this.view = null

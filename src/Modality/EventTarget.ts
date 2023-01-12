@@ -1,5 +1,5 @@
 import { ModalityState } from './State'
-import { setTimeout, testHasSmoothSnapScrolling, sleep } from '../lib/util'
+import { setTimeout, testHasSmoothSnapScrolling, testHasSnapReset, sleep } from '../lib/util'
 
 /**
  * Obsolete
@@ -41,12 +41,31 @@ class ModalityEventTarget extends ModalityState {
   }
   public async activateSnap(): Promise<void> {
     this.switchSmooth(false)
-    this.switchSnap(false)
+    /**
+     * Obsolete
+     * ------------- start -------------
+     */
+    // old; ios < 15
+    const hasSnapReset = testHasSnapReset()
+    if (!hasSnapReset) this.switchSnap(false)
+    /**
+     * Obsolete
+     * ------------- end -------------
+     */
     this.modalityPlaceholder.style.display = 'flex'
     this.modalityContainer.scrollTop = this.modalityContainer.offsetHeight + (this.miniCard?.offsetHeight ?? 0)
     await sleep(0)
     this.switchSmooth(true)
-    this.switchSnap(true)
+    /**
+     * Obsolete
+     * ------------- start -------------
+     */
+    // old; ios < 15
+    if (!hasSnapReset) this.switchSnap(true)
+    /**
+     * Obsolete
+     * ------------- end -------------
+     */
   }
   public async rise(): Promise<void> {
     if (this.switching) return this.processPromise

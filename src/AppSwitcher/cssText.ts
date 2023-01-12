@@ -46,6 +46,7 @@ export const snapWrapper3CSSText = `
 
 export const itemImgWrapperCSSText = `
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 16px;
@@ -96,4 +97,18 @@ export const itemTitleCSSText = `
   white-space: nowrap;
   text-overflow: ellipsis;
   font-family: "SF Pro Text","Myriad Set Pro","SF Pro Icons","Apple Legacy Chevron","Helvetica","Arial",sans-serif;
+`
+
+export const itemCloseBtnCSSText = `
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 18px;
+  line-height: 20px;
+  text-align: center;
+  background-color: rgba(120, 120, 120, .7);
 `

@@ -6,6 +6,7 @@ import testHasSmoothSnapScrolling from "./testHasSmoothSnapScrolling"
 import testHasSmoothScrolling from "./testHasSmoothScrolling"
 import testHasScrolling from './testHasScrolling'
 import testHasSlotBug from './testHasSlotBug'
+import testHasSnapReset from './testHasSnapReset'
 import getCSSUnits from './getCSSUnits'
 import sleep from './sleep'
 
@@ -18,6 +19,7 @@ export {
   testHasSmoothScrolling,
   testHasScrolling,
   testHasSlotBug,
+  testHasSnapReset,
   getCSSUnits,
   sleep
 }

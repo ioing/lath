@@ -10,8 +10,13 @@ import {
   itemImgCSSText,
   itemImgCoverCSSText,
   itemInfoCSSText,
-  itemTitleCSSText
+  itemTitleCSSText,
+  itemCloseBtnCSSText
 } from './cssText'
+
+interface SwitcherOptions {
+  readonly: boolean
+}
 
 class AppSwitcher {
   public application: Application
@@ -22,6 +27,10 @@ class AppSwitcher {
   public snapWrapper!: HTMLElement
   public scroll!: SmoothScroller
   public progressName = ''
+  public deleteMap: { [key: string]: number } = {}
+  public options: SwitcherOptions = {
+    readonly: false
+  }
   constructor(application: Application) {
     const { relativeViewport, absoluteViewport, fixedViewport } = application.segue
     this.relativeViewport = relativeViewport
@@ -39,9 +48,12 @@ class AppSwitcher {
     window.addEventListener('resize', close)
     window.addEventListener('orientationchange', close)
   }
-  public async open(): Promise<void> {
+  public async open(options?: SwitcherOptions): Promise<void> {
     if (this.progressName === 'open') return
     this.progressName = 'open'
+    if (options) {
+      this.options = options
+    }
     await this.createAppSwitcher()
     this.blurBackgroundImage()
     this.switcher.style.opacity = '1'
@@ -74,6 +86,7 @@ class AppSwitcher {
     for (const id in applets) {
       const applet = applets[id]
       const color = applet.color
+      if (this.deleteMap[applet.id] === applet.createTime && applet.status.requestRefresh === true) continue
       if (applet.rel !== 'applet' || applet.isModality || applet.slide) continue
       if (applet.view) {
         const itemView = document.createElement('applet-switcher-item')
@@ -116,6 +129,22 @@ class AppSwitcher {
         if (applet.id === activityApplet?.id) {
           await this.setActivityItem(applet, itemImgWrapper, itemImg)
         } else {
+          if (!this.options.readonly || applet.config.background !== true) {
+            const itemCloseBtn = document.createElement('div')
+            itemCloseBtn.style.cssText = itemCloseBtnCSSText
+            itemCloseBtn.innerText = '×'
+            itemImgWrapper.appendChild(itemCloseBtn)
+            itemCloseBtn.addEventListener('click', () => {
+              if (applet.parentApplet) {
+                // applet.status.requestRefresh = true
+                applet.parentApplet.destroy()
+              } else {
+                applet.destroy()
+              }
+              itemView.style.display = 'none'
+              this.deleteMap[applet.id] = applet.createTime
+            }, false)
+          }
           const showNormalItem = () => {
             requestIdleCallback(() => {
               this.setNormalItem(applet, itemImg)

@@ -104,7 +104,7 @@ class AppletLifeCycle extends AppletState {
   public destroy(reserve = false): Promise<boolean> {
     return new Promise((resolve) => {
       if (!this.view) return resolve(true)
-      if (this.status.presetElements === true) return resolve(false)
+      if (this.isPresetAppletsView) return resolve(false)
       if (this.rel === 'frameworks' || this.rel === 'system') return resolve(false)
       if (this.application.segue?.id === this.id && reserve === false) return resolve(false)
       if (this.viewType === 'iframe') this.unload()

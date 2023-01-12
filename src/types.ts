@@ -169,7 +169,6 @@ declare interface AppletStatus {
   prerender: boolean
   refreshing: boolean
   requestRefresh: boolean
-  presetElements: boolean
 }
 declare interface AppletResources {
   script?: Array<string>

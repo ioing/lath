@@ -136,7 +136,6 @@ class AppSwitcher {
             itemImgWrapper.appendChild(itemCloseBtn)
             itemCloseBtn.addEventListener('click', () => {
               if (applet.parentApplet) {
-                // applet.status.requestRefresh = true
                 applet.parentApplet.destroy()
               } else {
                 applet.destroy()
@@ -161,14 +160,6 @@ class AppSwitcher {
         this.bindItemClick(applet, itemImgWrapper, itemImg)
       }
     }
-    this.snapWrapper.style.transform = 'translate3d(0, 0, 0) scale(.9)'
-    this.snapWrapper.style.opacity = '.5'
-    setTimeout(() => {
-      if (this.progressName === 'close') return
-      this.snapWrapper.style.transition = 'transform .44s cubic-bezier(0.52, 0.16, 0.24, 1), opacity .36s cubic-bezier(0.52, 0.16, 0.24, 1)'
-      this.snapWrapper.style.transform = 'translate3d(0, 0, 0) scale(1)'
-      this.snapWrapper.style.opacity = '1'
-    }, 100)
   }
   private bindItemClick(applet: Applet, itemImgWrapper: HTMLElement, itemImg: HTMLElement) {
     itemImg.addEventListener('click', () => {
@@ -199,6 +190,7 @@ class AppSwitcher {
     const offsetLeft = itemImgWrapper.offsetLeft
     const { Animate } = await import('../Animate')
     const itemImgAnimate = new Animate(itemImg)
+    const snapWrapperAnimate = new Animate(this.snapWrapper)
     itemImg.style.cssText = `
       ${itemImgCoverCSSText}
       z-index: 3;
@@ -209,7 +201,11 @@ class AppSwitcher {
     this.switcher.appendChild(itemImg)
     itemImg.appendChild(await applet.captureShot())
     if (this.progressName === 'close') return
-    itemImgAnimate.height(imgHeight / scale).to(offsetLeft, offsetTop, 0).scale(scale).end(() => {
+    snapWrapperAnimate.duration(0).to(0, 0, 0).scale(.9).opacity(.5).end().then(async () => {
+      await Promise.all([
+        itemImgAnimate.height(imgHeight / scale).to(offsetLeft, offsetTop, 0).scale(scale).end(),
+        snapWrapperAnimate.to(0, 0, 0).scale(1).opacity(1).style('transition', 'transform .44s cubic-bezier(0.52, 0.16, 0.24, 1), opacity .36s cubic-bezier(0.52, 0.16, 0.24, 1)').end()
+      ])
       if (this.progressName === 'close') return
       itemImg.style.cssText = originalCssText
       itemImgWrapper.appendChild(itemImg)

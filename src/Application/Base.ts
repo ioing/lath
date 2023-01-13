@@ -8,6 +8,7 @@ class ApplicationBase extends EventProvider {
   public segue!: Segue
   public to!: Segue['to']
   public applets: { [key: string]: Applet } = {}
+  public residentApplets: Array<string> = []
   public presetAppletsView: PresetApplets = {}
   public config!: FrameworksAppletConfig
   public readonly historyNodeLocation: number = history.length
@@ -56,7 +57,7 @@ class ApplicationBase extends EventProvider {
     return Promise.resolve(promise())
   }
   public checkIsPresetAppletsView(id: string) {
-    return Object.keys(this.presetAppletsView).includes(id)
+    return this.residentApplets.includes(id)
   }
   public delPresetAppletsView(id: string, remove = false) {
     if (remove && !this.checkIsPresetAppletsView(id)) {
@@ -68,6 +69,7 @@ class ApplicationBase extends EventProvider {
     delete this.presetAppletsView[id]
   }
   public setPrestAppletsView(presetApplets: PresetApplets) {
+    this.residentApplets = Object.keys(presetApplets)
     this.presetAppletsView = presetApplets
   }
   public setting(options: ApplicationOptions): void {

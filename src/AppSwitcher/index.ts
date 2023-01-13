@@ -88,7 +88,7 @@ class AppSwitcher {
     for (const id in applets) {
       const applet = applets[id]
       const color = applet.color
-      if (this.deleteMap[applet.id] === applet.createTime && applet.status.requestRefresh === true) continue
+      if (this.deleteMap[applet.id] === applet.createTime) continue
       if (applet.rel !== 'applet' || applet.isModality || applet.slide) continue
       if (applet.view) {
         const itemView = document.createElement('applet-switcher-item')
@@ -131,7 +131,7 @@ class AppSwitcher {
         if (applet.id === activityApplet?.id) {
           await this.setActivityItem(applet, itemImgWrapper, itemImg)
         } else {
-          if (!this.options.readonly || applet.config.background !== true) {
+          if (!this.options.readonly && applet.config.background !== true && !applet.isPresetAppletsView) {
             const itemCloseBtn = document.createElement('div')
             const itemCloseBtnX1 = document.createElement('div')
             const itemCloseBtnX2 = document.createElement('div')
@@ -143,6 +143,10 @@ class AppSwitcher {
             itemImgWrapper.appendChild(itemCloseBtn)
             itemCloseBtn.addEventListener('click', () => {
               if (applet.parentApplet) {
+                const allSubApplets = applet.parentApplet.allSubApplets
+                for (const subAppletId in allSubApplets) {
+                  allSubApplets[subAppletId].destroy()
+                }
                 applet.parentApplet.destroy()
               } else {
                 applet.destroy()

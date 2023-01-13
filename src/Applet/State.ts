@@ -149,6 +149,12 @@ class AppletState extends AppletBase {
     }
     return
   }
+  get allSubApplets(): { [key: string]: Applet } | undefined {
+    if (this.slide) {
+      return this.application.applets
+    }
+    return
+  }
   protected resume() {
     this.status = {
       preload: false,
@@ -160,6 +166,12 @@ class AppletState extends AppletBase {
     this.darkTask = []
     this.view = null
     this.img = null
+    if (this.slide) {
+      this.slide = null
+    }
+    if (this.modality) {
+      this.modality = null
+    }
   }
   public saveMirroring(): Promise<boolean> {
     if (!this.config.useMirroring || !this.sameOrigin) {

@@ -61,6 +61,7 @@ export const itemViewCSSText = `
   scroll-snap-align: start;
   cursor: pointer;
   margin: 0 10px;
+  transition: filter .3s ease;
 `
 
 export const itemImgCSSText = `
@@ -100,15 +101,31 @@ export const itemTitleCSSText = `
 `
 
 export const itemCloseBtnCSSText = `
+  display: grid;
+  place-items: center;
   position: absolute;
   right: 4px;
   top: 4px;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 18px;
-  line-height: 20px;
-  text-align: center;
-  background-color: rgba(120, 120, 120, .7);
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background-color: #666;
+  opacity: .7
+`
+
+const itemCloseBtnXShapeCSSText = `
+  position: absolute;
+  height: 2px;
+  width: 60%;
+  background: #fff;
+  border-radius: 1px;
+`
+
+export const itemCloseBtnX1ShapeCSSText = `
+  ${itemCloseBtnXShapeCSSText}
+  transform: rotate(-45deg);
+`
+export const itemCloseBtnX2ShapeCSSText = `
+  ${itemCloseBtnXShapeCSSText}
+  transform: rotate(45deg);
 `

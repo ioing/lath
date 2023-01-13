@@ -11,7 +11,9 @@ import {
   itemImgCoverCSSText,
   itemInfoCSSText,
   itemTitleCSSText,
-  itemCloseBtnCSSText
+  itemCloseBtnCSSText,
+  itemCloseBtnX1ShapeCSSText,
+  itemCloseBtnX2ShapeCSSText
 } from './cssText'
 
 interface SwitcherOptions {
@@ -131,8 +133,13 @@ class AppSwitcher {
         } else {
           if (!this.options.readonly || applet.config.background !== true) {
             const itemCloseBtn = document.createElement('div')
+            const itemCloseBtnX1 = document.createElement('div')
+            const itemCloseBtnX2 = document.createElement('div')
             itemCloseBtn.style.cssText = itemCloseBtnCSSText
-            itemCloseBtn.innerText = '×'
+            itemCloseBtnX1.style.cssText = itemCloseBtnX1ShapeCSSText
+            itemCloseBtnX2.style.cssText = itemCloseBtnX2ShapeCSSText
+            itemCloseBtn.appendChild(itemCloseBtnX1)
+            itemCloseBtn.appendChild(itemCloseBtnX2)
             itemImgWrapper.appendChild(itemCloseBtn)
             itemCloseBtn.addEventListener('click', () => {
               if (applet.parentApplet) {
@@ -140,7 +147,10 @@ class AppSwitcher {
               } else {
                 applet.destroy()
               }
-              itemView.style.display = 'none'
+              itemView.style.filter = 'blur(90px)'
+              setTimeout(() => {
+                itemView.style.display = 'none'
+              }, 300)
               this.deleteMap[applet.id] = applet.createTime
             }, false)
           }

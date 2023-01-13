@@ -85,9 +85,11 @@ class AppSwitcher {
     this.scroll = new SmoothScroller(this.snapWrapper)
     const applets = this.application.applets
     const activityApplet = this.getActiveApplet()
+    const activitySubAppletIds = activityApplet?.parentApplet?.allSubAppletIds
     for (const id in applets) {
       const applet = applets[id]
       const color = applet.color
+      const isActive = activitySubAppletIds?.includes(id)
       if (this.deleteMap[applet.id] === applet.createTime) continue
       if (applet.rel !== 'applet' || applet.isModality || applet.slide) continue
       if (applet.view) {
@@ -131,7 +133,7 @@ class AppSwitcher {
         if (applet.id === activityApplet?.id) {
           await this.setActivityItem(applet, itemImgWrapper, itemImg)
         } else {
-          if (!this.options.readonly && applet.config.background !== true && !applet.isPresetAppletsView) {
+          if (!this.options.readonly && !isActive && applet.config.background !== true && !applet.isPresetAppletsView) {
             const itemCloseBtn = document.createElement('div')
             const itemCloseBtnX1 = document.createElement('div')
             const itemCloseBtnX2 = document.createElement('div')
@@ -143,9 +145,9 @@ class AppSwitcher {
             itemImgWrapper.appendChild(itemCloseBtn)
             itemCloseBtn.addEventListener('click', () => {
               if (applet.parentApplet) {
-                const allSubApplets = applet.parentApplet.allSubApplets
+                const allSubApplets = applet.parentApplet.allSubAppletIds
                 for (const subAppletId in allSubApplets) {
-                  allSubApplets[subAppletId].destroy()
+                  this.application.applets[subAppletId]?.destroy()
                 }
                 applet.parentApplet.destroy()
               } else {

@@ -145,8 +145,8 @@ class AppSwitcher {
             itemImgWrapper.appendChild(itemCloseBtn)
             itemCloseBtn.addEventListener('click', () => {
               if (applet.parentApplet) {
-                const allSubApplets = applet.parentApplet.allSubAppletIds
-                for (const subAppletId in allSubApplets) {
+                const allSubAppletIds = applet.parentApplet.allSubAppletIds
+                for (const subAppletId of allSubAppletIds) {
                   this.application.applets[subAppletId]?.destroy()
                 }
                 applet.parentApplet.destroy()

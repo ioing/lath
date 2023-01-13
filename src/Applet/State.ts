@@ -149,15 +149,14 @@ class AppletState extends AppletBase {
     }
     return
   }
-  get allSubAppletIds(): string[] | undefined {
+  get allSubAppletIds(): string[] {
     const applets = []
     if (this.slide) {
       for (const slideItem of this.slide.slideViewApplets) {
         applets.push(slideItem.id)
       }
-      return applets
     }
-    return
+    return applets
   }
   protected resume() {
     this.status = {

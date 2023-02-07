@@ -177,7 +177,10 @@ class AppletView extends AppletEventTarget {
   private injectIntoContext(stage: 1 | 2 = 1) {
     if (!this.sameOrigin) return
     const contentWindow = this.contentWindow
-    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__) return
+    /**
+     * There is no case where this should be executed multiple times, and the purpose of not validating is to let 'tunneling' pass
+     * --- if (contentWindow.__LATH_APPLICATION_AVAILABILITY__) return ---
+     */
     if (stage === 2) {
       injectDocument(contentWindow, this)
       contentWindow.__LATH_APPLICATION_AVAILABILITY__ = true

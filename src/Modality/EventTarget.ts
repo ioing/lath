@@ -146,7 +146,7 @@ class ModalityEventTarget extends ModalityState {
     // if miniCard.
     const relativeDegree = this.miniCard ? (degree - 1) / (maxDegree - 1) : degree
     // stillBackdrop
-    const stillBackdrop = this.options?.stillBackdrop || (this.miniCard && degree <= 1)
+    const stillBackdrop = this.options?.stillBackdrop ?? (this.miniCard && degree <= 1)
     // this.activity: Prevents asynchronous operations from resetting closed views
     if (this.activity && prevViewport && !stillBackdrop) {
       prevViewport.style.transitionDuration = '0ms'

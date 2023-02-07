@@ -153,10 +153,10 @@ class AppSwitcher {
               } else {
                 applet.destroy()
               }
-              itemView.style.filter = 'blur(90px)'
+              itemView.style.filter = 'blur(20px)'
               setTimeout(() => {
                 itemView.style.display = 'none'
-              }, 300)
+              }, 400)
               this.deleteMap[applet.id] = applet.createTime
             }, false)
           }

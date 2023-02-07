@@ -51,13 +51,13 @@ export default (appletWindow: Window, application: Application): void => {
         const anchor = el as HTMLAnchorElement
         const href = anchor.href || String(anchor)
         if (href) {
+          event.stopPropagation()
+          event.preventDefault()
           if (anchor.target === '_parent' || anchor.target === '_top') {
             realOpen(href)
             return false
           }
           const { cloneAs, title, preset } = getProps(el)
-          event.stopPropagation()
-          event.preventDefault()
           application.pushWindow(href, title, preset, cloneAs, getTouches(anchor)).catch(() => {
             realOpen(href)
           })

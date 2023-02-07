@@ -23,7 +23,7 @@ class Application extends ApplicationState {
     super()
     this.root = presetConfig.root as ShadowRoot
     this.appletsSpace = presetConfig.appletsSpace as HTMLElement
-    this.tunneling = parent !== window && !!presetConfig.tunneling && parent.__LATH_APPLICATION_AVAILABILITY__
+    this.tunneling = parent !== window && !!presetConfig.tunneling && window.__LATH_APPLICATION_AVAILABILITY__
     this.segue = new Segue(this, presetConfig)
     this.presetConfig = presetConfig
     this.to = this.segue.to.bind(this.segue)

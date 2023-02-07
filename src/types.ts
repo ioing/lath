@@ -187,7 +187,7 @@ declare interface AppletManifest {
   events?: Partial<AppletEvents>
 }
 declare interface AppletUsualManifest extends AppletManifest {
-  config: NotFrameworksAppletConfig & AppletConfig
+  config: AppletConfig
 }
 
 declare interface AppletAllTypeManifest extends AppletManifest {
@@ -267,7 +267,6 @@ declare interface FrameworksAppletConfig extends AppletConfigWithRender {
   globalCSSVariables?: GlobalCSSVariables | (() => GlobalCSSVariables)
   appletManifestProcess?: (config: AppletManifest) => AppletManifest
 }
-type NotFrameworksAppletConfig = Record<Exclude<keyof FrameworksAppletConfig, keyof FrameworksAppletConfig>, never>
 declare interface SystemAppletOnlyConfig {
   render?: (target: HTMLElement) => void
 }
@@ -293,7 +292,7 @@ declare interface AppletConfigWithRender extends AppletBaseConfig {
   slideViewGridRepeat?: number
 }
 type AppletAllConfig = FrameworksAppletConfig | AppletConfig
-declare type AppletConfig = (AppletConfigWithSource & NotFrameworksAppletConfig) | (AppletConfigWithRender & NotFrameworksAppletConfig)
+declare type AppletConfig = AppletConfigWithSource | AppletConfigWithRender
 declare interface AppletEvents {
   transformStart: (applet: Applet) => undefined | 'break'
   transformEnd: (applet: Applet) => void

@@ -1,6 +1,7 @@
 import { ModalityEventTarget } from './EventTarget'
 import { SmoothScroller } from "../Scroll"
 import { setTimeout, testHasScrolling, getCSSUnits } from '../lib/util'
+import { getIOSversion } from '../lib/util/getIOSversion'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { baseCSSText } from './cssText'
 import { Applet } from '../types'
@@ -120,7 +121,7 @@ class ModalityView extends ModalityEventTarget {
       modalityHandle.style.display = 'none'
     }
 
-    if (this.options?.swipeClosable !== false) {
+    if (this.options?.swipeClosable !== false && getIOSversion()) {
       setTimeout(() => {
         this.bindDragContentEvent()
       }, 10)

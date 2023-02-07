@@ -35,39 +35,47 @@ export default (manifest: AppletManifest, id: string): AppletManifest => {
     config.modality = 'sheet'
     typeError(1106, 'warn')
   }
-  if (config.modality?.indexOf('paper') === 0) {
-    if (config.animation) {
-      typeError(1105, 'warn')
+  if (config.modality) {
+    if (config.modality?.indexOf('paper') === 0) {
+      if (config.animation) {
+        typeError(1105, 'warn')
+      }
+      const { maskOpacity, swipeClosable, alwaysPopUp } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
+      config.animation = 'grow'
+      config.sheetOptions = {
+        stillBackdrop: true,
+        noHandlebar: true,
+        maskOpacity,
+        swipeClosable,
+        alwaysPopUp,
+        borderRadius: '0px',
+        top: '0px'
+      }
+    } else if (config.modality?.indexOf('overlay') === 0) {
+      if (config.animation) {
+        typeError(1105, 'warn')
+      }
+      if (!config.color) {
+        config.color = 'transparent'
+      }
+      const { maskOpacity, swipeClosable, alwaysPopUp } = config.overlayOptions || { maskOpacity: 0.5, swipeClosable: false }
+      config.animation = 'popup'
+      config.sheetOptions = {
+        stillBackdrop: true,
+        noHandlebar: true,
+        maskOpacity,
+        swipeClosable,
+        alwaysPopUp,
+        borderRadius: '0px',
+        top: '0px',
+        useFade: true
+      }
     }
-    const { maskOpacity, swipeClosable, alwaysPopUp } = config.paperOptions || { maskOpacity: 0.5, swipeClosable: false }
-    config.animation = 'grow'
-    config.sheetOptions = {
-      stillBackdrop: true,
-      noHandlebar: true,
-      maskOpacity,
-      swipeClosable,
-      alwaysPopUp,
-      borderRadius: '0px',
-      top: '0px'
+    if (!config.sheetOptions) {
+      config.sheetOptions = {}
     }
-  } else if (config.modality?.indexOf('overlay') === 0) {
-    if (config.animation) {
-      typeError(1105, 'warn')
-    }
-    if (!config.color) {
-      config.color = 'transparent'
-    }
-    const { maskOpacity, swipeClosable, alwaysPopUp } = config.overlayOptions || { maskOpacity: 0.5, swipeClosable: false }
-    config.animation = 'popup'
-    config.sheetOptions = {
-      stillBackdrop: true,
-      noHandlebar: true,
-      maskOpacity,
-      swipeClosable,
-      alwaysPopUp,
-      borderRadius: '0px',
-      top: '0px',
-      useFade: true
+    if (!getIOSversion()) {
+      config.sheetOptions.stillBackdrop = true
     }
   }
   // In scenes such as Tab, you should also close the left slide to exit when no animation is set, otherwise overlay layers will appear.

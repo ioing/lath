@@ -1,5 +1,4 @@
 import { Applet, Application, SheetOptions, SmoothScroller } from '../types'
-
 class ModalityBase {
   public applet: Applet
   public application: Application

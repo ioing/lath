@@ -55,3 +55,18 @@ export const injectDocument = (appletWindow: Window, applet: Applet): void => {
   }
   cssVar(appletWindow, applet)
 }
+
+export const injectDocumentOverwrite = (appletWindow: Window, applet: Applet): void => {
+  const { config, application } = applet
+  const apply = Array.from(new Set(config.apply))
+  for (const item of apply) {
+    switch (item) {
+      case 'proxy-link':
+        openWindow(appletWindow, application)
+        break
+      default:
+        break
+    }
+  }
+  cssVar(appletWindow, applet)
+}

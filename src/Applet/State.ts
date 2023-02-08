@@ -1,6 +1,6 @@
 import { AppletBase } from './Base'
 import getIOSVersion from '../lib/util/getIOSVersion'
-import { Applet, AppletStatus, SegueActionOrigin } from '../types'
+import { Applet, AppletStatus, SegueActionOrigin, SwipeModelType } from '../types'
 
 class AppletState extends AppletBase {
   public visibility = false
@@ -14,9 +14,9 @@ class AppletState extends AppletBase {
     refreshing: false,
     requestRefresh: false
   }
-  get swipeModel(): boolean {
+  get swipeModel(): SwipeModelType {
     // Use native performance optimizations only for iOS.
-    return this.application.config.swipeModel ?? (("ontouchend" in document) && (getIOSVersion()?.[0] ?? 0) >= 9) ? true : false
+    return this.application.config.swipeModel ?? (("ontouchend" in document) && (getIOSVersion()?.[0] ?? 0) >= 9) ? 'default' : false
   }
   get sameOrigin(): boolean {
     if (!this.uri) {

@@ -54,6 +54,7 @@ type AnimationPrestType = 'inherit'
   | 'flip' | 'flip-left' | 'flip-down' | 'flip-right' | 'flip-up'
   | 'slide' | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
 type SwipeTransitionType = 'zoom' | 'slide'
+type SwipeModelType = boolean | 'default'
 type AnimationConfig = AnimationPrestType | boolean | Array<AnimationPrestType> | AnimationFunction | [AnimationFunction, AnimationFunction]
 type ApplicationSafeAreaValue = string | Array<string>
 type GlobalCSSVariables = { [key: string]: string }
@@ -251,7 +252,7 @@ declare interface FrameworksAppletConfig extends AppletConfigWithRender {
   singleFlow?: boolean
   singleLock?: boolean
   allowHosts?: Array<string>
-  swipeModel?: boolean
+  swipeModel?: SwipeModelType
   swipeTransitionType?: SwipeTransitionType
   appSwitcher?: boolean
   oneHistory?: boolean
@@ -331,7 +332,7 @@ declare interface SegueOptions {
   limit?: number
   oneHistory?: boolean
   defaultAnimation?: AnimationConfig
-  swipeModel?: boolean
+  swipeModel?: SwipeModelType
   swipeTransitionType?: SwipeTransitionType
   holdBack?: FrameworksAppletConfig['holdBack']
 }
@@ -354,6 +355,7 @@ export {
   SlideViewApplets,
   SlideViewSnapType,
   SlidingState,
+  SwipeModelType,
   Modality,
   PopState,
   PresetApplets,

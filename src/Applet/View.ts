@@ -6,7 +6,7 @@ import { Modality } from '../Modality'
 import { setTimeout } from '../lib/util'
 import { coveredCSSText } from '../lib/cssText/coveredCSSText'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
-import { injectContext, injectDocument } from './inject'
+import { injectContext, injectDocument, injectDocumentOverwrite } from './inject'
 import { SandboxOptions, DefineApplet } from '../types'
 
 
@@ -177,10 +177,12 @@ class AppletView extends AppletEventTarget {
   private injectIntoContext(stage: 1 | 2 = 1) {
     if (!this.sameOrigin) return
     const contentWindow = this.contentWindow
-    /**
-     * There is no case where this should be executed multiple times, and the purpose of not validating is to let 'tunneling' pass
-     * --- if (contentWindow.__LATH_APPLICATION_AVAILABILITY__) return ---
-     */
+    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__) {
+      if (this.application.tunneling) {
+        injectDocumentOverwrite(contentWindow, this)
+      }
+      return
+    }
     if (stage === 2) {
       injectDocument(contentWindow, this)
       contentWindow.__LATH_APPLICATION_AVAILABILITY__ = true

@@ -294,6 +294,11 @@ class SegueSwitch extends SegueAnimation {
       this.applet.willShow()
       if (this.prevApplet) {
         this.prevApplet.willHide()
+        if (this.prevApplet.controls) {
+          if (this.prevApplet.swipeModel === 'default') {
+            this.prevApplet.controls.activate()
+          }
+        }
       }
       // 1.controls
       if (this.applet.controls) {
@@ -328,7 +333,11 @@ class SegueSwitch extends SegueAnimation {
     }
     // If used SwipeModel
     if (this.applet.controls) {
-      this.applet.controls.activate()
+      if (this.applet.swipeModel === 'default') {
+        this.applet.controls.freeze()
+      } else {
+        this.applet.controls.activate()
+      }
     }
     this.applet.show()
     if (this.prevApplet) {

@@ -4,9 +4,10 @@ import { AppletControls } from '../AppletControls'
 import { Slide } from '../Slide'
 import { Modality } from '../Modality'
 import { setTimeout } from '../lib/util'
+import typeError from '../lib/typeError'
 import { coveredCSSText } from '../lib/cssText/coveredCSSText'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
-import { injectContext, injectDocument, injectDocumentOverwrite } from './inject'
+import { injectContext, injectDocument } from './inject'
 import { SandboxOptions, DefineApplet } from '../types'
 
 
@@ -158,34 +159,43 @@ class AppletView extends AppletEventTarget {
       contentView?.appendChild(this.view as HTMLPortalElement)
       return Promise.resolve()
     }
-    if (!this.sandbox) return Promise.resolve()
+    const sandbox = this.sandbox
+    if (!sandbox) return Promise.resolve()
     if (this.uri) {
-      this.sandbox.onload = () => Promise.resolve()
-      this.sandbox.onerror = () => Promise.reject()
-      this.sandbox.enter(contentView as HTMLElement)
+      sandbox.setOnLoad(() => {
+        sandbox.setOnUnload(this.loadSourceContent.bind(this)).catch(() => {
+          typeError(1201, 'warn')
+        })
+        Promise.resolve()
+      })
+      sandbox.setOnError(() => Promise.reject())
+      sandbox.enter(contentView as HTMLElement)
       this.injectIntoContext()
       this.injectIntoContext(2)
     } else {
-      this.sandbox.enter(contentView as HTMLElement)
+      sandbox.enter(contentView as HTMLElement)
       this.injectIntoContext()
-      this.sandbox.append(await this.source)
+      sandbox.append(await this.source)
       this.injectIntoContext(2)
-      this.sandbox.onunload = this.loadSourceContent.bind(this)
+      sandbox.setOnUnload(this.loadSourceContent.bind(this)).catch(() => {
+        typeError(1201, 'warn')
+      })
       Promise.resolve()
     }
   }
   private injectIntoContext(stage: 1 | 2 = 1) {
     if (!this.sameOrigin) return
     const contentWindow = this.contentWindow
-    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__) {
-      if (this.application.tunneling) {
-        injectDocumentOverwrite(contentWindow, this)
-      }
+    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__ && this.config.inject) {
+      typeError(1202)
       return
     }
     if (stage === 2) {
       injectDocument(contentWindow, this)
-      contentWindow.__LATH_APPLICATION_AVAILABILITY__ = true
+      contentWindow.__LATH_APPLICATION_TUNNELING__ = true
+      if (this.config.apply?.length) {
+        contentWindow.__LATH_APPLICATION_AVAILABILITY__ = true
+      }
     } else {
       injectContext(contentWindow, this)
     }
@@ -296,6 +306,7 @@ class AppletView extends AppletEventTarget {
     }
     this.contentView = this.getContentView()
     this.view = await this.createView()
+    this.setContentViewColor()
     contentSlot.name = `applet-${this.id}`
     this.status.refreshing = false
     this.trigger('refreshing')

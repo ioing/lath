@@ -1,6 +1,7 @@
-import { requestAnimationFrame, requestIdleCallback, setTimeout } from '../lib/util'
+import { requestIdleCallback, setTimeout } from '../lib/util'
 import { SmoothScroller } from '../Scroll'
-import { Application, Applet } from '../types'
+import loadWebAnimations from '../lib/webAnimations/load'
+import cancelAllAnimations from '../lib/webAnimations/cancel'
 import {
   switcherCSSText,
   snapWrapper2CSSText,
@@ -15,6 +16,12 @@ import {
   itemCloseBtnX1ShapeCSSText,
   itemCloseBtnX2ShapeCSSText
 } from './cssText'
+import { Application, Applet } from '../types'
+
+const EASE = {
+  smoothAcceleration: 'cubic-bezier(0.52, 0.16, 0.24, 1)',
+  quickDeceleration: 'cubic-bezier(0.32, 0.08, 0.24, 1)'
+}
 
 interface SwitcherOptions {
   readonly: boolean
@@ -56,6 +63,7 @@ class AppSwitcher {
     if (options) {
       this.options = options
     }
+    await loadWebAnimations()
     await this.createAppSwitcher()
     this.blurBackgroundImage()
     this.switcher.style.opacity = '1'
@@ -153,10 +161,7 @@ class AppSwitcher {
               } else {
                 applet.destroy()
               }
-              itemView.style.filter = 'blur(20px)'
-              setTimeout(() => {
-                itemView.style.display = 'none'
-              }, 400)
+              this.deleteItem(itemView)
               this.deleteMap[applet.id] = applet.createTime
             }, false)
           }
@@ -177,6 +182,29 @@ class AppSwitcher {
       }
     }
   }
+  public deleteItem(elementToDelete: HTMLElement) {
+    const elementPositions = []
+    const gridList = Array.from(this.snapWrapper.children) as HTMLElement[]
+    const indexToDelete = gridList.indexOf(elementToDelete)
+    const nextElements = gridList.slice(indexToDelete).filter(el => !el.getAttribute('applet-to-delete'))
+
+    for (let i = 1; i <= nextElements.length - 1; i++) {
+      const currentEl = nextElements[i - 1]
+      const nextElement = nextElements[i]
+      const currentElRect = currentEl.getBoundingClientRect()
+      elementPositions.push({
+        x: currentElRect.x - nextElement.offsetLeft,
+        y: currentElRect.y - nextElement.offsetTop
+      })
+    }
+    elementToDelete.setAttribute('applet-to-delete', 'true')
+    elementToDelete.style.transform = 'translate3d(-100vw, 0, 0)'
+    for (let i = 1; i <= nextElements.length - 1; i++) {
+      const nextElement = nextElements[i]
+      const pos = elementPositions[i - 1]
+      nextElement.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`
+    }
+  }
   private bindItemClick(applet: Applet, itemImgWrapper: HTMLElement, itemImg: HTMLElement) {
     itemImg.addEventListener('click', () => {
       if (this.progressName === 'close') return
@@ -185,13 +213,24 @@ class AppSwitcher {
     })
   }
   private async setNormalItem(applet: Applet, itemImg: HTMLElement): Promise<void> {
-    applet.captureShot(Date.now() - applet.visitTime >= 120000 ? true : false).then((canvas) => {
+    applet.captureShot(Date.now() - applet.visitTime >= 120000 ? true : false).then(async (canvas) => {
       itemImg.appendChild(canvas)
-      canvas.style.opacity = '.1'
-      requestAnimationFrame(() => {
-        canvas.style.transition = 'opacity .3s cubic-bezier(0.52, 0.16, 0.24, 1)'
-        canvas.style.opacity = '1'
-      })
+      await canvas.animate([
+        { opacity: 0 },
+        { opacity: .1 }
+      ], {
+        duration: 0,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).finished
+      canvas.animate([
+        { opacity: .1 },
+        { opacity: 1 }
+      ], {
+        duration: 300,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).play()
     }).catch((e) => {
       console.warn(e)
     })
@@ -204,24 +243,62 @@ class AppSwitcher {
     const imgHeight = itemImgWrapper.offsetHeight
     const offsetTop = itemImgWrapper.offsetTop
     const offsetLeft = itemImgWrapper.offsetLeft
-    const { Animate } = await import('../Animate')
-    const itemImgAnimate = new Animate(itemImg)
-    const snapWrapperAnimate = new Animate(this.snapWrapper)
     itemImg.style.cssText = `
       ${itemImgCoverCSSText}
       z-index: 3;
       background: ${color};
       border-radius: ${16 / scale}px;
-      transition: height .46s cubic-bezier(0.52, 0.16, 0.24, 1), transform .36s cubic-bezier(0.32, 0.08, 0.24, 1), border-radius .2s cubic-bezier(0.52, 0.16, 0.24, 1)
     `
     this.switcher.appendChild(itemImg)
     itemImg.appendChild(await applet.captureShot())
     if (this.progressName === 'close') return
-    snapWrapperAnimate.duration(0).to(0, 0, 0).scale(.9).opacity(.5).end().then(async () => {
+    await itemImg.animate([
+      { opacity: 0 },
+      { opacity: 1 }
+    ], {
+      duration: 100,
+      easing: EASE.smoothAcceleration,
+      fill: 'forwards'
+    }).finished
+    this.snapWrapper.animate({
+      transform: `translate3d(0, 0, 0) scale(.9)`,
+      opacity: .5
+    }, {
+      duration: 0,
+      fill: 'forwards'
+    }).finished.then(async () => {
       await Promise.all([
-        itemImgAnimate.height(imgHeight / scale).to(offsetLeft, offsetTop, 0).scale(scale).end(),
-        snapWrapperAnimate.to(0, 0, 0).scale(1).opacity(1).style('transition', 'transform .44s cubic-bezier(0.52, 0.16, 0.24, 1), opacity .36s cubic-bezier(0.52, 0.16, 0.24, 1)').end()
+        itemImg.animate({
+          height: `${imgHeight / scale}px`
+        }, {
+          duration: 460,
+          easing: EASE.smoothAcceleration,
+          fill: 'forwards'
+        }).finished,
+        itemImg.animate({
+          transform: `translate3d(${offsetLeft}px, ${offsetTop}px, 0) scale(${scale})`,
+        }, {
+          duration: 360,
+          easing: EASE.quickDeceleration,
+          fill: 'forwards'
+        }).finished,
+        this.snapWrapper.animate({
+          transform: `translate3d(0, 0, 0) scale(1)`
+        }, {
+          duration: 440,
+          easing: EASE.smoothAcceleration,
+          fill: 'forwards'
+        }).finished,
+        this.snapWrapper.animate({
+          opacity: 1
+        }, {
+          duration: 360,
+          easing: EASE.smoothAcceleration,
+          fill: 'forwards'
+        }).finished
       ])
+      cancelAllAnimations(itemImg)
+      cancelAllAnimations(itemImgWrapper)
       if (this.progressName === 'close') return
       itemImg.style.cssText = originalCssText
       itemImgWrapper.appendChild(itemImg)
@@ -241,9 +318,6 @@ class AppSwitcher {
     const imgHeight = itemImgWrapper.offsetHeight
     const scale = imgWidth / this.switcher.offsetWidth
     const color = applet.color
-    const { Animate } = await import('../Animate')
-    const itemImgAnimate = new Animate(itemImg)
-    const snapWrapperAnimate = new Animate(this.snapWrapper)
     this.switcher.appendChild(itemImg)
     itemImg.style.cssText = `
       ${itemImgCoverCSSText}
@@ -252,13 +326,44 @@ class AppSwitcher {
       background: ${color};
       border-radius: ${16 / scale}px;
       transform: translate3d(${offsetLeft}px, ${offsetTop}px, 0px) scale(${scale});
-      transition: transform .4s cubic-bezier(0.32, 0.08, 0.24, 1), height .1s cubic-bezier(0.52, 0.16, 0.24, 1), border-radius .8s cubic-bezier(0.52, 0.16, 0.24, 1);
     `
-    this.snapWrapper.style.transition = 'transform .44s cubic-bezier(0.52, 0.16, 0.24, 1), opacity .2s cubic-bezier(0.52, 0.16, 0.24, 1)'
     if (this.progressName === 'open') return
     await Promise.all([
-      snapWrapperAnimate.to(0, 0, 0).scale(.9).opacity(.5).end(),
-      itemImgAnimate.to(0, 0, 0).scale(1).height(this.switcher.offsetHeight).borderRadius('0px').end()
+      itemImg.animate({
+        transform: 'translate3d(0, 0, 0) scale(1)'
+      }, {
+        duration: 400,
+        easing: EASE.quickDeceleration,
+        fill: 'forwards'
+      }).finished,
+      itemImg.animate({
+        height: `${this.switcher.offsetHeight}px`
+      }, {
+        duration: 100,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).finished,
+      itemImg.animate({
+        borderRadius: '0px'
+      }, {
+        duration: 800,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).finished,
+      this.snapWrapper.animate({
+        transform: 'translate3d(0, 0, 0) scale(.9)'
+      }, {
+        duration: 440,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).finished,
+      this.snapWrapper.animate({
+        opacity: .5
+      }, {
+        duration: 200,
+        easing: EASE.smoothAcceleration,
+        fill: 'forwards'
+      }).finished
     ])
     const startTime = Date.now()
     this.application.to(applet.id, applet.param, undefined, undefined, true).then(() => {
@@ -277,18 +382,27 @@ class AppSwitcher {
     return activityApplet
   }
   private blurBackgroundImage() {
-    this.relativeViewport.style.filter = 'blur(20px)'
-    this.absoluteViewport.style.filter = 'blur(20px)'
+    this.relativeViewport.animate([
+      { filter: 'blur(0px)' },
+      { filter: 'blur(20px)' }
+    ], {
+      duration: 0,
+      fill: 'forwards'
+    }).play()
+    this.absoluteViewport.animate([
+      { filter: 'blur(0px)' },
+      { filter: 'blur(20px)' }
+    ], {
+      duration: 0,
+      fill: 'forwards'
+    }).play()
   }
   private focusBackgroundImage() {
-    this.relativeViewport.style.filter = 'none'
-    this.absoluteViewport.style.filter = 'none'
+    cancelAllAnimations(this.relativeViewport)
+    cancelAllAnimations(this.absoluteViewport)
   }
   private delayDynamicImport(): void {
     import('../Applet/captureShot').catch((e) => {
-      console.warn(e)
-    })
-    import('../Animate').catch((e) => {
       console.warn(e)
     })
   }

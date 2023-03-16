@@ -1,33 +1,81 @@
+import EASE from '../../lib/webAnimations/ease'
 import { SegueAnimateState } from '../../types'
 
 export default (type: number) => {
-  return (state: SegueAnimateState) => {
-    switch (type) {
-      case 0:
-        state.in.transformOrigin(state.attach).filter('brightness(0.5)').ease('ease-out-expo').duration(0).to(0, 0, 0).scale(2.5).end(() => {
-          const actionOrigin = state.applets[1].getActionOrigin()
-          const origin = actionOrigin ? [actionOrigin.x, actionOrigin.y] : state.origin
-          state.out.transformOrigin(origin).ease('ease-out-expo').duration(767).scale(0.0001).end(() => {
-            state.out.transformOrigin(origin).ease('ease').duration(10).scale(0.0001).opacity(0).end(() => {
-              state.callback(false)
-            })
-          })
-          state.in.duration(767).filter('brightness(1)').to(0, 0, 0).scale(1).end()
+  return async (state: SegueAnimateState) => {
+    const attachOrigin = typeof state.attach === 'string' ? state.attach : `${state.attach[0]}px, ${state.attach[1]}px`
+    const actionOrigin = state.applets[1].getActionOrigin()
+    const origin = actionOrigin ? `${actionOrigin.x}px, ${actionOrigin.y}px` : (typeof state.origin === 'string' ? state.origin : `${state.origin[0]}px, ${state.origin[1]}px`)
+    if (type === 0) {
+      await Promise.all([
+        state.view[0].animate([
+          {
+            backfaceVisibility: 'hidden',
+            transform: `translate3d(0, 0, 0) scale(2.5)`,
+            transformOrigin: attachOrigin
+          },
+          {
+            filter: 'brightness(1)',
+            transform: `translate3d(0, 0, 0) scale(1)`,
+          }
+        ], {
+          duration: 767,
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
+        }).finished,
+        state.view[1].animate({
+          backfaceVisibility: 'hidden',
+          transform: `translate3d(0, 0, 0) scale(0.0001)`,
+          transformOrigin: origin
+        }, {
+          duration: 767,
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
+        }).finished.then(() => {
+          state.view[1].animate({
+            opacity: 0
+          }, {
+            duration: 10,
+            easing: EASE['ease'],
+            fill: 'forwards'
+          }).play()
         })
-        break
-      case 1:
-        state.in.transformOrigin(state.origin).ease('ease-out-expo').duration(0).to(0, 0, 0).scale(0).end(() => {
-          state.out.transformOrigin(state.attach).ease('ease-out-expo').filter('brightness(1)').duration(0).to(0, 0, 0).scale(1).end(() => {
-            state.in.duration(767).to(0, 0, 0).scale(1).end()
-            state.out.duration(767).scale(2.5).filter('brightness(0.5)').end(() => {
-              state.out.duration(0).filter('brightness(1)').end(() => {
-                state.callback(false)
-              })
-            })
-          })
-        })
-        break
+      ])
+      return false
+    } else {
+      await Promise.all([
+        state.view[0].animate([
+          {
+            backfaceVisibility: 'hidden',
+            transform: `translate3d(0, 0, 0) scale(0)`,
+            transformOrigin: origin
+          },
+          {
+            transform: `translate3d(0, 0, 0) scale(1)`,
+          }
+        ], {
+          duration: 767,
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
+        }).finished,
+        state.view[1].animate([
+          {
+            backfaceVisibility: 'hidden',
+            transform: `translate3d(0, 0, 0) scale(1)`,
+            transformOrigin: attachOrigin,
+            filter: 'brightness(1)'
+          },
+          {
+            transform: `translate3d(0, 0, 0) scale(2.5)`,
+            filter: 'brightness(0.5)'
+          }
+        ], {
+          duration: 767,
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
+        }).finished
+      ])
+      return false
     }
-    return undefined
   }
 }

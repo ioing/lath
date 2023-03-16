@@ -2,7 +2,6 @@ import { Applet } from './Applet'
 import { Application } from './Application'
 import { Segue } from './Segue'
 import { DefineApplet } from './Define/DefineApplet'
-import { Animate } from './Animate'
 import { Slide } from './Slide'
 import { Modality } from './Modality'
 import { AppSwitcher } from './AppSwitcher'
@@ -125,7 +124,6 @@ type SheetOptions = {
   defaultCardSize?: 'mini' | 'large'
   maskOpacity?: number
   blockedHolderWidth?: number | string
-  alwaysPopUp?: boolean
   maskClosable?: boolean
   noHandlebar?: boolean
   backdropColor?: string
@@ -138,12 +136,10 @@ type PaperOptions = {
   clipTop?: string
   maskOpacity?: number
   swipeClosable?: boolean
-  alwaysPopUp?: boolean
 }
 type OverlayOptions = {
   maskOpacity?: number
   swipeClosable?: boolean
-  alwaysPopUp?: boolean
 }
 type AppletAttachBehavior = {
   agentSegue: () => Promise<void>
@@ -159,7 +155,8 @@ declare interface PresetConfig {
     frameworks: FrameworksAppletSettings
   } & {
     [key: string]: AppletAllTypeSettings | undefined
-  }
+  },
+  useStatic?: boolean
 }
 declare interface PresetApplets {
   [key: string]: DefineApplet
@@ -184,7 +181,7 @@ declare interface AppletResources {
 declare interface AppletManifest {
   config: AppletAllConfig
   resources?: AppletResources
-  components?: ((w: Window) => CustomElementConstructor)[]
+  components?: ((w: Window) => void)[]
   events?: Partial<AppletEvents>
 }
 declare interface AppletUsualManifest extends AppletManifest {
@@ -306,8 +303,6 @@ declare interface AppletEvents {
 declare interface SegueAnimateState {
   x: number
   y: number
-  in: Animate
-  out: Animate
   view: Array<HTMLElement>
   width: number
   height: number
@@ -364,7 +359,6 @@ export {
   SegueAnimateState,
   SegueActionOrigin,
   SegueBackType,
-  Animate,
   Segue,
   AnimationConfig,
   AnimationPrestType,
@@ -382,6 +376,7 @@ export {
   AppletControls,
   AppletAttachBehavior,
   AppletApplyOptions,
+  AppletApplyMaybeOptions,
   FrameworksAppletConfig,
   FrameworksAppletManifest,
   AppletAllConfig,

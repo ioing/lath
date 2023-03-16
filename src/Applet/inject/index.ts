@@ -50,22 +50,7 @@ export const injectDocument = (appletWindow: Window, applet: Applet): void => {
   }
   if (applet.components) {
     for (const mountComponent of applet.components) {
-      appletWindow.customElements.define('code-highlight', mountComponent(appletWindow))
-    }
-  }
-  cssVar(appletWindow, applet)
-}
-
-export const injectDocumentOverwrite = (appletWindow: Window, applet: Applet): void => {
-  const { config, application } = applet
-  const apply = Array.from(new Set(config.apply))
-  for (const item of apply) {
-    switch (item) {
-      case 'proxy-link':
-        openWindow(appletWindow, application)
-        break
-      default:
-        break
+      mountComponent(appletWindow)
     }
   }
   cssVar(appletWindow, applet)

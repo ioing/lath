@@ -21,14 +21,29 @@ class Sandbox {
   set src(src: string) {
     this.sandbox.src = src
   }
-  set onunload(onunload: null | ((this: WindowEventHandlers, ev: Event) => unknown)) {
-    this.window.onunload = onunload
+  public setOnUnload(onunload: null | ((this: WindowEventHandlers, ev: Event) => unknown)) {
+    try {
+      this.window.onunload = onunload
+      return Promise.resolve()
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
-  set onload(onload: (this: GlobalEventHandlers, ev: Event) => unknown) {
-    this.sandbox.onload = onload
+  public setOnLoad(onload: (this: GlobalEventHandlers, ev: Event) => unknown) {
+    try {
+      this.sandbox.onload = onload
+      return Promise.resolve()
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
-  set onerror(onerror: OnErrorEventHandler) {
-    this.sandbox.onerror = onerror
+  public setOnError(onerror: OnErrorEventHandler) {
+    try {
+      this.sandbox.onerror = onerror
+      return Promise.resolve()
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
   public set(allow = this.setting): void {
     if (allow === undefined) return

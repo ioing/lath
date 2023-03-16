@@ -29,7 +29,7 @@ class SegueBase {
     this.setupViewport()
   }
 
-  setupViewport(): void {
+  public setupViewport(): void {
     this.relativeViewport.id = 'relative-viewport'
     this.absoluteViewport.id = 'absolute-viewport'
     this.resetViewport()
@@ -55,7 +55,7 @@ class SegueBase {
     this.root.appendChild(this.applicationViewport)
   }
 
-  resetViewport(free?: boolean): void {
+  public resetViewport(free?: boolean): void {
     const baseStyle = `
       position: fixed;
       ${fullscreenBaseCSSText}

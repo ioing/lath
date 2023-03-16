@@ -1,3 +1,4 @@
+import EASE from '../../lib/webAnimations/ease'
 import { SegueAnimateState } from '../../types'
 
 export default (type: number) => {
@@ -42,12 +43,42 @@ export default (type: number) => {
         break
     }
     prevApplet.controls?.prepare(true)
-    await state.in.duration(0).ease('ease-out-expo').perspective(1000).transformOrigin(origin).to(0, 0, 0).backface(false).rotate3d(rx, ry, 0, rotate * direction).scale(minScale).end()
     await Promise.all([
-      state.in.delay(inDelay).duration(duration).backface(false).rotate3d(rx, ry, 0, 0).scale(1).end(),
-      state.out.duration(duration).ease('ease-out-expo').perspective(1000).transformOrigin(origin).backface(false).rotate3d(rx, ry, 0, -rotate * direction).scale(minScale).end()
+      state.view[0].animate([
+        {
+          transform: `translate3d(0, 0, 0) rotate3d(${rx}, ${ry}, 0, ${rotate * direction}deg) perspective(1000px) scale(${minScale})`,
+          backfaceVisibility: 'hidden',
+          transformOrigin: origin
+        },
+        {
+          transformOrigin: origin,
+          transform: `rotate3d(${rx}, ${ry}, 0, 0deg) perspective(1000px) scale(1)`,
+        }
+      ], {
+        delay: inDelay,
+        duration,
+        easing: EASE['ease-out-expo'],
+        fill: 'forwards'
+      }).finished,
+      state.view[1].animate({
+        backfaceVisibility: 'hidden',
+        transform: `rotate3d(${rx}, ${ry}, 0, ${-rotate * direction}deg) perspective(1000px) scale(${minScale})`,
+        transformOrigin: origin
+      }, {
+        delay: inDelay,
+        duration,
+        easing: EASE['ease-out-expo'],
+        fill: 'forwards'
+      }).finished
     ])
-    await state.out.duration(0).backface(false).rotate3d(rx, ry, 0, -rotate * direction).end()
+    await state.view[1].animate({
+      transform: `rotate3d(${rx}, ${ry}, 0, ${-rotate * direction}deg) perspective(1000px) scale(${minScale})`,
+      transformOrigin: origin
+    }, {
+      duration: 0,
+      easing: EASE['ease-out-expo'],
+      fill: 'forwards'
+    }).finished
     prevApplet.controls?.prepare()
     return Promise.resolve(false)
   }

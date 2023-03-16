@@ -1,3 +1,4 @@
+import EASE from '../../lib/webAnimations/ease'
 import { SegueAnimateState } from '../../types'
 
 export default (type: number) => {
@@ -37,21 +38,67 @@ export default (type: number) => {
 
     if (state.reverse) {
       if (swipeTransitionType === 'slide') {
-        await state.in.duration(0).filter('brightness(0.9)').to(inX * .1, inY * .1, 0).end()
+        await state.view[0].animate([
+          { filter: 'brightness(0.9)', transform: `translate3d(${inX * 0.1}px, ${inY * 0.1}px, 0)` },
+          { filter: 'brightness(0.9)', transform: `translate3d(0, 0, 0)` }
+        ], {
+          duration: 0,
+          easing: 'linear',
+          fill: 'forwards'
+        }).finished
       } else {
-        await state.in.duration(0).filter('brightness(0.9)').scale(1 - backdropReducedScale).end()
+        await state.view[0].animate([
+          { filter: 'brightness(0.9)', transform: `scale(${1 - backdropReducedScale})` },
+          { filter: 'brightness(0.9)', transform: 'scale(1)' }
+        ], {
+          duration: 0,
+          easing: 'linear',
+          fill: 'forwards'
+        }).finished
       }
       await Promise.all([
-        state.out.duration(duration).ease('ease-out-expo').to(outX, outY, 0).end(),
-        state.in.duration(duration).ease('ease-out-expo').filter('brightness(1)').to(0, 0, 0).scale(1).end()
+        state.view[1].animate([
+          { transform: `translate3d(${outX}px, ${outY}px, 0)` }
+        ], {
+          duration,
+          easing: EASE['ease-out-expo']
+        }).finished,
+        state.view[0].animate([
+          { transform: 'translate3d(0, 0, 0)', filter: 'brightness(1)', scale: 1 },
+          { transform: 'translate3d(0, 0, 0)', filter: 'brightness(1)', scale: 1 }
+        ], {
+          duration,
+          easing: EASE['ease-out-expo']
+        }).finished
       ])
     } else {
-      await state.in.duration(0).to(inX, inY, 0).end()
+      await state.view[0].animate([
+        { transform: `translate3d(${inX}px, ${inY}px, 0)` }
+      ], {
+        duration: 0,
+        easing: 'linear',
+        fill: 'forwards'
+      }).finished
       await Promise.all([
-        state.in.duration(duration).ease('ease-out-expo').to(0, 0, 100).end(),
+        state.view[0].animate([
+          { transform: 'translate3d(0, 0, 100px)' },
+        ], {
+          duration,
+          easing: EASE['ease-out-expo']
+        }).finished,
         swipeTransitionType === 'slide'
-          ? state.out.duration(duration).ease('ease-out-expo').filter('brightness(0.9)').to(outX * .3, outY * .3, 0).end()
-          : state.out.duration(duration).ease('ease-out-expo').filter('brightness(0.9)').scale(1 - backdropReducedScale).end()
+          ? state.view[1].animate([
+            { filter: 'brightness(0.9)', transform: `translate3d(${outX * .3}px, ${outY * .3}px, 0)` }
+          ], {
+            duration,
+            easing: EASE['ease-out-expo']
+          }).finished
+          : state.view[1].animate([
+            { filter: 'brightness(0.9)', scale: 1 - backdropReducedScale }
+          ], {
+            duration,
+            easing: EASE['ease-out-expo']
+          }).finished
       ])
     }
     return Promise.resolve(false)

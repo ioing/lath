@@ -7,12 +7,17 @@ import { setTimeout, testHasSmoothSnapScrolling, testHasSnapReset, sleep } from 
  */
 // old; ios < 9
 const NoSmoothSnapScrolling = testHasSmoothSnapScrolling() === false
+// old; ios < 15
+const HasSnapReset = testHasSnapReset()
 /**
  * Obsolete
  * ------------- end -------------
  */
 class ModalityEventTarget extends ModalityState {
   private scrollingTimeoutId = -1
+  private freezePosition = -1
+  // old; ios < 15
+  private fixSnapReset = HasSnapReset ? false : true
   private fallHeight = this.application.isFullscreen ? 40 : 0
   private processPromise!: Promise<void>
   private async switchSheet(hideThresholdScale = 1.5): Promise<void> {
@@ -45,9 +50,7 @@ class ModalityEventTarget extends ModalityState {
      * Obsolete
      * ------------- start -------------
      */
-    // old; ios < 15
-    const hasSnapReset = testHasSnapReset()
-    if (!hasSnapReset) this.switchSnap(false)
+    if (!HasSnapReset) this.switchSnap(false)
     /**
      * Obsolete
      * ------------- end -------------
@@ -61,7 +64,7 @@ class ModalityEventTarget extends ModalityState {
      * ------------- start -------------
      */
     // old; ios < 15
-    if (!hasSnapReset) this.switchSnap(true)
+    if (!HasSnapReset) this.switchSnap(true)
     /**
      * Obsolete
      * ------------- end -------------
@@ -257,15 +260,10 @@ class ModalityEventTarget extends ModalityState {
     }, true)
   }
   protected bindBaseEvent() {
-    const options = this.options
     this.applet.on('willShow', () => {
       this.switchBackdropColor(true)
       if (this.application.segue.stackUp) {
         this.fromViewports = undefined
-      }
-      if (options?.alwaysPopUp !== false) {
-        if (this.applet.transforming) return
-        this.rise()
       }
     })
     this.applet.on('willSegueShow', () => {
@@ -276,10 +274,6 @@ class ModalityEventTarget extends ModalityState {
     })
     this.applet.on('willHide', () => {
       this.removeSlidingEvent()
-      if (options?.alwaysPopUp !== false) {
-        if (this.applet.transforming) return
-        this.fall()
-      }
     })
     this.applet.on('willSegueHide', () => {
       this.segueTransition(false)
@@ -287,6 +281,26 @@ class ModalityEventTarget extends ModalityState {
     this.applet.on('hide', () => {
       this.switchBackdropColor(false)
     })
+  }
+  public freeze(): void {
+    this.removeSlidingEvent()
+    if (this.fixSnapReset === false) {
+      // (offsetTop) ios < 15, Get the scroll position of the snap as 0.
+      this.freezePosition = this.modalityContainer.scrollTop || this.contentContainer.offsetTop
+      this.modalityPlaceholder.style.display = 'none'
+    }
+  }
+  public activate(): void {
+    if (this.fixSnapReset === false && this.freezePosition !== -1) {
+      this.modalityPlaceholder.style.display = 'block'
+      const freezePosition = this.freezePosition
+      this.modalityContainer.scrollTop = freezePosition
+      this.scroller.snapTo(0, freezePosition, 0)
+      this.freezePosition = -1
+      // The snap will be automatically repaired on the second execution.
+      this.fixSnapReset = true
+    }
+    this.bindSlidingEvent()
   }
 }
 

@@ -43,7 +43,7 @@ class AppletBase extends EventProvider {
     background: 'auto',
     free: false
   }
-  public components: ((w: Window) => CustomElementConstructor)[] = []
+  public components: ((w: Window) => void)[] = []
   public resources: AppletResources = {
     script: [],
     image: [],

@@ -1,6 +1,6 @@
 {
   "name": "lath",
-  "version": "0.10.39",
+  "version": "0.12.0",
   "description": "Seamless connection of pages.",
   "keywords": [
     "lath",
@@ -44,10 +44,12 @@
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "html2canvas": "^1.4.1",
     "scroll-polyfill": "^1.0.1",
-    "uglify-js": "^3.17.4"
+    "uglify-js": "^3.17.4",
+    "web-animations-js": "^2.3.2"
   },
   "devDependencies": {
     "@types/node": "^10.12.12",
+    "@types/web-animations-js": "^2.2.12",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "eslint": "^8.11.0",

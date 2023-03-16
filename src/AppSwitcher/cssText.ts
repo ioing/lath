@@ -61,7 +61,7 @@ export const itemViewCSSText = `
   scroll-snap-align: start;
   cursor: pointer;
   margin: 0 10px;
-  transition: filter .4s ease;
+  transition: transform .4s ease;
 `
 
 export const itemImgCSSText = `

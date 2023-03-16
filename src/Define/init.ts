@@ -8,6 +8,10 @@ import { DefineApplication } from './DefineApplication'
 import typeError from '../lib/typeError'
 import needsPolyfill from '../lib/wc/needsPolyfill'
 
+if (needsPolyfill) {
+  import('@webcomponents/webcomponentsjs')
+}
+
 export const initApplication = () => {
   const defineElements = () => {
     if (customElements.get('define-applet') || customElements.get('define-application')) {

@@ -1,9 +1,10 @@
 
 export default {
-  'in': 'ease-in',
-  'out': 'ease-out',
-  'in-out': 'ease-in-out',
-  'snap': 'cubic-bezier(0, 1, .5, 1)',
+  'ease': 'ease',
+  'ease-in': 'ease-in',
+  'ease-out': 'ease-out',
+  'ease-in-out': 'ease-in-out',
+  'ease-snap': 'cubic-bezier(0, 1, .5, 1)',
   'linear': 'cubic-bezier(0.250, 0.250, 0.750, 0.750)',
   'ease-in-quad': 'cubic-bezier(0.550, 0.085, 0.680, 0.530)',
   'ease-in-cubic': 'cubic-bezier(0.550, 0.055, 0.675, 0.190)',

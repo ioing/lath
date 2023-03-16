@@ -1,7 +1,9 @@
 import { Application } from '../Application'
 import { SegueAnimation } from './Animation'
-import { requestIdleCallback, setTimeout } from '../lib/util'
+import { requestIdleCallback, setTimeout, testHasSnapReset } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
+import loadWebAnimations from '../lib/webAnimations/load'
+import cancelAllAnimations from '../lib/webAnimations/cancel'
 import { SegueAnimateState, SegueActionOrigin, Applet, PresetConfig } from '../types'
 
 type SegueToOptions = [
@@ -11,6 +13,9 @@ type SegueToOptions = [
   touches?: SegueActionOrigin,
   disableAnimation?: boolean
 ]
+
+// old; ios < 15
+const HasSnapReset = testHasSnapReset()
 
 class SegueSwitch extends SegueAnimation {
   private readonly windowSet: string[] = []
@@ -38,9 +43,7 @@ class SegueSwitch extends SegueAnimation {
 
   private delayDynamicImport(): void {
     requestIdleCallback(() => {
-      import('../Animate').catch((e) => {
-        console.warn(e)
-      })
+      loadWebAnimations()
     })
   }
 
@@ -56,6 +59,7 @@ class SegueSwitch extends SegueAnimation {
   private resetAppletViewport(applet: Applet, visibility = this.immovable): void {
     const viewport = applet.viewport as HTMLElement
     const systemLevel = ['frameworks', 'system'].includes(applet.rel)
+    cancelAllAnimations(viewport)
     viewport.style.cssText = ''
     if (systemLevel) return
     viewport.style.cssText = `
@@ -226,12 +230,10 @@ class SegueSwitch extends SegueAnimation {
     const pos = this.pos()
 
     return new Promise((resolve, reject) => {
-      import('../Animate').then(({ Animate }) => {
+      loadWebAnimations().then(() => {
         const animateEvent: SegueAnimateState = {
           x: pos.x,
           y: pos.y,
-          in: new Animate(viewports[0]),
-          out: new Animate(viewports[1]),
           view: viewports,
           width: pos.width,
           height: pos.height,
@@ -299,6 +301,20 @@ class SegueSwitch extends SegueAnimation {
             this.prevApplet.controls.activate()
           }
         }
+        /**
+         * Obsolete
+         * ------------- start -------------
+         */
+        // old; ios < 15
+        // Keep the position of the previous pop-up window, when the iOS is less than 15, there is a bug of snap reset.
+        // When a new content is inserted in the document stream, the snap resets, and the problem only occurs the first time.
+        if (HasSnapReset && this.prevApplet.modality) {
+          this.prevApplet.modality.freeze()
+        }
+        /**
+         * Obsolete
+         * ------------- end -------------
+         */
       }
       // 1.controls
       if (this.applet.controls) {
@@ -339,6 +355,21 @@ class SegueSwitch extends SegueAnimation {
         this.applet.controls.activate()
       }
     }
+    /**
+         * Obsolete
+         * ------------- start -------------
+         */
+    // old; ios < 15
+    // Keep the position of the previous pop-up window, when the iOS is less than 15, there is a bug of snap reset.
+    // When a new content is inserted in the document stream, the snap resets, and the problem only occurs the first time.
+    if (HasSnapReset && this.applet.modality) {
+      const applet = this.applet
+      applet.modality?.activate()
+    }
+    /**
+     * Obsolete
+     * ------------- end -------------
+     */
     this.applet.show()
     if (this.prevApplet) {
       this.prevApplet.hide()
@@ -352,6 +383,8 @@ class SegueSwitch extends SegueAnimation {
   }
 
   private switchViewport() {
+    cancelAllAnimations(this.relativeViewport)
+    cancelAllAnimations(this.absoluteViewport)
     this.resetViewport(this.applet?.config?.free)
   }
 
@@ -366,6 +399,7 @@ class SegueSwitch extends SegueAnimation {
         const backdropType = this.applet.useControls || this.applet.config.modality
         const backdropState = (backdropType && !this.countercurrent) || (this.prevApplet.config.modality && this.fromHistoryBack)
         if (this.prevApplet.viewport) {
+          cancelAllAnimations(this.prevApplet.viewport)
           this.prevApplet.viewport.style.transform = backdropState ? 'translate(0, 0)' : 'translate(0, 200%)'
         }
       }

@@ -6,22 +6,59 @@ export default async (state: SegueAnimateState) => {
   const swipeTransitionType = state.swipeTransitionType
   if (!controls) return Promise.resolve(false)
   if (!state.reverse) {
-    await state.in.duration(0).to(0, 0, 0).end()
+    await state.view[0].animate({
+      transform: `translate3d(0, 0, 0)`
+    }, {
+      duration: 0,
+      fill: 'forwards'
+    }).finished
     if (swipeTransitionType === 'slide') {
-      state.out.duration(400).delay(30).to('-30%', 0, 0).end()
+      state.view[1].animate({
+        transform: `translate3d(-30%, 0, 0)`
+      }, {
+        delay: 100,
+        duration: 400,
+        fill: 'forwards'
+      }).play()
     } else {
-      state.out.duration(400).to(0, 0, 0).scale(1 - controls.backdropReducedScale).end()
+      state.view[1].animate({
+        transform: `translate3d(0, 0, 0) scale(${1 - controls.backdropReducedScale})`
+      }, {
+        duration: 400,
+        fill: 'forwards'
+      }).play()
     }
     await controls?.show()
     return Promise.resolve(false)
   } else {
+    state.applets[0].controls?.appearImmediately()
     if (state.applets[1].controls?.visibility === true) {
       if (swipeTransitionType === 'slide') {
-        await state.in.duration(0).to('-30%', 0, 0).end()
-        state.in.duration(400).to(0, 0, 0).end()
+        await state.view[0].animate({
+          transform: `translate3d(-30%, 0, 0)`
+        }, {
+          duration: 0,
+          fill: 'forwards'
+        }).finished
+        state.view[0].animate({
+          transform: `translate3d(0, 0, 0)`
+        }, {
+          duration: 400,
+          fill: 'forwards'
+        }).play()
       } else {
-        await state.in.duration(0).to(0, 0, 0).scale(1 - controls.backdropReducedScale).end()
-        state.in.duration(400).to(0, 0, 0).scale(1).end()
+        await state.view[0].animate({
+          transform: `translate3d(0, 0, 0) scale(${1 - controls.backdropReducedScale})`
+        }, {
+          duration: 0,
+          fill: 'forwards'
+        }).finished
+        state.view[0].animate({
+          transform: `translate3d(0, 0, 0) scale(1)`
+        }, {
+          duration: 400,
+          fill: 'forwards'
+        }).play()
       }
       await controls?.hide()
     }

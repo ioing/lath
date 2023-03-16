@@ -29,7 +29,7 @@ module.exports = {
       useTsconfigDeclarationDir: true
     })
   ],
-  external: ['html2canvas', '@webcomponents/webcomponentsjs'],
+  external: ['html2canvas', '@webcomponents/webcomponentsjs', 'web-animations-js'],
   onwarn: function (warning) {
     if (warning.code === 'THIS_IS_UNDEFINED') {
       return

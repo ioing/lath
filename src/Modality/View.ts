@@ -121,7 +121,7 @@ class ModalityView extends ModalityEventTarget {
       modalityHandle.style.display = 'none'
     }
 
-    if (this.options?.swipeClosable !== false && getIOSversion()) {
+    if (this.options?.swipeClosable ?? getIOSversion()) {
       setTimeout(() => {
         this.bindDragContentEvent()
       }, 10)

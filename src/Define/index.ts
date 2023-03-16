@@ -4,6 +4,8 @@ import typeError from '../lib/typeError'
 import autoScrollPolyfill from '../Scroll/polyfill'
 import { initApplication } from './init'
 
+import('..')
+
 export const destroyApplication = () => {
   if (!Preset.appletsSpace) return
   const appletsSpace = Preset.appletsSpace
@@ -16,16 +18,16 @@ export const destroyApplication = () => {
   }
 }
 
-export const createApplication = async (options: Partial<PresetConfig> = { tunneling: true }): Promise<Application> => {
+export const createApplication = async (options: Partial<PresetConfig> = { tunneling: false }): Promise<Application> => {
   /**
    * Obsolete
    */
   await autoScrollPolyfill()
   if (Preset.__EXISTING__) return Promise.reject('repeat')
-  if (options.tunneling && window.__LATH_APPLICATION_AVAILABILITY__) return Promise.reject('tunneling')
+  if (options.tunneling && !!window.__LATH_APPLICATION_AVAILABILITY__) return Promise.reject('tunneling')
   Preset.__EXISTING__ = true
   const { Application } = await import('..')
-  const { tunneling = true, zIndex = undefined, applets = {} as Required<PresetConfig>['applets'] } = options
+  const { tunneling = false, zIndex = undefined, applets = {} as Required<PresetConfig>['applets'] } = options
   if (!Preset.root) {
     setTimeout(() => {
       if (!Preset.root) {

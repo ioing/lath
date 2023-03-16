@@ -7,17 +7,17 @@ class AppletPrefetch extends AppletLifeCycle {
     return new Promise((resolve, reject) => {
       const head = document.head
       const sandbox = new Sandbox(uri, '', type)
-      sandbox.onload = (e) => {
+      sandbox.setOnLoad((e) => {
         // wait async script
         setTimeout(() => {
           sandbox.exit()
         }, 2000)
         resolve(e)
-      }
-      sandbox.onerror = (e) => {
+      })
+      sandbox.setOnError((e) => {
         sandbox.exit()
         reject(e)
-      }
+      })
       sandbox.enter(head)
     })
   }

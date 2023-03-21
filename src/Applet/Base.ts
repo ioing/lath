@@ -69,6 +69,8 @@ class AppletBase extends EventProvider {
     if (components) {
       this.components = components
     }
+    // preloadAnimation
+    this.application.segue.preloadAnimation(this.self)
   }
   public setDefaultConfig = manifestProcess
 }

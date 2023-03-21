@@ -47,8 +47,7 @@ export class DefineApplication extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
     if (name === 'default-applet' && newValue) {
       if (oldValue && oldValue !== newValue) {
-        typeError(1004)
-        return
+        typeError(1004, 'warn')
       }
       // some exception callbacks
       this.defineApplet?.()

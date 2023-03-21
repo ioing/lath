@@ -186,7 +186,7 @@ class AppletView extends AppletEventTarget {
   private injectIntoContext(stage: 1 | 2 = 1) {
     if (!this.sameOrigin) return
     const contentWindow = this.contentWindow
-    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__ && this.config.inject) {
+    if (contentWindow.__LATH_APPLICATION_AVAILABILITY__ && this.viewType === 'shadow') {
       typeError(1202)
       return
     }

@@ -1,6 +1,6 @@
 const ErrorCode: ErrorCodeType = {
   1001: '<define-application> not found！Only call <define-applet> at the Top Level / inside loops, conditions, or nested functions.',
-  1002: 'Cannot redefine \'applet-id\'!',
+  1002: 'Avoid redefine \'applet-id\'! "[$]"',
   1003: 'Only call <define-applet> at the Top Level / inside loops, conditions, or nested functions.',
   1004: 'Non-changeable \'default-applet\'!',
   1005: '<define-application> execution exception! Maybe the browser version is not supported.',
@@ -15,7 +15,7 @@ const ErrorCode: ErrorCodeType = {
   1106: 'Applet config: Using the "sheet" animation type requires setting the modality to "sheet".',
   1107: 'Applet config: An unknown modality type was used.',
   1201: 'Applet has entered cross-domain mode, stopping the ability to inject.',
-  1202: 'Shared window Applets (i.e. non-iframe) only support one-time execution of \'apply\' and \'inject\' methods.'
+  1202: 'Shared window Applets (i.e. non-iframe) only support one-time execution of \'apply\' and \'inject\' methods. If you have the above configuration, merge it into the Frameworks Applet.'
 }
 
 export {

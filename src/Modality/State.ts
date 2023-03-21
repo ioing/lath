@@ -1,9 +1,5 @@
 import { ModalityBase } from './Base'
 
-/**
- * Obsolete
- * ------------- end -------------
- */
 class ModalityState extends ModalityBase {
   /**
    * Gets the view of the two switched windows during a transition.

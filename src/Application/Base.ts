@@ -73,6 +73,9 @@ class ApplicationBase extends EventProvider {
     this.presetAppletsView = presetApplets
   }
   public setting(options: ApplicationOptions): void {
+    if (!options.applets.frameworks.config.prerender) {
+      options.applets.frameworks.config.prerender = Object.keys(options.applets)
+    }
     this.options = options
   }
 }

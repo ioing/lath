@@ -16,13 +16,12 @@ declare global {
 function convertKeyframes(element: Element, keyframes: KeyframesArray | KeyframeObject): AnimationsProperty {
   const newKeyFrames: AnimationsProperty = {}
   const computedStyle = getComputedStyle(element)
-  if (!Array.isArray(keyframes)) {
-    for (const propertyName in keyframes) {
-      if (!Array.isArray(keyframes[propertyName])) {
-        newKeyFrames[propertyName] = [computedStyle[propertyName], keyframes[propertyName]]
-      } else {
-        newKeyFrames[propertyName] = [keyframes[propertyName][0], keyframes[propertyName][1]]
-      }
+  if (Array.isArray(keyframes)) return keyframes as unknown as AnimationsProperty
+  for (const propertyName in keyframes) {
+    if (!Array.isArray(keyframes[propertyName])) {
+      newKeyFrames[propertyName] = [computedStyle[propertyName], keyframes[propertyName]]
+    } else {
+      newKeyFrames[propertyName] = [keyframes[propertyName][0], keyframes[propertyName][1]]
     }
   }
   return newKeyFrames

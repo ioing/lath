@@ -2,6 +2,7 @@ import { requestIdleCallback, setTimeout } from '../lib/util'
 import { SmoothScroller } from '../Scroll'
 import loadWebAnimations from '../lib/webAnimations/load'
 import cancelAllAnimations from '../lib/webAnimations/cancel'
+import allAnimationsFinish from '../lib/webAnimations/finish'
 import {
   switcherCSSText,
   snapWrapper2CSSText,
@@ -65,7 +66,7 @@ class AppSwitcher {
     }
     await loadWebAnimations()
     await this.createAppSwitcher()
-    this.blurBackgroundImage()
+    await this.blurBackgroundImage()
     this.switcher.style.opacity = '1'
     this.bindResize()
     setTimeout(() => {
@@ -73,10 +74,10 @@ class AppSwitcher {
       this.progressName = ''
     }, 400)
   }
-  public close(): void {
+  public async close(): Promise<void> {
     if (this.progressName === 'close') return
     this.progressName = 'close'
-    this.focusBackgroundImage()
+    await this.focusBackgroundImage()
     this.switcher.style.opacity = '0'
     setTimeout(() => {
       if (this.progressName === 'open') return
@@ -182,7 +183,7 @@ class AppSwitcher {
       }
     }
   }
-  public deleteItem(elementToDelete: HTMLElement) {
+  public deleteItem(elementToDelete: HTMLElement): void {
     const elementPositions = []
     const gridList = Array.from(this.snapWrapper.children) as HTMLElement[]
     const indexToDelete = gridList.indexOf(elementToDelete)
@@ -329,6 +330,7 @@ class AppSwitcher {
     `
     if (this.progressName === 'open') return
     await Promise.all([
+      this.application.to(applet.id, applet.param, undefined, undefined, true),
       itemImg.animate({
         transform: 'translate3d(0, 0, 0) scale(1)'
       }, {
@@ -365,41 +367,25 @@ class AppSwitcher {
         fill: 'forwards'
       }).finished
     ])
-    const startTime = Date.now()
-    this.application.to(applet.id, applet.param, undefined, undefined, true).then(() => {
-      const processTime = Date.now() - startTime
-      setTimeout(() => {
-        this.progressName = ''
-        this.close()
-      }, processTime > 200 ? 0 : 400 - processTime)
-    })
+    this.progressName = ''
+    this.close()
   }
-  private getActiveApplet() {
+  private getActiveApplet(): Applet | undefined {
     const activityApplet = this.application.activityApplet
     if (activityApplet?.slide) {
       return activityApplet.subApplet
     }
     return activityApplet
   }
-  private blurBackgroundImage() {
-    this.relativeViewport.animate([
-      { filter: 'blur(0px)' },
-      { filter: 'blur(20px)' }
-    ], {
-      duration: 0,
-      fill: 'forwards'
-    }).play()
-    this.absoluteViewport.animate([
-      { filter: 'blur(0px)' },
-      { filter: 'blur(20px)' }
-    ], {
-      duration: 0,
-      fill: 'forwards'
-    }).play()
+  private async blurBackgroundImage(): Promise<void> {
+    await allAnimationsFinish(this.relativeViewport)
+    await allAnimationsFinish(this.absoluteViewport)
+    this.relativeViewport.style.filter = this.absoluteViewport.style.filter = 'blur(20px)'
   }
-  private focusBackgroundImage() {
-    cancelAllAnimations(this.relativeViewport)
-    cancelAllAnimations(this.absoluteViewport)
+  private async focusBackgroundImage(): Promise<void> {
+    await allAnimationsFinish(this.relativeViewport)
+    await allAnimationsFinish(this.absoluteViewport)
+    this.relativeViewport.style.filter = this.absoluteViewport.style.filter = 'none'
   }
   private delayDynamicImport(): void {
     import('../Applet/captureShot').catch((e) => {

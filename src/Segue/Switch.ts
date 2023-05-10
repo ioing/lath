@@ -399,13 +399,13 @@ class SegueSwitch extends SegueAnimation {
         const backdropType = this.applet.useControls || this.applet.config.modality
         const backdropState = (backdropType && !this.countercurrent) || (this.prevApplet.config.modality && this.fromHistoryBack)
         if (this.prevApplet.viewport) {
-          cancelAllAnimations(this.prevApplet.viewport)
           this.prevApplet.viewport.style.transform = backdropState ? 'translate(0, 0)' : 'translate(0, 200%)'
         }
       }
       this.resetAppletViewport(this.applet, true)
     }
     if (this.prevApplet.viewport) {
+      cancelAllAnimations(this.prevApplet.viewport)
       this.prevApplet.viewport.style.transitionDuration = '0ms'
     }
     if (this.prevApplet.config.background !== false || this.applet.config.modality) {

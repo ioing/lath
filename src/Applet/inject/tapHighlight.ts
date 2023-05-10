@@ -20,7 +20,7 @@ export default (appletWindow: Window, capture?: string | string[]): void => {
   }
   const addHighlight = (event: TouchEvent): void => {
     const captureList = capture ? typeof capture === 'string' ? capture.split(' ') : capture : null
-    const path = (event as ObsoleteTouchEvent).path || event.composedPath() || []
+    const path = (event as ObsoleteTouchEvent).path || event.composedPath?.() || []
     path.splice(-3)
     const anchor: HTMLElement | null = (() => {
       for (const el of path) {

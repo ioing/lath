@@ -332,9 +332,9 @@ class Application extends ApplicationState {
   }
   public activateTunneling(): void {
     window.addEventListener('message', (event: MessageEvent) => {
+      if (event.source === window) return
       const { type } = event.data
       const activityApplet = this.activityApplet
-      if (event.source === window) return
       switch (type) {
         case 'applet-show':
           activityApplet?.show()
@@ -355,6 +355,19 @@ class Application extends ApplicationState {
           this?.activate(false)
           break
       }
+    })
+  }
+  public subscribeSubAppMessages(): void {
+    window.addEventListener('message', (event: MessageEvent) => {
+      if (event.source === window) return
+      const { type, data } = event.data
+      switch (type) {
+        case 'overscrollHistoryNavigationStatusChange':
+          this.overscrollHistoryNavigation.moment = data[0]
+          this.overscrollHistoryNavigation.type = data[1]
+          break
+      }
+      parent.postMessage(event.data, '*')
     })
   }
   public async start(): Promise<void> {

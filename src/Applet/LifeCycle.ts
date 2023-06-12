@@ -101,7 +101,10 @@ class AppletLifeCycle extends AppletState {
     this.trigger('willSegueHide')
   }
 
-  public destroy(reserve = false): Promise<boolean> {
+  public destroy(reserve = false, referenceChecking = true): Promise<boolean> {
+    if (referenceChecking) {
+      [...this.allSubAppletIds, ...(this.parentApplet?.allSubAppletIds ?? [])].forEach((subAppletId) => this.application.applets[subAppletId]?.destroy(false, false))
+    }
     return new Promise((resolve) => {
       if (!this.view) return resolve(true)
       if (this.isPresetAppletsView) return resolve(false)

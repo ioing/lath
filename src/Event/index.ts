@@ -36,17 +36,15 @@ class EventProvider {
 
   public removeEventGroup(groupName: string): this {
     const filter = <T extends TriggerEventTypes>(t: T) => {
-      interface GroupTriggerEventCallback extends TriggerEventCallback<T> {
-        [EventGroupSymbol]: string
-      }
-      return this._events[t]?.filter((fn) => {
-        return (fn as GroupTriggerEventCallback)[EventGroupSymbol] !== groupName
+      return (this._events[t] as (TriggerEventCallback<T> & { [EventGroupSymbol]: string })[] | undefined)?.filter((fn) => {
+        return fn[EventGroupSymbol] !== groupName
       })
     }
 
     for (const type in this._events) {
       this._events[type as TriggerEventTypes] = filter(type as TriggerEventTypes)
     }
+
     return this
   }
 

@@ -22,27 +22,33 @@ export class AppletControlsEventTarget extends AppletControlsState {
     const swipeTransitionType = this.swipeTransitionType
     const degree = this.degree
     this.requestGoBack(degree)
-    this.backdropView.style.transitionDuration = '0ms'
-    this.backdropView.style.transitionDelay = '0ms'
-    this.backdropView.style.transitionProperty = 'opacity'
-    this.backdropView.style.opacity = `${degree}`
-    this.controlsView.style.transitionDuration = '0ms'
-    this.controlsView.style.transitionDelay = '0ms'
-    this.controlsView.style.transitionProperty = 'background-color'
+    this.backdropView.animate([
+      { opacity: degree }
+    ], {
+      duration: 0,
+      fill: 'forwards'
+    }).play()
+    let controlsViewBackgroundColor = 'transparent'
     if (degree > 1) {
-      this.controlsView.style.backgroundColor = `rgba(0, 0, 0, ${0.5 + 3 * (degree - 1)})`
-    } else {
-      this.controlsView.style.backgroundColor = 'transparent'
+      controlsViewBackgroundColor = `rgba(0, 0, 0, ${0.5 + 3 * (degree - 1)})`
     }
+    this.controlsView.animate([
+      { backgroundColor: controlsViewBackgroundColor }
+    ], {
+      duration: 0,
+      fill: 'forwards'
+    }).play()
     if (prevViewport && applet.visibility && !applet.transforming && !this.toggleLock) {
-      prevViewport.style.transitionDuration = '0ms'
-      prevViewport.style.transitionDelay = '0ms'
-      prevViewport.style.transitionProperty = 'transform'
+      let prevViewportTransform = `scale(${1 - degree * 0.03})`
       if (swipeTransitionType === 'slide') {
-        prevViewport.style.transform = `translate3d(${-degree * 30}%, 0, 0)`
-      } else {
-        prevViewport.style.transform = `scale(${1 - degree * 0.03})`
+        prevViewportTransform = `translate3d(${-degree * 30}%, 0, 0)`
       }
+      prevViewport.animate([
+        { transform: prevViewportTransform }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
     }
     this.application.trigger('transition', degree, this.application.segue.appletGroup)
   }
@@ -89,11 +95,19 @@ export class AppletControlsEventTarget extends AppletControlsState {
     const swipeTransitionType = this.swipeTransitionType
     const prevViewport = viewports[1]
     if (prevViewport) {
+      let transform = ''
       if (swipeTransitionType === 'slide') {
-        prevViewport.style.transform = reset ? 'translate3d(0, 0, 0)' : 'translate3d(-30%, 0, 0)'
+        transform = reset ? 'translate3d(0, 0, 0)' : 'translate3d(-30%, 0, 0)'
       } else {
-        prevViewport.style.transform = reset ? 'scale(1)' : `scale(${1 - this.backdropReducedScale})`
+        transform = reset ? 'scale(1)' : `scale(${1 - this.backdropReducedScale})`
       }
+
+      prevViewport.animate([
+        { transform }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
     }
   }
   public async switch(show: boolean): Promise<void> {

@@ -1,3 +1,4 @@
+import EASE from '../../lib/webAnimations/ease'
 import { SegueAnimateState } from '../../types'
 
 export default async (state: SegueAnimateState) => {
@@ -10,14 +11,15 @@ export default async (state: SegueAnimateState) => {
       transform: `translate3d(0, 0, 0)`
     }, {
       duration: 0,
+      easing: EASE['ease-in-out'],
       fill: 'forwards'
     }).finished
     if (swipeTransitionType === 'slide') {
       state.view[1].animate({
         transform: `translate3d(-30%, 0, 0)`
       }, {
-        delay: 100,
         duration: 400,
+        easing: EASE['ease-in-out'],
         fill: 'forwards'
       }).play()
     } else {
@@ -25,6 +27,7 @@ export default async (state: SegueAnimateState) => {
         transform: `translate3d(0, 0, 0) scale(${1 - controls.backdropReducedScale})`
       }, {
         duration: 400,
+        easing: EASE['ease-in-out'],
         fill: 'forwards'
       }).play()
     }
@@ -38,12 +41,14 @@ export default async (state: SegueAnimateState) => {
           transform: `translate3d(-30%, 0, 0)`
         }, {
           duration: 0,
+          easing: EASE['ease-in-out'],
           fill: 'forwards'
         }).finished
         state.view[0].animate({
           transform: `translate3d(0, 0, 0)`
         }, {
           duration: 400,
+          easing: EASE['ease-in-out'],
           fill: 'forwards'
         }).play()
       } else {
@@ -51,12 +56,14 @@ export default async (state: SegueAnimateState) => {
           transform: `translate3d(0, 0, 0) scale(${1 - controls.backdropReducedScale})`
         }, {
           duration: 0,
+          easing: EASE['ease-in-out'],
           fill: 'forwards'
         }).finished
         state.view[0].animate({
           transform: `translate3d(0, 0, 0) scale(1)`
         }, {
           duration: 400,
+          easing: EASE['ease-in-out'],
           fill: 'forwards'
         }).play()
       }

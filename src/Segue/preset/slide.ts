@@ -37,38 +37,27 @@ export default (type: number) => {
     }
 
     if (state.reverse) {
-      if (swipeTransitionType === 'slide') {
-        await state.view[0].animate([
-          { filter: 'brightness(0.9)', transform: `translate3d(${inX * 0.1}px, ${inY * 0.1}px, 0)` },
-          { filter: 'brightness(0.9)', transform: `translate3d(0, 0, 0)` }
-        ], {
-          duration: 0,
-          easing: 'linear',
-          fill: 'forwards'
-        }).finished
-      } else {
-        await state.view[0].animate([
-          { filter: 'brightness(0.9)', transform: `scale(${1 - backdropReducedScale})` },
-          { filter: 'brightness(0.9)', transform: 'scale(1)' }
-        ], {
-          duration: 0,
-          easing: 'linear',
-          fill: 'forwards'
-        }).finished
-      }
+      await state.view[0].animate([
+        { filter: 'brightness(0.9)', transform: swipeTransitionType === 'slide' ? `translate3d(${inX * 0.3}px, ${inY * 0.3}px, 0)` : `scale(${1 - backdropReducedScale})` },
+      ], {
+        duration: 0,
+        easing: 'linear',
+        fill: 'forwards'
+      }).finished
       await Promise.all([
         state.view[1].animate([
           { transform: `translate3d(${outX}px, ${outY}px, 0)` }
         ], {
           duration,
-          easing: EASE['ease-out-expo']
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
         }).finished,
         state.view[0].animate([
-          { transform: 'translate3d(0, 0, 0)', filter: 'brightness(1)', scale: 1 },
-          { transform: 'translate3d(0, 0, 0)', filter: 'brightness(1)', scale: 1 }
+          { filter: 'brightness(1)', transform: swipeTransitionType === 'slide' ? 'translate3d(0, 0, 0)' : 'scale(1)' }
         ], {
           duration,
-          easing: EASE['ease-out-expo']
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
         }).finished
       ])
     } else {
@@ -84,21 +73,17 @@ export default (type: number) => {
           { transform: 'translate3d(0, 0, 100px)' },
         ], {
           duration,
-          easing: EASE['ease-out-expo']
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
         }).finished,
-        swipeTransitionType === 'slide'
-          ? state.view[1].animate([
-            { filter: 'brightness(0.9)', transform: `translate3d(${outX * .3}px, ${outY * .3}px, 0)` }
-          ], {
-            duration,
-            easing: EASE['ease-out-expo']
-          }).finished
-          : state.view[1].animate([
-            { filter: 'brightness(0.9)', scale: 1 - backdropReducedScale }
-          ], {
-            duration,
-            easing: EASE['ease-out-expo']
-          }).finished
+
+        state.view[1].animate([
+          { filter: 'brightness(0.9)', transform: swipeTransitionType === 'slide' ? `translate3d(${outX * .3}px, ${outY * .3}px, 0)` : `scale(${1 - backdropReducedScale})` }
+        ], {
+          duration,
+          easing: EASE['ease-out-expo'],
+          fill: 'forwards'
+        }).finished
       ])
     }
     return Promise.resolve(false)

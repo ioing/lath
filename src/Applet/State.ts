@@ -16,7 +16,7 @@ class AppletState extends AppletBase {
   }
   get swipeModel(): SwipeModelType {
     // Use native performance optimizations only for iOS.
-    return this.application.config.swipeModel ?? ((("ontouchend" in document) && (getIOSVersion()?.[0] ?? 0) >= 9) ? 'default' : false)
+    return this.application.config.swipeModel === 'default' ? ((("ontouchend" in document) && (getIOSVersion()?.[0] ?? 0) >= 9) ? 'default' : false) : true
   }
   get sameOrigin(): boolean {
     if (!this.uri) {

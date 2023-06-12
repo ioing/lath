@@ -62,8 +62,16 @@ class AppletEventTarget extends AppletPrefetch {
     const updateTriggerTime = (types: string[], event: TouchEvent) => {
       if (event.type !== 'touchmove') return
       if (types.includes('left') || types.includes('right') || types.includes('wipe')) {
-        this.application.overscrollHistoryNavigation.moment = Date.now()
-        this.application.overscrollHistoryNavigation.type = types.join(' ')
+        const timestamp = Date.now()
+        const touchType = types.join(' ')
+        this.application.overscrollHistoryNavigation.moment = timestamp
+        this.application.overscrollHistoryNavigation.type = touchType
+
+        // Continue to send the message up to the parent window.
+        parent.postMessage({
+          type: 'overscrollHistoryNavigationStatusChange',
+          data: [timestamp, touchType]
+        }, '*')
       }
     }
     this.on('touchBorder', updateTriggerTime)

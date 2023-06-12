@@ -1,7 +1,7 @@
 import { requestIdleCallback, setTimeout } from '../lib/util'
 import { SmoothScroller } from '../Scroll'
 import loadWebAnimations from '../lib/webAnimations/load'
-import cancelAllAnimations from '../lib/webAnimations/cancel'
+import clearAnimations from '../lib/webAnimations/clear'
 import allAnimationsFinish from '../lib/webAnimations/finish'
 import {
   switcherCSSText,
@@ -298,10 +298,10 @@ class AppSwitcher {
           fill: 'forwards'
         }).finished
       ])
-      cancelAllAnimations(itemImg)
-      cancelAllAnimations(itemImgWrapper)
       if (this.progressName === 'close') return
       itemImg.style.cssText = originalCssText
+      clearAnimations(itemImg)
+      clearAnimations(itemImgWrapper)
       itemImgWrapper.appendChild(itemImg)
       this.snapWrapper.style.overflowY = 'scroll'
       this.snapWrapper.style.scrollSnapType = 'y mandatory'

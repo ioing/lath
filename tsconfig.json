@@ -8,7 +8,6 @@
     "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "charset": "utf8",
     "allowJs": false,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

@@ -1,5 +1,5 @@
 import { Application } from '../Application'
-import { Applet } from '../applet'
+import { Applet } from '../Applet'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { SegueOptions, SegueActionOrigin, PresetConfig } from '../types'
 
@@ -61,16 +61,21 @@ class SegueBase {
       ${fullscreenBaseCSSText}
       overflow: hidden;
       contain: layout size;
+      filter: none;
+      opacity: 1;
     `
+    /**
+     * relativeViewport Needs to be constantly present in the visible area
+     */
     this.relativeViewport.style.cssText = `
       ${baseStyle}
       z-index: 1;
-      ${free ? 'transform: translate3d(0, 0, 0);' : ''}
+      transform: translate3d(0, 0, 0);
     `
     this.absoluteViewport.style.cssText = `
       ${baseStyle}
       z-index: 2;
-      ${!free ? 'transform: translate(200%, 200%);' : ''}
+      transform: ${!free ? 'translate(200%, 200%)' : 'translate3d(0, 0, 0)'};
     `
   }
 }

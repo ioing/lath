@@ -3,13 +3,14 @@ import { SegueAnimation } from './Animation'
 import { requestIdleCallback, setTimeout, testHasSnapReset } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import loadWebAnimations from '../lib/webAnimations/load'
-import cancelAllAnimations from '../lib/webAnimations/cancel'
+import resetAllAnimations from '../lib/webAnimations/reset'
+import waitAllAnimations from '../lib/webAnimations/finished'
 import { SegueAnimateState, SegueActionOrigin, Applet, PresetConfig } from '../types'
 
 type SegueToOptions = [
   id: string,
   param?: string,
-  history?: -1 | 0 | 1,
+  pushStatus?: -1 | 0 | 1,
   touches?: SegueActionOrigin,
   disableAnimation?: boolean
 ]
@@ -56,10 +57,10 @@ class SegueSwitch extends SegueAnimation {
     this.hasAnimation = disableAnimation ? false : this.checkAnimationNamed()
   }
 
-  private resetAppletViewport(applet: Applet, visibility = this.immovable): void {
+  private async resetAppletViewport(applet: Applet, visibility = this.immovable): Promise<void> {
     const viewport = applet.viewport as HTMLElement
     const systemLevel = ['frameworks', 'system'].includes(applet.rel)
-    cancelAllAnimations(viewport)
+    await waitAllAnimations(viewport)
     viewport.style.cssText = ''
     if (systemLevel) return
     viewport.style.cssText = `
@@ -71,9 +72,12 @@ class SegueSwitch extends SegueAnimation {
       transition-property: all;
       transform: ${visibility ? 'translate(0, 0)' : 'translate(0, 200%)'};
       backface-visibility: hidden;
+      filter: none;
+      opacity: 1;
       overflow: hidden;
       contain: layout size;
     `
+    await resetAllAnimations(viewport)
   }
 
   // Gets the previous queue task
@@ -114,13 +118,14 @@ class SegueSwitch extends SegueAnimation {
   }
 
   // Control memory growth
-  private limit(id: string): void {
+  private limit(applet: Applet): void {
+    const { id } = applet
     const limit = Math.max(this?.options?.limit || 3, 2)
     const index = this.windowSet.indexOf(id)
 
     if (this.applet.rel !== 'applet' || this.applet.config.background === true) return
     if (index !== -1) this.windowSet.splice(index, 1)
-    this.windowSet.push(id)
+    if (!applet.parentApplet) this.windowSet.push(id)
 
     if (this.windowSet.length > limit) {
       this.application.applets[this.windowSet.splice(0, 1)[0]]?.destroy()
@@ -185,9 +190,9 @@ class SegueSwitch extends SegueAnimation {
     applet.setActionOrigin(touches)
     await applet.setParam(this.param)
     await applet.build()
-    return this.start().then(async () => this.transform().then((stillness) => {
-      this.end(stillness)
-      this.limit(id)
+    return this.start().then(async () => this.transform().then(async (stillness) => {
+      await this.end(stillness)
+      this.limit(applet)
       this.application.pullDependencies(applet.config?.prerender).then(() => {
         this.application.trigger('prerenderComplete')
       })
@@ -283,69 +288,59 @@ class SegueSwitch extends SegueAnimation {
     })
   }
 
-  private start(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.application.activate(false)
-      this.application.trigger('transformStart', this.appletGroup)
-      const transformStart = this.applet.events.transformStart
-      if (typeof transformStart === 'function') {
-        if (transformStart(this.applet) === 'break') return reject()
-      }
-      // 0.willShow Event
-      // "willShow" runs before "controls.disappearImmediately"
-      this.applet.willShow()
-      if (this.prevApplet) {
-        this.prevApplet.willHide()
-        if (this.prevApplet.controls) {
-          if (this.prevApplet.swipeModel === 'default') {
-            this.prevApplet.controls.activate()
-          }
-        }
-        /**
-         * Obsolete
-         * ------------- start -------------
-         */
-        // old; ios < 15
-        // Keep the position of the previous pop-up window, when the iOS is less than 15, there is a bug of snap reset.
-        // When a new content is inserted in the document stream, the snap resets, and the problem only occurs the first time.
-        if (HasSnapReset && this.prevApplet.modality) {
-          this.prevApplet.modality.freeze()
-        }
-        /**
-         * Obsolete
-         * ------------- end -------------
-         */
-      }
-      // 1.controls
-      if (this.applet.controls) {
-        this.applet.controls.disappearImmediately()
-        if (this.isInseparableLayer) {
-          this.applet.controls.disable()
-          this.applet.controls.freeze()
-        } else if (!this.checkNativeAnimation()) {
-          this.applet.controls.freeze()
+  private async start(): Promise<void> {
+    this.application.activate(false)
+    this.application.trigger('transformStart', this.appletGroup)
+    const transformStart = this.applet.events.transformStart
+    if (typeof transformStart === 'function') {
+      if (transformStart(this.applet) === 'break') return Promise.reject()
+    }
+    // 0.willShow Event
+    // "willShow" runs before "controls.disappearImmediately"
+    this.applet.willShow()
+    if (this.prevApplet) {
+      this.prevApplet.willHide()
+      if (this.prevApplet.controls) {
+        if (this.prevApplet.swipeModel === 'default') {
+          this.prevApplet.controls.activate()
         }
       }
-      if (!this.hasAnimation || this.superSwitch) {
-        /**
-         * important!, Frame-type applets do not set styles.
-         * When returning from history, an abnormal container height will appear.
-         */
-        if (this.applet.viewport && this.applet.rel === 'applet') {
-          this.applet.viewport.style.transform = 'translate(0, 0)'
-        }
+    }
+    // 1.controls
+    if (this.applet.controls) {
+      this.applet.controls.disappearImmediately()
+      if (this.isInseparableLayer) {
+        this.applet.controls.disable()
+        this.applet.controls.freeze()
+      } else if (!this.checkNativeAnimation()) {
+        this.applet.controls.freeze()
       }
-      resolve()
-    })
+    }
+    if (!this.hasAnimation || this.superSwitch) {
+      /**
+       * important!, Frame-type applets do not set styles.
+       * When returning from history, an abnormal container height will appear.
+       */
+      if (this.applet.viewport && this.applet.rel === 'applet') {
+        // this.applet.viewport.style.transform = 'translate(0, 0)'
+        await this.applet.viewport.animate([
+          { transform: 'translate(0, 0)' }
+        ], {
+          duration: 0,
+          fill: 'forwards'
+        }).finished
+      }
+    }
+    Promise.resolve()
   }
 
-  private end(stillness = false): void {
+  private async end(stillness = false): Promise<void> {
     // Return from upstream or into non-Modality
     if (this.applet.isFullscreen || this.countercurrent) {
       if (this.superSwitch) {
-        this.switchViewport()
+        await this.switchViewport()
       }
-      this.switchApplet(stillness)
+      await this.switchApplet(stillness)
     }
     // If used SwipeModel
     if (this.applet.controls) {
@@ -362,9 +357,14 @@ class SegueSwitch extends SegueAnimation {
     // old; ios < 15
     // Keep the position of the previous pop-up window, when the iOS is less than 15, there is a bug of snap reset.
     // When a new content is inserted in the document stream, the snap resets, and the problem only occurs the first time.
-    if (HasSnapReset && this.applet.modality) {
-      const applet = this.applet
-      applet.modality?.activate()
+    if (HasSnapReset) {
+      if (this.prevHistoryStep === 1 && this.prevApplet?.modality) {
+        this.prevApplet.modality.freeze()
+      }
+      if (this.applet.modality) {
+        const applet = this.applet
+        applet.modality?.activate()
+      }
     }
     /**
      * Obsolete
@@ -382,13 +382,15 @@ class SegueSwitch extends SegueAnimation {
     this.application.trigger('transformEnd', this.appletGroup)
   }
 
-  private switchViewport() {
-    cancelAllAnimations(this.relativeViewport)
-    cancelAllAnimations(this.absoluteViewport)
+  private async switchViewport() {
+    await waitAllAnimations(this.relativeViewport)
+    await waitAllAnimations(this.absoluteViewport)
     this.resetViewport(this.applet?.config?.free)
+    await resetAllAnimations(this.relativeViewport)
+    await resetAllAnimations(this.absoluteViewport)
   }
 
-  private switchApplet(stillness = false) {
+  private async switchApplet(stillness = false) {
     if (!this.prevApplet) return
     if (!stillness) {
       if (this.prevApplet.rel === 'applet') {
@@ -399,13 +401,14 @@ class SegueSwitch extends SegueAnimation {
         const backdropType = this.applet.useControls || this.applet.config.modality
         const backdropState = (backdropType && !this.countercurrent) || (this.prevApplet.config.modality && this.fromHistoryBack)
         if (this.prevApplet.viewport) {
+          await waitAllAnimations(this.prevApplet.viewport)
           this.prevApplet.viewport.style.transform = backdropState ? 'translate(0, 0)' : 'translate(0, 200%)'
+          await resetAllAnimations(this.prevApplet.viewport)
         }
       }
       this.resetAppletViewport(this.applet, true)
     }
     if (this.prevApplet.viewport) {
-      cancelAllAnimations(this.prevApplet.viewport)
       this.prevApplet.viewport.style.transitionDuration = '0ms'
     }
     if (this.prevApplet.config.background !== false || this.applet.config.modality) {

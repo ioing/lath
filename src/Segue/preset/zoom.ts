@@ -3,20 +3,23 @@ import { SegueAnimateState } from '../../types'
 
 export default (type: number) => {
   return async (state: SegueAnimateState) => {
-    const attachOrigin = typeof state.attach === 'string' ? state.attach : `${state.attach[0]}px, ${state.attach[1]}px`
+    const attachOrigin = typeof state.attach === 'string' ? state.attach : `${state.attach[0]}px ${state.attach[1]}px`
     const actionOrigin = state.applets[1].getActionOrigin()
-    const origin = actionOrigin ? `${actionOrigin.x}px, ${actionOrigin.y}px` : (typeof state.origin === 'string' ? state.origin : `${state.origin[0]}px, ${state.origin[1]}px`)
+    const origin = actionOrigin ? `${actionOrigin.x}px ${actionOrigin.y}px` : (typeof state.origin === 'string' ? state.origin : `${state.origin[0]}px ${state.origin[1]}px`)
     if (type === 0) {
       await Promise.all([
         state.view[0].animate([
           {
             backfaceVisibility: 'hidden',
+            filter: 'brightness(.5)',
             transform: `translate3d(0, 0, 0) scale(2.5)`,
             transformOrigin: attachOrigin
           },
           {
+            backfaceVisibility: 'hidden',
             filter: 'brightness(1)',
             transform: `translate3d(0, 0, 0) scale(1)`,
+            transformOrigin: attachOrigin
           }
         ], {
           duration: 767,
@@ -43,6 +46,15 @@ export default (type: number) => {
       ])
       return false
     } else {
+      await state.view[0].animate([
+        {
+          opacity: 1
+        }
+      ], {
+        duration: 0,
+        easing: EASE['linear'],
+        fill: 'forwards'
+      }).finished
       await Promise.all([
         state.view[0].animate([
           {

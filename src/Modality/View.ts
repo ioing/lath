@@ -1,7 +1,7 @@
 import { ModalityEventTarget } from './EventTarget'
 import { SmoothScroller } from "../Scroll"
 import { setTimeout, testHasScrolling, getCSSUnits } from '../lib/util'
-import { getIOSversion } from '../lib/util/getIOSversion'
+import { getIOSversion } from '../lib/util/getIOSVersion'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { baseCSSText } from './cssText'
 import { Applet } from '../types'

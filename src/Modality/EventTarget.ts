@@ -110,24 +110,42 @@ class ModalityEventTarget extends ModalityState {
     // stillBackdrop
     const stillBackdrop = this.options?.stillBackdrop
     if (!stillBackdrop) {
-      prevViewport.style.transitionDuration = duration + 'ms'
-      prevViewport.style.transitionDelay = delay + 'ms'
-      prevViewport.style.transitionProperty = 'transform, border-radius'
-      prevViewport.style.borderRadius = `${relativeDegree * this.backdropBorderRadius}px`
-      prevViewport.style.transform = `
-        translate3d(0, ${relativeDegree * this.fallHeight}px, -100px) 
-        perspective(${this.backdropPerspective}px) 
-        rotateX(${relativeDegree * this.backdropRotateX}deg) 
-        scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
-      `
+      prevViewport.animate([
+        {
+          borderRadius: `${relativeDegree * this.backdropBorderRadius}px`,
+          transform: `
+            translate3d(0, ${relativeDegree * this.fallHeight}px, -100px) 
+            perspective(${this.backdropPerspective}px) 
+            rotateX(${relativeDegree * this.backdropRotateX}deg) 
+            scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
+          `
+        }
+      ], {
+        duration,
+        delay,
+        fill: 'forwards'
+      }).play()
     }
-    this.modalityContainer.style.transitionDuration = duration + 'ms'
-    this.modalityContainer.style.transitionDelay = delay + 'ms'
-    this.modalityContainer.style.transitionProperty = 'transform, background-color'
-    this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${show ? darkness : 0})`
+    this.modalityContainer.animate([
+      {
+        backgroundColor: `rgba(0, 0, 0, ${show ? darkness : 0})`
+      }
+    ], {
+      duration,
+      delay,
+      fill: 'forwards'
+    }).play()
     // reset opacity while "hide"
     if (useFade && !show) {
-      this.contentContainer.style.opacity = '1'
+      // this.contentContainer.style.opacity = '1'
+      this.contentContainer.animate([
+        {
+          opacity: '1'
+        }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
     }
   }
   private sliding() {
@@ -139,11 +157,15 @@ class ModalityEventTarget extends ModalityState {
     const options = this.options
     const darkness = options?.maskOpacity ?? 0.3
     const useFade = options?.useFade
-    this.modalityContainer.style.transitionDuration = '0ms'
-    this.modalityContainer.style.transitionDelay = '0ms'
-    this.modalityContainer.style.transitionProperty = 'transform, background-color'
     if (degree > maxDegree) {
-      this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
+      this.contentContainer.animate([
+        {
+          backgroundColor: `rgba(0, 0, 0, ${darkness + (1 - darkness) * (degree - maxDegree) / 0.2})`
+        }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
       return
     }
     // if miniCard.
@@ -152,23 +174,39 @@ class ModalityEventTarget extends ModalityState {
     const stillBackdrop = this.options?.stillBackdrop ?? (this.miniCard && degree <= 1)
     // this.activity: Prevents asynchronous operations from resetting closed views
     if (this.activity && prevViewport && !stillBackdrop) {
-      prevViewport.style.transitionDuration = '0ms'
-      prevViewport.style.transitionDelay = '0ms'
-      prevViewport.style.transitionProperty = 'transform, border-radius'
-      prevViewport.style.borderRadius = `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`
-      prevViewport.style.transform = `
-        translate3d(0, ${relativeDegree * this.fallHeight}px, -100px) 
-        perspective(${this.backdropPerspective}px) 
-        rotateX(${relativeDegree * this.backdropRotateX}deg) 
-        scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
-      `
+      prevViewport.animate([
+        {
+          borderRadius: `${Math.min(relativeDegree, 1) * this.backdropBorderRadius}px`,
+          transform: `
+            translate3d(0, ${relativeDegree * this.fallHeight}px, -100px) 
+            perspective(${this.backdropPerspective}px) 
+            rotateX(${relativeDegree * this.backdropRotateX}deg) 
+            scale(${1 - Math.max(relativeDegree * this.backdropReducedScale, 0)})
+          `
+        }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
     }
-    this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
+    // this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
+    this.modalityContainer.animate([
+      {
+        backgroundColor: `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
+      }
+    ], {
+      duration: 0,
+      fill: 'forwards'
+    }).play()
     if (useFade) {
-      this.contentContainer.style.transitionDuration = '0ms'
-      this.contentContainer.style.transitionDelay = '0ms'
-      this.contentContainer.style.transitionProperty = 'opacity'
-      this.contentContainer.style.opacity = `${relativeDegree - ((1 - relativeDegree) * 2)}`
+      this.contentContainer.animate([
+        {
+          opacity: `${relativeDegree - ((1 - relativeDegree) * 2)}`
+        }
+      ], {
+        duration: 0,
+        fill: 'forwards'
+      }).play()
     }
 
     this.scrolling = true

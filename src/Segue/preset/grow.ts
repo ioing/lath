@@ -41,8 +41,8 @@ export default async (state: SegueAnimateState) => {
       opacity: 1
     }, {
       duration: 100,
-      fill: 'forwards',
-      easing: EASE['ease-out-expo']
+      easing: EASE['ease-out-expo'],
+      fill: 'forwards'
     }).play()
     await state.view[0].animate({
       transform: `translate3d(0px, 0px, 500px)`,
@@ -51,8 +51,8 @@ export default async (state: SegueAnimateState) => {
       borderRadius: '0px'
     }, {
       duration: 600,
-      fill: 'forwards',
-      easing: EASE['ease-out-expo']
+      easing: EASE['ease-out-expo'],
+      fill: 'forwards'
     }).finished
     await modality.rise()
     await state.view[0].animate({
@@ -62,8 +62,8 @@ export default async (state: SegueAnimateState) => {
       borderRadius: '0px'
     }, {
       duration: 100,
-      fill: 'forwards',
-      easing: EASE['ease-out-expo']
+      easing: EASE['ease-out-expo'],
+      fill: 'forwards'
     }).finished
     if (iframeView) {
       iframeView.style.willChange = 'none'

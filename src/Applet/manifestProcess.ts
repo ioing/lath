@@ -20,7 +20,7 @@ export default (manifest: AppletManifest, id: string): AppletManifest => {
   if ((config.level ?? 0) > 10000) {
     typeError(1104, 'warn')
   }
-  if (id !== 'frameworks' && (config.source?.html || config.source?.src)) {
+  if (id !== 'frameworks' && !(config.source?.html || config.source?.src)) {
     if (config.apply) {
       typeError(1202, 'warn')
     }

@@ -4,7 +4,7 @@ import { requestIdleCallback, setTimeout, testHasSnapReset } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import loadWebAnimations from '../lib/webAnimations/load'
 import resetAllAnimations from '../lib/webAnimations/reset'
-import waitAllAnimations from '../lib/webAnimations/finished'
+import waitAllAnimations from '../lib/webAnimations/finish'
 import { SegueAnimateState, SegueActionOrigin, Applet, PresetConfig } from '../types'
 
 type SegueToOptions = [

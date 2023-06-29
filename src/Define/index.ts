@@ -2,9 +2,12 @@ import Preset from './preset'
 import { AppletAllTypeSettings, PresetConfig, Application } from '../types'
 import typeError from '../lib/typeError'
 import autoScrollPolyfill from '../Scroll/polyfill'
+import loadWebAnimations from '../lib/webAnimations/load'
 import { initApplication } from './init'
 
 import('..')
+autoScrollPolyfill()
+loadWebAnimations()
 
 export const destroyApplication = () => {
   if (!Preset.appletsSpace) return
@@ -23,6 +26,7 @@ export const createApplication = async (options: Partial<PresetConfig> = { tunne
    * Obsolete
    */
   await autoScrollPolyfill()
+  await loadWebAnimations()
   if (Preset.__EXISTING__) return Promise.reject('repeat')
   if (options.tunneling && !!window.__LATH_APPLICATION_AVAILABILITY__) return Promise.reject('tunneling')
   Preset.__EXISTING__ = true

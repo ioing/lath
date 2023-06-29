@@ -1,9 +1,12 @@
 import 'web-animations-js/web-animations-next.min'
 
-type OriginalAnimate = (keyframes: AnimationsProperty, options?: number | KeyframeAnimationOptions | undefined) => Animation
+type OriginalAnimate = (keyframes: AnimationsProperty | AnimationsKeyFramesProperty, options?: number | KeyframeAnimationOptions | undefined) => Animation
 type AnimationsProperty = {
   [key in keyof CSSStyleDeclaration]?: [CSSStyleDeclaration[key], CSSStyleDeclaration[key]]
 }
+type AnimationsKeyFramesProperty = {
+  [key in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[key]
+}[]
 type KeyframesArray = Array<CSSStyleDeclaration>
 type KeyframeObject = CSSStyleDeclaration
 
@@ -13,10 +16,15 @@ declare global {
   }
 }
 
-function convertKeyframes(element: Element, keyframes: KeyframesArray | KeyframeObject): AnimationsProperty {
+function convertKeyframes(element: Element, keyframes: KeyframesArray | KeyframeObject): AnimationsProperty | AnimationsKeyFramesProperty {
   const newKeyFrames: AnimationsProperty = {}
   const computedStyle = getComputedStyle(element)
-  if (Array.isArray(keyframes)) return keyframes as unknown as AnimationsProperty
+  if (Array.isArray(keyframes)) {
+    if (keyframes.length > 1) {
+      return keyframes as unknown as AnimationsProperty
+    }
+    return [keyframes[0], keyframes[0]]
+  }
   for (const propertyName in keyframes) {
     if (!Array.isArray(keyframes[propertyName])) {
       newKeyFrames[propertyName] = [computedStyle[propertyName], keyframes[propertyName]]

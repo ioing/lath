@@ -8,3 +8,8 @@ export const fullscreenBaseCSSText = `
   left: 0px;
   ${coveredCSSText}
 `
+
+export const viewportBaseStatusCSSText = `
+  filter: none;
+  opacity: 1;
+`

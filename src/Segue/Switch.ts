@@ -72,10 +72,9 @@ class SegueSwitch extends SegueAnimation {
       transition-property: all;
       transform: ${visibility ? 'translate(0, 0)' : 'translate(0, 200%)'};
       backface-visibility: hidden;
-      filter: none;
-      opacity: 1;
       overflow: hidden;
       contain: layout size;
+      ${this.resetBaseStyleText}
     `
     await resetAllAnimations(viewport)
   }

@@ -1,6 +1,6 @@
 import { Application } from '../Application'
 import { Applet } from '../Applet'
-import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
+import { fullscreenBaseCSSText, viewportBaseStatusCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { SegueOptions, SegueActionOrigin, PresetConfig } from '../types'
 
 class SegueBase {
@@ -27,6 +27,11 @@ class SegueBase {
     this.root = presetConfig.root || document.body
     this.zIndex = presetConfig.zIndex || Number.MAX_SAFE_INTEGER
     this.setupViewport()
+  }
+
+  public resetBaseStyleText = viewportBaseStatusCSSText
+  public resetBaseStyle(cssText = '') {
+    this.resetBaseStyleText = viewportBaseStatusCSSText + cssText
   }
 
   public setupViewport(): void {
@@ -61,8 +66,7 @@ class SegueBase {
       ${fullscreenBaseCSSText}
       overflow: hidden;
       contain: layout size;
-      filter: none;
-      opacity: 1;
+      ${this.resetBaseStyleText}
     `
     /**
      * relativeViewport Needs to be constantly present in the visible area

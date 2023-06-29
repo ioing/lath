@@ -6,6 +6,8 @@ import typeError from '../lib/typeError'
 import { globalCSSText } from '../lib/cssText/globalCSSText'
 import { setTimeout, testHasSlotBug } from '../lib/util'
 import { PresetConfig, AppletManifest, AppletConfig, FrameworksAppletConfig, AppSwitcher, ApplicationSafeAreaValue, GlobalCSSVariables, SegueActionOrigin, DefineApplet } from '../types'
+import Preset from '../Define/preset'
+import { buildAppletSlot } from '../Define/slot'
 
 class Application extends ApplicationState {
   public tunneling = false
@@ -238,7 +240,7 @@ class Application extends ApplicationState {
     return this.get('frameworks').then((applet) => {
       const route = this.route
       const config = applet.config as FrameworksAppletConfig
-      const index = config.index || ''
+      const index = config.index || Preset.defaultApplet || ''
       const preIndex = config.preIndex
       const id = route.id || index
       this.config = config
@@ -309,6 +311,13 @@ class Application extends ApplicationState {
     return Promise.resolve()
   }
   private async mountFirstApplet(id: string, index: string, preIndex?: string, oneHistory?: boolean): Promise<void> {
+    // If the default view of the first screen is defined and not entered when first entered, the default view should be removed.
+    if (id !== Preset.defaultApplet) {
+      const appletSlot = buildAppletSlot(Preset.defaultApplet)
+      if (appletSlot.parentNode) {
+        appletSlot.parentNode.removeChild(appletSlot)
+      }
+    }
     await this.createCloneApplet(id)
     if (oneHistory) {
       this.segue.pushState(index || 'frameworks')

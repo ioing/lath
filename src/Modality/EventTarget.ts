@@ -90,10 +90,13 @@ class ModalityEventTarget extends ModalityState {
     })
   }
   public async hide(): Promise<void> {
+    if (this.switching) return this.processPromise
+    this.switching = true
     if (!this.activity) return Promise.resolve()
     this.removeSlidingEvent()
     this.segueTransition(false)
     return this.fall().then(async () => {
+      this.switching = false
       if (this.activity) {
         await this.application.segue.back()
       }
@@ -189,7 +192,6 @@ class ModalityEventTarget extends ModalityState {
         fill: 'forwards'
       }).play()
     }
-    // this.modalityContainer.style.backgroundColor = `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`
     this.modalityContainer.animate([
       {
         backgroundColor: `rgba(0, 0, 0, ${darkness * Math.min(degree, 1)})`

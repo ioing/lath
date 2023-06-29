@@ -20,11 +20,17 @@ export default (manifest: AppletManifest, id: string): AppletManifest => {
   if ((config.level ?? 0) > 10000) {
     typeError(1104, 'warn')
   }
-  const defaultApply: AppletApplyOptions = ['smart-setTimeout', 'proxy-link', 'tap-highlight']
-  const { apply = defaultApply, unApply } = config
-  config.apply = apply
-  if (unApply?.length) {
-    config.apply = apply?.filter((item) => !unApply.includes(item))
+  if (id !== 'frameworks' && (config.source?.html || config.source?.src)) {
+    if (config.apply) {
+      typeError(1202, 'warn')
+    }
+  } else {
+    const defaultApply: AppletApplyOptions = ['smart-setTimeout', 'proxy-link', 'tap-highlight']
+    const { apply = defaultApply, unApply } = config
+    config.apply = apply
+    if (unApply?.length) {
+      config.apply = apply?.filter((item) => !unApply.includes(item))
+    }
   }
   if (config.modality?.indexOf('sheet') === 0) {
     if (config.animation) {

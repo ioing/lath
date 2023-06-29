@@ -39,7 +39,7 @@ class AppletBase extends EventProvider {
     level: 0,
     source: {},
     prerender: [],
-    apply: [],
+    apply: undefined,
     background: 'auto',
     free: false
   }

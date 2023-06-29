@@ -24,5 +24,8 @@
     "importHelpers": true,
     "moduleResolution": "node"
   },
+  "rules": {
+    "no-useless-constructor": true
+  },
   "exclude": ["node_modules"]
 }

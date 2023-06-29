@@ -10,6 +10,7 @@ export const switcherCSSText = `
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   transition: opacity .4s ease;
+  backdrop-filter: blur(20px) saturate(180%);
 `
 export const snapWrapperCSSText = `
   display: grid;

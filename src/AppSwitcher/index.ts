@@ -2,6 +2,7 @@ import { requestIdleCallback, setTimeout } from '../lib/util'
 import { SmoothScroller } from '../Scroll'
 import loadWebAnimations from '../lib/webAnimations/load'
 import clearAnimations from '../lib/webAnimations/clear'
+import resetAllAnimations from '../lib/webAnimations/reset'
 import allAnimationsFinish from '../lib/webAnimations/finish'
 import {
   switcherCSSText,
@@ -23,6 +24,9 @@ const EASE = {
   smoothAcceleration: 'cubic-bezier(0.52, 0.16, 0.24, 1)',
   quickDeceleration: 'cubic-bezier(0.32, 0.08, 0.24, 1)'
 }
+
+const supportedBackdropFilter = CSS.supports('backdrop-filter', 'blur(1px)')
+
 
 interface SwitcherOptions {
   readonly: boolean
@@ -66,7 +70,9 @@ class AppSwitcher {
     }
     await loadWebAnimations()
     await this.createAppSwitcher()
-    await this.blurBackgroundImage()
+    if (!supportedBackdropFilter) {
+      await this.blurBackgroundImage()
+    }
     this.switcher.style.opacity = '1'
     this.bindResize()
     setTimeout(() => {
@@ -77,7 +83,9 @@ class AppSwitcher {
   public async close(): Promise<void> {
     if (this.progressName === 'close') return
     this.progressName = 'close'
-    await this.focusBackgroundImage()
+    if (!supportedBackdropFilter) {
+      await this.focusBackgroundImage()
+    }
     this.switcher.style.opacity = '0'
     setTimeout(() => {
       if (this.progressName === 'open') return
@@ -329,6 +337,11 @@ class AppSwitcher {
       transform: translate3d(${offsetLeft}px, ${offsetTop}px, 0px) scale(${scale});
     `
     if (this.progressName === 'open') return
+    if (!supportedBackdropFilter) {
+      this.application.segue.resetBaseStyle(
+        `filter: blur(20px);`
+      )
+    }
     await Promise.all([
       this.application.to(applet.id, applet.param, undefined, undefined, true),
       itemImg.animate({
@@ -367,6 +380,15 @@ class AppSwitcher {
         fill: 'forwards'
       }).finished
     ])
+    if (!supportedBackdropFilter) {
+      this.application.segue.resetBaseStyle()
+      this.application.segue.appletGroup.forEach((applet) => {
+        if (applet.viewport) {
+          applet.viewport.style.filter = 'none'
+          resetAllAnimations(applet.viewport)
+        }
+      })
+    }
     this.progressName = ''
     this.close()
   }
@@ -377,15 +399,15 @@ class AppSwitcher {
     }
     return activityApplet
   }
-  private async blurBackgroundImage(): Promise<void> {
+  private async blurBackgroundImage(blur = true): Promise<void> {
     await allAnimationsFinish(this.relativeViewport)
     await allAnimationsFinish(this.absoluteViewport)
-    this.relativeViewport.style.filter = this.absoluteViewport.style.filter = 'blur(20px)'
+    this.relativeViewport.style.filter = this.absoluteViewport.style.filter = blur ? 'blur(20px)' : 'none'
+    await resetAllAnimations(this.relativeViewport)
+    await resetAllAnimations(this.absoluteViewport)
   }
   private async focusBackgroundImage(): Promise<void> {
-    await allAnimationsFinish(this.relativeViewport)
-    await allAnimationsFinish(this.absoluteViewport)
-    this.relativeViewport.style.filter = this.absoluteViewport.style.filter = 'none'
+    await this.blurBackgroundImage(false)
   }
   private delayDynamicImport(): void {
     import('../Applet/captureShot').catch((e) => {

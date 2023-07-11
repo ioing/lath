@@ -19,6 +19,7 @@ type SegueToOptions = [
 const HasSnapReset = testHasSnapReset()
 
 class SegueSwitch extends SegueAnimation {
+  private promiseId = ''
   private readonly windowSet: string[] = []
   private readonly promiseQueue: (Promise<void> | undefined)[] = []
   private readonly promiseParamQueue: [...SegueToOptions][] = []
@@ -151,13 +152,14 @@ class SegueSwitch extends SegueAnimation {
 
   private async to404(): Promise<void> {
     if (!this.options.notFound) return Promise.resolve()
-    return this.promise(this.options.notFound, this.param + (this.param.indexOf('?') === -1 ? '?' : '&') + '__notFoundId=' + this.id, this.prevHistoryStep)
+    return this.promise(this.options.notFound, this.param + (this.param.indexOf('?') === -1 ? '?' : '&') + '__notFoundId=' + this.promiseId, this.prevHistoryStep)
   }
 
   private async promise(...args: SegueToOptions): Promise<void> {
     const [id, param = '', pushState = 1, touches, disableAnimation] = args
     // next is undefined
     if (!id) return Promise.resolve()
+    this.promiseId = id
     const prevId = this.id
     const applet = this.application.applets[id]
     const prevApplet = this.application.applets[prevId]
@@ -194,7 +196,7 @@ class SegueSwitch extends SegueAnimation {
       this.limit(applet)
       this.application.pullDependencies(applet.config?.prerender).then(() => {
         this.application.trigger('prerenderComplete')
-      })
+      }).catch(() => 0)
       if (applet.config.title) {
         document.title = applet.config.title
       }

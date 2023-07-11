@@ -7,6 +7,7 @@ const ErrorCode: ErrorCodeType = {
   1006: 'The defined applet(\'defaultApplet\') could not be found!',
   1007: '\'FrameworksApplet\' must be included!',
   1008: 'Unable to get applet with id "[$]".',
+  1009: 'Can\'t get the applet\'s manifest! "[$]"]',
   1101: 'Applet config: Applets(id == frameworks/system) applets do not need to configured with [free].',
   1102: 'Applet config: Applets(id == frameworks/system) do not need to configured with [source].',
   1103: 'Applet config: [free & portal] conflict! [free] must be true when [portal] sets true.',

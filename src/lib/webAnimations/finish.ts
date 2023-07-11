@@ -1,4 +1,4 @@
-export default (element: HTMLElement) => {
+export default async (element: HTMLElement) => {
   const animatePromise: Promise<Animation>[] = []
   element.getAnimations?.().forEach(animation => {
     animatePromise.push(animation.finished)

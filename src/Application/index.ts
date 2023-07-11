@@ -20,6 +20,7 @@ class Application extends ApplicationState {
     spinner: HTMLElement | null
     holdLayer: HTMLElement | null
   } = { holder: null, spinner: null, holdLayer: null }
+  public installed = false
   private working = false
   constructor(presetConfig: PresetConfig = {} as PresetConfig) {
     super()
@@ -83,10 +84,10 @@ class Application extends ApplicationState {
         if (this.verifyAppletSrcLegitimacy(id)) {
           return await this.createAppletByURL(id, {}, id) ?? Promise.reject()
         } else {
-          return Promise.reject()
+          return Promise.reject(typeError(1009, 'warn', `id: ${id}`))
         }
       default:
-        return Promise.reject()
+        return Promise.reject(typeError(1009, 'warn', `id: ${id}`))
     }
   }
   public defineApplet(defineApplet: DefineApplet, id: string) {
@@ -182,7 +183,7 @@ class Application extends ApplicationState {
       return Promise.reject()
     }
   }
-  public pullDependencies(dependencies: string[] = [], prerender = true): Promise<unknown> {
+  public async pullDependencies(dependencies: string[] = [], prerender = true): Promise<unknown> {
     const allPromise: Promise<unknown>[] = []
     for (const dep of dependencies) {
       allPromise.push(new Promise((resolve, reject) => {
@@ -298,17 +299,23 @@ class Application extends ApplicationState {
     })
   }
   private async lineUpApplet(id: string, params: string, history: -1 | 0 | 1): Promise<void> {
-    const applet = await this.get(id)
-    const { antecedentApplet } = applet.config
-    if (antecedentApplet) {
-      for (const antecedentId of antecedentApplet) {
-        this.segue.to(antecedentId, params, 1)
-      }
-      this.segue.to(id, params, 1)
-    } else {
-      this.segue.to(id, params, history)
-    }
-    return Promise.resolve()
+    return new Promise((resolve) => {
+      this.get(id).then((applet) => {
+        const { antecedentApplet } = applet.config
+        if (antecedentApplet) {
+          for (const antecedentId of antecedentApplet) {
+            this.segue.to(antecedentId, params, 1)
+          }
+          this.segue.to(id, params, 1)
+        } else {
+          this.segue.to(id, params, history)
+        }
+        resolve()
+      }).catch(() => {
+        this.segue.to(id, params, -1)
+        resolve()
+      })
+    })
   }
   private async mountFirstApplet(id: string, index: string, preIndex?: string, oneHistory?: boolean): Promise<void> {
     // If the default view of the first screen is defined and not entered when first entered, the default view should be removed.
@@ -379,6 +386,15 @@ class Application extends ApplicationState {
       parent.postMessage(event.data, '*')
     })
   }
+  public async awaitInstalled(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.installed) {
+        resolve()
+      } else {
+        this.one('firstAppletDidMount', resolve)
+      }
+    })
+  }
   public async start(): Promise<void> {
     if (!this.options.applets) {
       return Promise.reject('Please configure the applet first!')
@@ -387,6 +403,7 @@ class Application extends ApplicationState {
     this.working = true
     this.setExists()
     return this.mountFramework().then(() => {
+      this.installed = true
       this.trigger('firstAppletDidMount')
       this.mountSystem()
     })

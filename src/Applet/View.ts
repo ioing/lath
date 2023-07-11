@@ -108,7 +108,11 @@ class AppletView extends AppletEventTarget {
     if (this.config.defaultSlideViewApplets) {
       this.buildSlideView(contentContainer)
     }
-    contentContainer.appendChild(this.contentSlot)
+    const contentSlot = this.contentSlot
+    // Prevent flicker
+    this.application.awaitInstalled().then(() => {
+      contentContainer.appendChild(contentSlot)
+    })
   }
   private createShadowView(): Promise<HTMLElement | null> {
     if (!this.config.render) return Promise.resolve(this.contentView as DefineApplet)

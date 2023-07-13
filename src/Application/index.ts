@@ -319,7 +319,7 @@ class Application extends ApplicationState {
   }
   private async mountFirstApplet(id: string, index: string, preIndex?: string, oneHistory?: boolean): Promise<void> {
     // If the default view of the first screen is defined and not entered when first entered, the default view should be removed.
-    if (id !== Preset.defaultApplet) {
+    if (!['frameworks', 'system'].includes(id) && id !== Preset.defaultApplet) {
       const appletSlot = buildAppletSlot(Preset.defaultApplet)
       if (appletSlot.parentNode) {
         appletSlot.parentNode.removeChild(appletSlot)
@@ -384,15 +384,6 @@ class Application extends ApplicationState {
           break
       }
       parent.postMessage(event.data, '*')
-    })
-  }
-  public async awaitInstalled(): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.installed) {
-        resolve()
-      } else {
-        this.one('firstAppletDidMount', resolve)
-      }
     })
   }
   public async start(): Promise<void> {

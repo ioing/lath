@@ -1,5 +1,5 @@
 import Preset from './preset'
-import { USE_SHADOW_DOM } from './env'
+import { getEnv } from './env'
 import { buildAppletSlot } from './slot'
 import testHasScrolling from '../lib/util/testHasScrolling'
 import typeError from '../lib/typeError'
@@ -8,6 +8,7 @@ export class DefineApplet extends HTMLElement {
   constructor() {
     super()
   }
+  private installed = false
   public appletSlot!: HTMLSlotElement
   public getViewSlot() {
     return this.appletSlot
@@ -20,6 +21,7 @@ export class DefineApplet extends HTMLElement {
   }
   private defineApplet() {
     const id = this.appletId
+    const { USE_SHADOW_DOM } = getEnv()
     if (!id) return
     /**
      * Obsolete
@@ -52,6 +54,8 @@ export class DefineApplet extends HTMLElement {
     }
   }
   connectedCallback(): void {
+    if (this.installed) return
+    this.installed = true
     this.defineApplet()
     if (testHasScrolling() === false) {
       /**

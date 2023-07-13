@@ -18,4 +18,19 @@ if (window.__LATH_NO_SHADOW_DOM__) {
 * ------------- end -------------
 */
 
-export const USE_SHADOW_DOM = _USE_SHADOW_DOM
+let _USE_PERCENTAGE = false
+interface EnvOptions {
+  USE_SHADOW_DOM?: boolean,
+  USE_PERCENTAGE?: boolean
+}
+
+export function setEnv(options: EnvOptions) {
+  _USE_SHADOW_DOM = options.USE_SHADOW_DOM ?? _USE_SHADOW_DOM
+  _USE_PERCENTAGE = options.USE_PERCENTAGE ?? _USE_PERCENTAGE
+}
+export function getEnv() {
+  return {
+    USE_SHADOW_DOM: _USE_SHADOW_DOM,
+    USE_PERCENTAGE: _USE_PERCENTAGE
+  }
+}

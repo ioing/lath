@@ -1,12 +1,17 @@
-import { coveredCSSText } from './coveredCSSText'
+import { getEnv } from '../../Define/env'
+const { USE_PERCENTAGE } = getEnv()
 
 export const fullscreenBaseCSSText = `
-  inset: 0px;
   top: 0px;
   right: 0px;
   bottom: 0px;
   left: 0px;
-  ${coveredCSSText}
+  width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+  height: ${USE_PERCENTAGE ? '100%' : '100vh'};
+  min-width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+  min-height: ${USE_PERCENTAGE ? '100%' : '100vh'};
+  max-width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+  max-height: ${USE_PERCENTAGE ? '100%' : '100vh'};
 `
 
 export const viewportBaseStatusCSSText = `

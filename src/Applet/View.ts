@@ -3,14 +3,15 @@ import { Sandbox } from '../Sandbox'
 import { AppletControls } from '../AppletControls'
 import { Slide } from '../Slide'
 import { Modality } from '../Modality'
-import { setTimeout } from '../lib/util'
+import { setTimeout, requestIdleCallback } from '../lib/util'
 import typeError from '../lib/typeError'
 import { coveredCSSText } from '../lib/cssText/coveredCSSText'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { injectContext, injectDocument } from './inject'
+import { getEnv } from '../Define/env'
 import { SandboxOptions, DefineApplet } from '../types'
 
-
+const { USE_PERCENTAGE } = getEnv()
 class AppletView extends AppletEventTarget {
   private setShadowView(shadowbox: HTMLElement, shadowboxInner: HTMLElement) {
     if (['frameworks', 'system'].includes(this.rel)) {
@@ -23,8 +24,8 @@ class AppletView extends AppletEventTarget {
       shadowboxInner.style.pointerEvents = 'all'
     } else {
       shadowbox.style.cssText = shadowboxInner.style.cssText = `
-        min-width: 100%;
-        min-height: 100%;
+        min-width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+        min-height: ${USE_PERCENTAGE ? '100%' : '100vh'};
       `
     }
   }
@@ -86,10 +87,10 @@ class AppletView extends AppletEventTarget {
         position: relative;
         z-index: 1;
         display: block;
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
+        width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+        height: ${USE_PERCENTAGE ? '100%' : '100vh'};
+        max-width: ${USE_PERCENTAGE ? '100%' : '100vw'};
+        max-height: ${USE_PERCENTAGE ? '100%' : '100vh'};
         overflow: auto;
         background: transparent;
       `
@@ -110,9 +111,15 @@ class AppletView extends AppletEventTarget {
     }
     const contentSlot = this.contentSlot
     // Prevent flicker
-    this.application.awaitInstalled().then(() => {
-      contentContainer.appendChild(contentSlot)
-    })
+    if (!this.application.installed) {
+      requestIdleCallback(() => {
+        contentContainer.appendChild(contentSlot)
+      }, {
+        timeout: 300
+      })
+      return
+    }
+    contentContainer.appendChild(this.contentSlot)
   }
   private createShadowView(): Promise<HTMLElement | null> {
     if (!this.config.render) return Promise.resolve(this.contentView as DefineApplet)

@@ -1,7 +1,10 @@
 export const switcherCSSText = `
   box-sizing: border-box;
   position: fixed;
-  inset: 0;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
   z-index: 102;
   width: 100%;
   height: 100%;
@@ -16,7 +19,10 @@ export const snapWrapperCSSText = `
   display: grid;
   box-sizing: border-box;
   position: fixed;
-  inset: 0;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
   z-index: 2;
   width: 100%;
   height: 100%;

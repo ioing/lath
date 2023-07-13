@@ -1,9 +1,10 @@
 import Preset from './preset'
-import { USE_SHADOW_DOM } from './env'
+import { getEnv } from './env'
 import { buildAppletSlot } from './slot'
 import typeError from '../lib/typeError'
 export class DefineApplication extends HTMLElement {
   private contentShadowRoot!: ShadowRoot
+  private installed = false
   constructor() {
     super()
   }
@@ -11,6 +12,7 @@ export class DefineApplication extends HTMLElement {
     return ['default-applet']
   }
   private init() {
+    const { USE_SHADOW_DOM } = getEnv()
     if (this.contentShadowRoot) return
     /**
      * Obsolete
@@ -54,6 +56,8 @@ export class DefineApplication extends HTMLElement {
     }
   }
   connectedCallback(): void {
+    if (this.installed) return
+    this.installed = true
     this.defineApplet()
   }
 }

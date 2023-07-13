@@ -9,6 +9,7 @@ import('..')
 autoScrollPolyfill()
 loadWebAnimations()
 
+export * from './env'
 export const destroyApplication = () => {
   if (!Preset.appletsSpace) return
   const appletsSpace = Preset.appletsSpace
@@ -22,6 +23,7 @@ export const destroyApplication = () => {
 }
 
 export const createApplication = async (options: Partial<PresetConfig> = { tunneling: false }): Promise<Application> => {
+  initApplication()
   /**
    * Obsolete
    */
@@ -105,5 +107,3 @@ export const createApplication = async (options: Partial<PresetConfig> = { tunne
   application.setPrestAppletsView(Preset.appletsDefinition)
   return Promise.resolve(application)
 }
-
-initApplication()

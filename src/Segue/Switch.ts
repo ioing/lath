@@ -175,7 +175,6 @@ class SegueSwitch extends SegueAnimation {
     }
     this.prevId = this.id
     this.id = id
-    this.param = this.getSearch(param)
     this.applet = applet
     this.prevPrevApplet = this.prevApplet
     this.prevApplet = prevApplet
@@ -189,7 +188,7 @@ class SegueSwitch extends SegueAnimation {
     this.resetAppletViewport(applet)
     this.requestRegisterHistory(id, applet.config.title, param as string)
     applet.setActionOrigin(touches)
-    await applet.setParam(this.param)
+    await applet.setParam(this.getSearch(param))
     await applet.build()
     return this.start().then(async () => this.transform().then(async (stillness) => {
       await this.end(stillness)
@@ -323,7 +322,6 @@ class SegueSwitch extends SegueAnimation {
        * When returning from history, an abnormal container height will appear.
        */
       if (this.applet.viewport && this.applet.rel === 'applet') {
-        // this.applet.viewport.style.transform = 'translate(0, 0)'
         await this.applet.viewport.animate([
           { transform: 'translate(0, 0)' }
         ], {

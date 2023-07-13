@@ -1,6 +1,7 @@
-import { createApplication, destroyApplication } from './Define'
+import { createApplication, destroyApplication, setEnv } from './Define'
 
 export {
+  setEnv,
   createApplication,
   destroyApplication
 }

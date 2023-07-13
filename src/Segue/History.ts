@@ -153,7 +153,7 @@ class SegueHistory extends SegueBase {
     this.historyDirection = 0
   }
   public requestRegisterHistory(id = '', title = '', search = ''): void {
-    if (this.applet.viewType === 'portal') return
+    if (this.applet.viewType === 'portal' || this.applet.rel !== 'applet') return
     if (this.options.oneHistory) {
       if (this.prevHistoryStep === -1) {
         return this.replaceState(id, title, search)

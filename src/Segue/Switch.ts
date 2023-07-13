@@ -322,6 +322,7 @@ class SegueSwitch extends SegueAnimation {
        * When returning from history, an abnormal container height will appear.
        */
       if (this.applet.viewport && this.applet.rel === 'applet') {
+        this.applet.viewport.style.transform = 'translate(0, 0)'
         await this.applet.viewport.animate([
           { transform: 'translate(0, 0)' }
         ], {

@@ -13,8 +13,3 @@ export const fullscreenBaseCSSText = `
   max-width: ${USE_PERCENTAGE ? '100%' : '100vw'};
   max-height: ${USE_PERCENTAGE ? '100%' : '100vh'};
 `
-
-export const viewportBaseStatusCSSText = `
-  filter: none;
-  opacity: 1;
-`

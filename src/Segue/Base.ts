@@ -1,6 +1,6 @@
 import { Application } from '../Application'
 import { Applet } from '../Applet'
-import { fullscreenBaseCSSText, viewportBaseStatusCSSText } from '../lib/cssText/fullscreenBaseCSSText'
+import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import { SegueOptions, SegueActionOrigin, PresetConfig } from '../types'
 
 class SegueBase {
@@ -29,9 +29,9 @@ class SegueBase {
     this.setupViewport()
   }
 
-  public resetBaseStyleText = viewportBaseStatusCSSText
+  public resetBaseStyleText = ''
   public resetBaseStyle(cssText = '') {
-    this.resetBaseStyleText = viewportBaseStatusCSSText + cssText
+    this.resetBaseStyleText = cssText
   }
 
   public setupViewport(): void {

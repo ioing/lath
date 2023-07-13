@@ -3,7 +3,7 @@ import { Sandbox } from '../Sandbox'
 import { AppletControls } from '../AppletControls'
 import { Slide } from '../Slide'
 import { Modality } from '../Modality'
-import { setTimeout, requestIdleCallback } from '../lib/util'
+import { setTimeout } from '../lib/util'
 import typeError from '../lib/typeError'
 import { coveredCSSText } from '../lib/cssText/coveredCSSText'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
@@ -112,10 +112,8 @@ class AppletView extends AppletEventTarget {
     const contentSlot = this.contentSlot
     // Prevent flicker
     if (!this.application.installed) {
-      requestIdleCallback(() => {
+      this.application.on('firstAppletDidMount', () => {
         contentContainer.appendChild(contentSlot)
-      }, {
-        timeout: 300
       })
       return
     }

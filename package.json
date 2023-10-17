@@ -1,6 +1,6 @@
 {
   "name": "lath",
-  "version": "0.12.28",
+  "version": "0.12.36",
   "description": "Seamless connection of pages.",
   "keywords": [
     "lath",
@@ -44,7 +44,6 @@
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "html2canvas": "^1.4.1",
     "scroll-polyfill": "^1.0.1",
-    "uglify-js": "^3.17.4",
     "web-animations-js": "^2.3.2"
   },
   "devDependencies": {
@@ -58,6 +57,7 @@
     "rollup-plugin-typescript2": "^0.31.2",
     "ts-loader": "^9.2.6",
     "tslib": "^2.3.1",
+    "uglify-js": "^3.17.4",
     "typescript": "^4.6.2"
   },
   "author": "lien",

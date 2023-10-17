@@ -1,6 +1,10 @@
 export default async (): Promise<boolean> => {
-  if (!('animate' in document.createElement('div')) || !Element.prototype.getAnimations) {
-    return !!(await import('./polyfill')).default
+  if (!('animate' in document.createElement('div'))) {
+    try {
+      return !!(await import('./polyfill')).default
+    } catch (e) {
+      return false
+    }
   }
   return true
 }

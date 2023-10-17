@@ -29,9 +29,13 @@ class SegueBase {
     this.setupViewport()
   }
 
-  public resetBaseStyleText = ''
+
+  public resetBaseStyleText = `
+    filter: none;
+    opacity: 1;
+  `
   public resetBaseStyle(cssText = '') {
-    this.resetBaseStyleText = cssText
+    this.resetBaseStyleText = this.resetBaseStyleText + cssText
   }
 
   public setupViewport(): void {

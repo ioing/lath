@@ -28,7 +28,7 @@ class AppletState extends AppletBase {
       this.uri,
       window.location.toString()
     )
-    const isSameOrigin = link.host === location.host
+    const isSameOrigin = link.host === window.location.host
     return isSameOrigin
   }
   get level(): number {

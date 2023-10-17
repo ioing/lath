@@ -14,7 +14,7 @@ export class DefineApplet extends HTMLElement {
     return this.appletSlot
   }
   static get observedAttributes() {
-    return ['applet-id', 'slot']
+    return ['applet-id']
   }
   private get appletId() {
     return this.getAttribute('applet-id')
@@ -28,18 +28,19 @@ export class DefineApplet extends HTMLElement {
      * ------------- start -------------
      */
     // old; ios < 9
-    if (USE_SHADOW_DOM) {
-      this.slot = 'applet-' + id
-      this.appletSlot = buildAppletSlot(id)
-    } else {
+    if (!USE_SHADOW_DOM) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.appletSlot = this as any
+      Preset.appletsSlot[id] = this.appletSlot = this as any
+      Preset.appletsDefinition[id] = this
+      return
     }
     /**
      * Obsolete
      * ------------- end -------------
      */
 
+    this.slot = 'applet-' + id
+    this.appletSlot = buildAppletSlot(id)
     Preset.appletsDefinition[id] = this
   }
   attributeChangedCallback(name: string, oldValue: string, newValue: string): void {

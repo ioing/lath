@@ -9,7 +9,9 @@ import typeError from '../lib/typeError'
 import needsPolyfill from '../lib/wc/needsPolyfill'
 
 if (needsPolyfill) {
-  import('@webcomponents/webcomponentsjs')
+  import('@webcomponents/webcomponentsjs').catch((e) => {
+    console.warn(e)
+  })
 }
 
 export const initApplication = () => {

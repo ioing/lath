@@ -202,7 +202,7 @@ class AppletLifeCycle extends AppletState {
           const counter = { times: 0 }
           const observer = this.observer(() => {
             counter.times++
-            if (counter.times > 1000) {
+            if (counter.times > 10000) {
               resolve(false)
               this.mutationObserver.disconnect()
             }

@@ -57,7 +57,10 @@ class SegueAnimation extends SegueState {
 
   public preloadAnimation(applet: Applet) {
     const animationNames = applet?.config?.animation ?? 'slide'
-    this.getAnimationByName(animationNames as AnimationPrestType)
+    this.getAnimationByName(animationNames as AnimationPrestType).catch(() => {
+      // Load trunk error
+      // console.warn(`Load animation[${animationNames}] trunk error!`)
+    })
   }
 
   public async getAnimationByName(type: AnimationPrestType): Promise<[SegueAnimateFn, SegueAnimateFn] | SegueAnimateFn | undefined> {

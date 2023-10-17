@@ -5,7 +5,9 @@ import autoScrollPolyfill from '../Scroll/polyfill'
 import loadWebAnimations from '../lib/webAnimations/load'
 import { initApplication } from './init'
 
-import('..')
+import('..').catch((e) => {
+  console.warn(e)
+})
 autoScrollPolyfill()
 loadWebAnimations()
 
@@ -32,7 +34,13 @@ export const createApplication = async (options: Partial<PresetConfig> = { tunne
   if (Preset.__EXISTING__) return Promise.reject('repeat')
   if (options.tunneling && !!window.__LATH_APPLICATION_AVAILABILITY__) return Promise.reject('tunneling')
   Preset.__EXISTING__ = true
-  const { Application } = await import('..')
+  let Application
+  try {
+    ({ Application } = await import('..'))
+  } catch (error) {
+    console.warn(error)
+    return Promise.reject(error)
+  }
   const { tunneling = false, zIndex = undefined, applets = {} as Required<PresetConfig>['applets'] } = options
   if (!Preset.root) {
     setTimeout(() => {
@@ -103,7 +111,7 @@ export const createApplication = async (options: Partial<PresetConfig> = { tunne
     applets
   })
 
-  application.start()
+  await application.start()
   application.setPrestAppletsView(Preset.appletsDefinition)
   return Promise.resolve(application)
 }

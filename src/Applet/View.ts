@@ -109,14 +109,6 @@ class AppletView extends AppletEventTarget {
     if (this.config.defaultSlideViewApplets) {
       this.buildSlideView(contentContainer)
     }
-    const contentSlot = this.contentSlot
-    // Prevent flicker
-    if (!this.application.installed) {
-      this.application.on('firstAppletDidMount', () => {
-        contentContainer.appendChild(contentSlot)
-      })
-      return
-    }
     contentContainer.appendChild(this.contentSlot)
   }
   private createShadowView(): Promise<HTMLElement | null> {
@@ -325,7 +317,7 @@ class AppletView extends AppletEventTarget {
     discardView.parentNode?.removeChild(discardView)
     contentView.parentElement?.removeChild(contentView)
   }
-  public async captureShot(update = true): Promise<HTMLCanvasElement> {
+  public async captureShot(update = true): Promise<HTMLCanvasElement | undefined> {
     if (!update && this.snapshot && this.snapshotTime === this.createTime) {
       return this.snapshot
     }
@@ -334,6 +326,9 @@ class AppletView extends AppletEventTarget {
       return captureShot.capture(this.self).then((snapshot) => {
         return this.snapshot = snapshot
       })
+    }).catch((e) => {
+      console.warn(e)
+      return undefined
     })
   }
 }

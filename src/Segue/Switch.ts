@@ -71,7 +71,7 @@ class SegueSwitch extends SegueAnimation {
       transition-duration: 0ms;
       transition-delay: 0ms;
       transition-property: all;
-      transform: ${visibility ? 'translate(0, 0)' : 'translate(0, 200%)'};
+      transform: ${visibility ? 'translate3d(0, 0, 0)' : 'translate(0, 200%)'};
       backface-visibility: hidden;
       overflow: hidden;
       contain: layout size;
@@ -322,9 +322,9 @@ class SegueSwitch extends SegueAnimation {
        * When returning from history, an abnormal container height will appear.
        */
       if (this.applet.viewport && this.applet.rel === 'applet') {
-        this.applet.viewport.style.transform = 'translate(0, 0)'
+        this.applet.viewport.style.transform = 'translate3d(0, 0, 0)'
         await this.applet.viewport.animate([
-          { transform: 'translate(0, 0)' }
+          { transform: 'translate3d(0, 0, 0)' }
         ], {
           duration: 0,
           fill: 'forwards'
@@ -351,9 +351,9 @@ class SegueSwitch extends SegueAnimation {
       }
     }
     /**
-         * Obsolete
-         * ------------- start -------------
-         */
+     * Obsolete
+     * ------------- start -------------
+     */
     // old; ios < 15
     // Keep the position of the previous pop-up window, when the iOS is less than 15, there is a bug of snap reset.
     // When a new content is inserted in the document stream, the snap resets, and the problem only occurs the first time.
@@ -402,7 +402,7 @@ class SegueSwitch extends SegueAnimation {
         const backdropState = (backdropType && !this.countercurrent) || (this.prevApplet.config.modality && this.fromHistoryBack)
         if (this.prevApplet.viewport) {
           await waitAllAnimations(this.prevApplet.viewport)
-          this.prevApplet.viewport.style.transform = backdropState ? 'translate(0, 0)' : 'translate(0, 200%)'
+          this.prevApplet.viewport.style.transform = backdropState ? 'translate3d(0, 0, 0)' : 'translate(0, 200%)'
           await resetAllAnimations(this.prevApplet.viewport)
         }
       }

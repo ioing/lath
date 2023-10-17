@@ -300,19 +300,19 @@ class Application extends ApplicationState {
   }
   private async lineUpApplet(id: string, params: string, history: -1 | 0 | 1): Promise<void> {
     return new Promise((resolve) => {
-      this.get(id).then((applet) => {
+      this.get(id).then(async (applet) => {
         const { antecedentApplet } = applet.config
         if (antecedentApplet) {
           for (const antecedentId of antecedentApplet) {
-            this.segue.to(antecedentId, params, 1)
+            await this.segue.to(antecedentId, params, 1)
           }
-          this.segue.to(id, params, 1)
+          await this.segue.to(id, params, 1)
         } else {
-          this.segue.to(id, params, history)
+          await this.segue.to(id, params, history)
         }
         resolve()
-      }).catch(() => {
-        this.segue.to(id, params, -1)
+      }).catch(async () => {
+        await this.segue.to(id, params, -1)
         resolve()
       })
     })

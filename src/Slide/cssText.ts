@@ -7,7 +7,7 @@ export const viewportCSSText = `
   ${coveredCSSText}
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  transform: translate(0, 0);
+  transform: translate3d(0, 0, 0);
 `
 
 export const slideBaseCSSText = `

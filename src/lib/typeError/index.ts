@@ -1,5 +1,13 @@
 async function getMessage(code: number, args: string[]) {
-  const { ErrorCode } = await import('./errorCode')
+  let ErrorCode
+  try {
+    ({ ErrorCode } = await import('./errorCode'))
+  } catch (error) {
+    console.warn(error)
+    return {
+      ErrorCode: {}
+    }
+  }
   const message = ErrorCode[code]
   if (message && args) {
     return String.raw({

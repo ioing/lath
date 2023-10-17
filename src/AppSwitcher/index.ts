@@ -223,6 +223,7 @@ class AppSwitcher {
   }
   private async setNormalItem(applet: Applet, itemImg: HTMLElement): Promise<void> {
     applet.captureShot(Date.now() - applet.visitTime >= 120000 ? true : false).then(async (canvas) => {
+      if (!canvas) return
       itemImg.appendChild(canvas)
       await canvas.animate([
         { opacity: 0 },
@@ -259,7 +260,10 @@ class AppSwitcher {
       border-radius: ${16 / scale}px;
     `
     this.switcher.appendChild(itemImg)
-    itemImg.appendChild(await applet.captureShot())
+    const captureShotImg = await applet.captureShot()
+    if (captureShotImg) {
+      itemImg.appendChild(captureShotImg)
+    }
     if (this.progressName === 'close') return
     await itemImg.animate([
       { opacity: 0 },

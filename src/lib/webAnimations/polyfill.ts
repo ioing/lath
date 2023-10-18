@@ -37,24 +37,36 @@ function convertKeyframes(element: Element, keyframes: KeyframesArray | Keyframe
 
 if (!window.__isElementAnimateDefined) {
   window.__isElementAnimateDefined = true
-
+  const elementAnimations = new Map()
   const originalAnimate = Element.prototype.animate as unknown as OriginalAnimate
   Element.prototype.animate = function (keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation {
     const animation = originalAnimate.call(this, convertKeyframes(this, keyframes as unknown as (KeyframesArray | KeyframeObject)), options) as Animation
-    if (!this.animations) {
-      this.animations = []
+
+    if (!elementAnimations.has(this)) {
+      elementAnimations.set(this, [])
     }
-    this.animations.push(animation)
+
+    const animations = elementAnimations.get(this)
+    animations.push(animation)
+    animation.addEventListener('finish', () => {
+      const index = animations.indexOf(animation)
+      if (index !== -1) {
+        animations.splice(index, 1)
+      }
+    })
+
     return animation
   }
   Element.prototype.getAnimations = function (options?: GetAnimationsOptions): Animation[] {
-    const animations = this.animations || []
+    const animations = []
     if (options?.subtree) {
       this.querySelectorAll('*').forEach(node => {
-        if (node.animations.length) {
-          animations.push(...node.animations)
+        if (elementAnimations.has(node)) {
+          animations.push(...elementAnimations.get(node))
         }
       })
+    } else if (elementAnimations.has(this)) {
+      animations.push(...elementAnimations.get(this))
     }
     return animations
   }

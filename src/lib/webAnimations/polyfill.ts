@@ -51,7 +51,9 @@ if (!window.__isElementAnimateDefined) {
     const animations = this.animations || []
     if (options?.subtree) {
       this.querySelectorAll('*').forEach(node => {
-        if (node.animations.length) animations.concat(node.animations)
+        if (node.animations.length) {
+          animations.push(...node.animations)
+        }
       })
     }
     return animations

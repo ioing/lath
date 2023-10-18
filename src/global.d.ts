@@ -13,6 +13,7 @@ declare interface Window {
     waitFor: (fn: () => void) => void
     _batchCustomElements: () => void
   }
+  __isElementAnimateDefined?: boolean
   ShadyDOM: {
     force: boolean
   },

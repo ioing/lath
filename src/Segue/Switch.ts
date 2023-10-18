@@ -323,12 +323,17 @@ class SegueSwitch extends SegueAnimation {
        */
       if (this.applet.viewport && this.applet.rel === 'applet') {
         this.applet.viewport.style.transform = 'translate3d(0, 0, 0)'
-        await this.applet.viewport.animate([
-          { transform: 'translate3d(0, 0, 0)' }
-        ], {
-          duration: 0,
-          fill: 'forwards'
-        }).finished
+        // If there is also a wrong polyfill introduced by other third parties.
+        try {
+          await this.applet.viewport.animate([
+            { transform: 'translate3d(0, 0, 0)' }
+          ], {
+            duration: 0,
+            fill: 'forwards'
+          }).finished
+        } catch (e) {
+          console.warn(e)
+        }
       }
     }
     Promise.resolve()

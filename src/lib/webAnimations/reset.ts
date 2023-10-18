@@ -12,7 +12,8 @@ export default async (element: HTMLElement) => {
     const propValue = currentStyle.getPropertyValue(propName)
     styleObject[propName] = [propValue, propValue]
   }
-  return element.animate(styleObject, {
+  // Prevents processed elements from already being unloaded.
+  return typeof element.animate === 'function' && element.animate(styleObject, {
     duration: 0,
     fill: 'forwards'
   }).finished

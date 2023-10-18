@@ -35,21 +35,27 @@ function convertKeyframes(element: Element, keyframes: KeyframesArray | Keyframe
   return newKeyFrames
 }
 
-const originalAnimate = Element.prototype.animate as unknown as OriginalAnimate
-Element.prototype.animate = function (keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation {
-  const animation = originalAnimate.call(this, convertKeyframes(this, keyframes as unknown as (KeyframesArray | KeyframeObject)), options) as Animation
-  if (!this.animations) {
-    this.animations = [];
+if (!window.__isElementAnimateDefined) {
+  window.__isElementAnimateDefined = true
+
+  const originalAnimate = Element.prototype.animate as unknown as OriginalAnimate
+  Element.prototype.animate = function (keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation {
+    const animation = originalAnimate.call(this, convertKeyframes(this, keyframes as unknown as (KeyframesArray | KeyframeObject)), options) as Animation
+    if (!this.animations) {
+      this.animations = []
+    }
+    this.animations.push(animation)
+    return animation
   }
-  this.animations.push(animation)
-  return animation
-}
-Element.prototype.getAnimations = function (options?: GetAnimationsOptions): Animation[] {
-  const animations = this.animations || []
-  if (options?.subtree) {
-    this.querySelectorAll('*').forEach(node => animations.concat(node.animations))
+  Element.prototype.getAnimations = function (options?: GetAnimationsOptions): Animation[] {
+    const animations = this.animations || []
+    if (options?.subtree) {
+      this.querySelectorAll('*').forEach(node => {
+        if (node.animations.length) animations.concat(node.animations)
+      })
+    }
+    return animations
   }
-  return animations
 }
 
 export default true

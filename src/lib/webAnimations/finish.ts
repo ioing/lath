@@ -1,7 +1,5 @@
-export default async (element: HTMLElement) => {
-  const animatePromise: Promise<Animation>[] = []
-  element.getAnimations?.().forEach(animation => {
-    animatePromise.push(animation.finished)
+export default (element: HTMLElement, subtree = false) => {
+  element.getAnimations?.({ subtree }).forEach(animation => {
+    animation.cancel()
   })
-  return Promise.all(animatePromise)
 }

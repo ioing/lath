@@ -3,8 +3,8 @@ import { SegueAnimation } from './Animation'
 import { requestIdleCallback, setTimeout, testHasSnapReset } from '../lib/util'
 import { fullscreenBaseCSSText } from '../lib/cssText/fullscreenBaseCSSText'
 import loadWebAnimations from '../lib/webAnimations/load'
-import resetAllAnimations from '../lib/webAnimations/reset'
-import waitAllAnimations from '../lib/webAnimations/finish'
+import waitAllAnimations from '../lib/webAnimations/finished'
+import clearAllAnimations from '../lib/webAnimations/clear'
 import { SegueAnimateState, SegueActionOrigin, Applet, PresetConfig } from '../types'
 
 type SegueToOptions = [
@@ -77,7 +77,7 @@ class SegueSwitch extends SegueAnimation {
       contain: layout size;
       ${this.resetBaseStyleText}
     `
-    await resetAllAnimations(viewport)
+    clearAllAnimations(viewport)
   }
 
   // Gets the previous queue task
@@ -274,6 +274,8 @@ class SegueSwitch extends SegueAnimation {
           this.applet.willSegueShow()
           // Rendering and animation execution are isolated, otherwise native scroll animations will be affected
           setTimeout(() => {
+            clearAllAnimations(options.view[0])
+            clearAllAnimations(options.view[1])
             const promiseAnimation = animation(options)
             if (promiseAnimation instanceof Promise) {
               promiseAnimation.then(resolve)
@@ -391,8 +393,8 @@ class SegueSwitch extends SegueAnimation {
     await waitAllAnimations(this.relativeViewport)
     await waitAllAnimations(this.absoluteViewport)
     this.resetViewport(this.applet?.config?.free)
-    await resetAllAnimations(this.relativeViewport)
-    await resetAllAnimations(this.absoluteViewport)
+    clearAllAnimations(this.relativeViewport)
+    clearAllAnimations(this.absoluteViewport)
   }
 
   private async switchApplet(stillness = false) {
@@ -408,7 +410,7 @@ class SegueSwitch extends SegueAnimation {
         if (this.prevApplet.viewport) {
           await waitAllAnimations(this.prevApplet.viewport)
           this.prevApplet.viewport.style.transform = backdropState ? 'translate3d(0, 0, 0)' : 'translate(0, 200%)'
-          await resetAllAnimations(this.prevApplet.viewport)
+          clearAllAnimations(this.prevApplet.viewport)
         }
       }
       this.resetAppletViewport(this.applet, true)

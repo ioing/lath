@@ -1,9 +1,8 @@
 import { requestIdleCallback, setTimeout } from '../lib/util'
 import { SmoothScroller } from '../Scroll'
 import loadWebAnimations from '../lib/webAnimations/load'
-import clearAnimations from '../lib/webAnimations/clear'
-import resetAllAnimations from '../lib/webAnimations/reset'
-import allAnimationsFinish from '../lib/webAnimations/finish'
+import clearAllAnimations from '../lib/webAnimations/clear'
+import waitAllAnimations from '../lib/webAnimations/finished'
 import {
   switcherCSSText,
   snapWrapper2CSSText,
@@ -312,8 +311,8 @@ class AppSwitcher {
       ])
       if (this.progressName === 'close') return
       itemImg.style.cssText = originalCssText
-      clearAnimations(itemImg)
-      clearAnimations(itemImgWrapper)
+      clearAllAnimations(itemImg)
+      clearAllAnimations(itemImgWrapper)
       itemImgWrapper.appendChild(itemImg)
       this.snapWrapper.style.overflowY = 'scroll'
       this.snapWrapper.style.scrollSnapType = 'y mandatory'
@@ -385,11 +384,13 @@ class AppSwitcher {
       }).finished
     ])
     if (!supportedBackdropFilter) {
-      this.application.segue.resetBaseStyle()
+      this.application.segue.resetBaseStyle(
+        `filter: none;`
+      )
       this.application.segue.appletGroup.forEach((applet) => {
         if (applet.viewport) {
           applet.viewport.style.filter = 'none'
-          resetAllAnimations(applet.viewport)
+          clearAllAnimations(applet.viewport)
         }
       })
     }
@@ -404,11 +405,11 @@ class AppSwitcher {
     return activityApplet
   }
   private async blurBackgroundImage(blur = true): Promise<void> {
-    await allAnimationsFinish(this.relativeViewport)
-    await allAnimationsFinish(this.absoluteViewport)
+    await waitAllAnimations(this.relativeViewport)
+    await waitAllAnimations(this.absoluteViewport)
     this.relativeViewport.style.filter = this.absoluteViewport.style.filter = blur ? 'blur(20px)' : 'none'
-    await resetAllAnimations(this.relativeViewport)
-    await resetAllAnimations(this.absoluteViewport)
+    clearAllAnimations(this.relativeViewport)
+    clearAllAnimations(this.absoluteViewport)
   }
   private async focusBackgroundImage(): Promise<void> {
     await this.blurBackgroundImage(false)
